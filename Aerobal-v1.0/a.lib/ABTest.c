@@ -17,8 +17,8 @@
  * v0.1
  */
 void ABTestDelay(){
-	lcdCursorLine4();
-	lcdWriteString("[");
+	ABTestLogLineClear(LCD_LINE_4);
+	lcdWriteStringInLine(4,"[");
 	SysCtlDelay(1000000);
 	int i = 0;
 	for(i = 0; i < 18; i++){
@@ -36,20 +36,20 @@ void ABTestDelay(){
  */
 void ABTestLog(char* line1, char* line2, char* line3, char* line4){
 	if(line1 != ""){
-		lcdCursorLine1();
-		lcdWriteString(line1);
+		ABTestLogLineClear(1);
+		lcdWriteStringInLine(1,line1);
 	}
 	if(line2 != ""){
-		lcdCursorLine2();
-		lcdWriteString(line2);
+		ABTestLogLineClear(2);
+		lcdWriteStringInLine(2,line2);
 	}
 	if(line3 != ""){
-		lcdCursorLine3();
-		lcdWriteString(line3);
+		ABTestLogLineClear(3);
+		lcdWriteStringInLine(3,line3);
 	}
 	if(line4 != ""){
-		lcdCursorLine4();
-		lcdWriteString(line4);
+		ABTestLogLineClear(4);
+		lcdWriteStringInLine(4,line4);
 	}
 }
 
@@ -58,28 +58,24 @@ void ABTestLog(char* line1, char* line2, char* line3, char* line4){
  * line number.
  */
 void ABTestLogLineClear(char lineNumber){
-	if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_1){
-		lcdCursorLine1();
-		lcdWriteString("                    ");
+	if(lineNumber == LCD_LINE_1){
+		lcdWriteStringInLine(1,"                    ");
 	}
-	else if(lineNumber == LCD_CMD_CURSOR_POSITION_LINE_2){
-		lcdCursorLine2();
-		lcdWriteString("                    ");
+	else if(lineNumber == LCD_LINE_2){
+		lcdWriteStringInLine(2,"                    ");
 	}
-	else if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_3){
-		lcdCursorLine3();
-		lcdWriteString("                    ");
+	else if(lineNumber == LCD_LINE_3){
+		lcdWriteStringInLine(3,"                    ");
 	}
-	else if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_4){
-		lcdCursorLine4();
-		lcdWriteString("                    ");
+	else if(lineNumber == LCD_LINE_4){
+		lcdWriteStringInLine(4,"                    ");
 	}
 }
 
 
-//*******************
+//********************************************************************/
 // Test Functions.
-//*******************
+//********************************************************************/
 
 /* Tester for the LCD.
  * Should be run first as of v0.1. Tests the
@@ -122,16 +118,20 @@ int ABTestBMP(){
 	while(1){
 		bmp085DataRead();
 		if(counter %200 == 0){
-			lcdCursorLine2();
-	    	lcdWriteString("P: ");
+			lcdWriteStringInLine(2,"P: ");
 	    	lcdWriteNumber(bmp085GetPressure());
-	    	lcdCursorLine3();
-	    	lcdWriteString("T: ");
+	    	lcdWriteStringInLine(3,"T: ");
 	    	lcdWriteNumber(bmp085GetTemperature());
 	    	lcdCursorLine4();
 	    	lcdWriteNumber(counter);
 	    	lcdWriteString("/");
 	    	lcdWriteNumber(1000);
+	    	lcdWriteString(" [");
+	    	if(counter >= 200) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 400) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 600) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 800) lcdWriteString("."); else lcdWriteString(" ");
+	    	lcdWriteString("]");
 		}
 		if(counter == 1000){
 			break;
@@ -162,43 +162,68 @@ int ABTestRelay(){
 	int rState = 0;
 	while(rCounter < 6){
 		if(rState){
-			ABTestLog("","","Testing On... ","");
+			lcdWriteStringInLine(3,"Test On... ");
 			relayOn();
-			ABTestDelay();
 		}
 		else{
-			ABTestLog("","","Testing Off...","");
+			lcdWriteStringInLine(3,"Test Off...");
 			relayOff();
-			ABTestDelay();
 		}
+		lcdWriteString(" ");
+		lcdWriteNumber(rCounter+1);
+		lcdWriteString("/");
+		lcdWriteNumber(6);
+		ABTestDelay();
 		rState = !rState;
-		ABTestLogLineClear(LCD_CMD_CURSOR_POSITION_LINE_4);
+		ABTestLogLineClear(LCD_LINE_4);
 		rCounter ++ ;
 	}
 	rCounter = 0;
-	while(rCounter < 6){
-		lcdCursorLine3();
-		lcdWriteString("Testing Toggle: ");
-		lcdWriteNumber(rCounter);
+	while(rCounter < 3){
+		lcdWriteStringInLine(3,"Testing Toggle: ");
+		lcdWriteNumber(rCounter+1);
+		lcdWriteString("/");
+		lcdWriteNumber(3);
 		relayToggle();
 		ABTestDelay();
-		ABTestLogLineClear(LCD_CMD_CURSOR_POSITION_LINE_4);
 		rCounter ++ ;
 	}
-	ABTestLog("","Relay Tests       ", "Successful!","");
+	relayOff();
+	lcdClear();
+	ABTestLog("ABTL: Relay","Relay Tests", "Successful!","");
 	ABTestDelay();
 	return 1;
 }
 
 /* Performs a test for the Bluetooth Module.
- *
  * v0.1
  *
  * Ports:
- *
+ * PA0 - UART0 RX
+ * PA1 - UART0 TX
+ * PF2 - GPIO LED
  */
 int ABTestBT(){
 
+	lcdClear();
+	bluetoothInit();
+	ABTestLog("ABTL: Bluetooth", "Write in terminal to","","");
+	int count = -1;
+	while(bluetoothEventCount < 5){
+		if(count != bluetoothEventCount){
+			lcdWriteStringInLine(LCD_LINE_3,"test.  ");
+			lcdWriteNumber(bluetoothEventCount);
+			lcdWriteString("/");
+			lcdWriteNumber(5);
+			count = bluetoothEventCount;
+		}
+		ABTestDelay();
+	}
+	lcdClear();
+	ABTestLog("ABTL: Bluetooth","Test Successful!","","");
+	ABTestDelay();
+
+	return 1;
 }
 
 
