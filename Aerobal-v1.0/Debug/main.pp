@@ -30,6 +30,7 @@ main.obj: ../a.lib/bluetooth.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/debug.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h
+main.obj: ../a.lib/dht11.h
 
 ../main.c: 
 ../a.lib/ABTest.h: 
@@ -61,3 +62,4 @@ C:/ti/TivaWare_C_Series-1.0/sensorlib/bmp180.h:
 C:/ti/TivaWare_C_Series-1.0/driverlib/debug.h: 
 C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h: 
 C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h: 
+../a.lib/dht11.h: 

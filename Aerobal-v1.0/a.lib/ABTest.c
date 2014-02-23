@@ -117,7 +117,7 @@ int ABTestBMP(){
 	int counter = 0;
 	while(1){
 		bmp085DataRead();
-		if(counter %200 == 0){
+		if(counter % 500 == 0){
 			lcdWriteStringInLine(2,"P: ");
 	    	lcdWriteNumber(bmp085GetPressure());
 	    	lcdWriteStringInLine(3,"T: ");
@@ -125,15 +125,15 @@ int ABTestBMP(){
 	    	lcdCursorLine4();
 	    	lcdWriteNumber(counter);
 	    	lcdWriteString("/");
-	    	lcdWriteNumber(1000);
+	    	lcdWriteNumber(5000);
 	    	lcdWriteString(" [");
-	    	if(counter >= 200) lcdWriteString("."); else lcdWriteString(" ");
-	    	if(counter >= 400) lcdWriteString("."); else lcdWriteString(" ");
-	    	if(counter >= 600) lcdWriteString("."); else lcdWriteString(" ");
-	    	if(counter >= 800) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 1000) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 2000) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 3000) lcdWriteString("."); else lcdWriteString(" ");
+	    	if(counter >= 4000) lcdWriteString("."); else lcdWriteString(" ");
 	    	lcdWriteString("]");
 		}
-		if(counter == 1000){
+		if(counter == 5000){
 			break;
 		}
 		counter++;
@@ -202,6 +202,12 @@ int ABTestRelay(){
  * PA0 - UART0 RX
  * PA1 - UART0 TX
  * PF2 - GPIO LED
+ *
+ * Interrupts:
+ *
+ * UART0
+ * | extern void bluetoothInterruptHandler();
+ *
  */
 int ABTestBT(){
 
@@ -226,5 +232,47 @@ int ABTestBT(){
 	return 1;
 }
 
+/* Performs a test for the DHT11 Humidity and Temperature
+ * Sensor Module.
+ *
+ * v0.1
+ *
+ * Ports:
+ * PA4 - GPIO DHT.
+ *
+ * Interrupts:
+ * Timer 0A
+ * | extern void dht11getData();
+ *
+ * Timer 1A
+ * | extern void dht11count1uS()
+ *
+ * GPIOA IO - PIN 4
+ * | extern void readDataBit()
+ *
+ */
+/*
+int ABTestDHT(){
+	lcdClear();
+	dht11init();
+	ABTestLog("ABTL: DHT11","Testing DHT:.","","");
+	int count = 0;
+	while(count < 5){
+		dht11getData();
+		while(dhtIsActive());
+		lcdWriteStringInLine(2,"T: ");
+		lcdWriteNumber(dht11getTemperature());
+		lcdWriteStringInLine(3,"H: ");
+		lcdWriteNumber(dht11getHumidity());
+		lcdWriteString("   ");
+		lcdWriteNumber(count);
+		lcdWriteString("/");
+		lcdWriteNumber(5);
+		ABTestDelay();
+		count++ ;
+	}
 
+	return 1;
+}
+*/
 
