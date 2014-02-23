@@ -1,6 +1,7 @@
 # FIXED
 
 main.obj: ../main.c
+main.obj: ../a.lib/ABTest.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdint.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdbool.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h
@@ -24,8 +25,10 @@ main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/pin_map.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/sensorlib/hw_bmp180.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/sensorlib/i2cm_drv.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/sensorlib/bmp180.h
+main.obj: ../a.lib/relay.h
 
 ../main.c: 
+../a.lib/ABTest.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdint.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/stdbool.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.1/include/yvals.h: 
@@ -49,3 +52,4 @@ C:/ti/TivaWare_C_Series-1.0/driverlib/pin_map.h:
 C:/ti/TivaWare_C_Series-1.0/sensorlib/hw_bmp180.h: 
 C:/ti/TivaWare_C_Series-1.0/sensorlib/i2cm_drv.h: 
 C:/ti/TivaWare_C_Series-1.0/sensorlib/bmp180.h: 
+../a.lib/relay.h: 

@@ -8,9 +8,11 @@ CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/arm_5.1.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./a.lib/relay.obj" \
 "./a.lib/lcd.obj" \
 "./a.lib/gpio.obj" \
 "./a.lib/bmp085.obj" \
+"./a.lib/ABTest.obj" \
 "./startup_ccs.obj" \
 "./main.obj" \
 "../main_ccs.cmd" \
@@ -131,8 +133,8 @@ X-Aerobal-v1.0.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "X-Aerobal-v1.0.out"
-	-$(RM) "main.pp" "startup_ccs.pp" "a.lib\bmp085.pp" "a.lib\gpio.pp" "a.lib\lcd.pp" 
-	-$(RM) "main.obj" "startup_ccs.obj" "a.lib\bmp085.obj" "a.lib\gpio.obj" "a.lib\lcd.obj" 
+	-$(RM) "main.pp" "startup_ccs.pp" "a.lib\ABTest.pp" "a.lib\bmp085.pp" "a.lib\gpio.pp" "a.lib\lcd.pp" "a.lib\relay.pp" 
+	-$(RM) "main.obj" "startup_ccs.obj" "a.lib\ABTest.obj" "a.lib\bmp085.obj" "a.lib\gpio.obj" "a.lib\lcd.obj" "a.lib\relay.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
