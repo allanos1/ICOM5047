@@ -15,12 +15,17 @@
 #include "driverlib/rom.h"
 #include "driverlib/timer.h"
 #include "driverlib/sysctl.h"
-//
+
+//////////////////////////
+// AB Module Imports.
+//////////////////////////
 #include "gpio.h"
 #include "lcd.h"
 #include "bmp085.h"
 #include "relay.h"
 #include "bluetooth.h"
+#include "dht11.h"
+//////////////////////////
 
 void ABTestDelay();
 void ABTestLog(char* line1, char* line2, char* line3, char* line4);
@@ -29,5 +34,6 @@ int ABTestBMP();
 int ABTestLCD();
 int ABTestRelay();
 int ABTestBT();
+int ABTestDHT();
 
 #endif /* ABTEST_H_ */

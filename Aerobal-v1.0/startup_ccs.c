@@ -47,6 +47,9 @@ extern void _c_int00(void);
 //*****************************************************************************
 extern void bmp085I2CIntHandler(void);
 extern void bluetoothInterruptHandler(void);
+extern void dht11getData();
+extern void dht11count1uS();
+extern void readDataBit();
 
 
 //*****************************************************************************
@@ -80,7 +83,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
-    IntDefaultHandler,                      // GPIO Port A
+    IntDefaultHandler/*readDataBit*/,                      		// GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
@@ -99,9 +102,9 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    IntDefaultHandler,                      // Timer 0 subtimer A
+    IntDefaultHandler/*dht11getData*/,                      		// Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
-    IntDefaultHandler,                      // Timer 1 subtimer A
+    IntDefaultHandler/*dht11count1uS*/,                      	// Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     IntDefaultHandler,                      // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B
