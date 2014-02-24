@@ -27,38 +27,38 @@
 #include "inc/hw_types.h"
 
 //*****************************************************************************
-//
 // Forward declaration of the default fault handlers.
-//
 //*****************************************************************************
 void ResetISR(void);
 static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
 
+
 //*****************************************************************************
-//
 // External declaration for the reset handler that is to be called when the
 // processor is started
-//
 //*****************************************************************************
 extern void _c_int00(void);
 
-extern void bmp085I2CIntHandler(void);
+
 //*****************************************************************************
-//
+// External declaration of Interrupt Handlers.
+//*****************************************************************************
+extern void bmp085I2CIntHandler(void);
+extern void bluetoothInterruptHandler(void);
+
+
+//*****************************************************************************
 // Linker variable that marks the top of the stack.
-//
 //*****************************************************************************
 extern uint32_t __STACK_TOP;
 
 
 //*****************************************************************************
-//
 // The vector table.  Note that the proper constructs must be placed on this to
 // ensure that it ends up at physical address 0x0000.0000 or at the start of
 // the program if located at a start address other than 0.
-//
 //*****************************************************************************
 #pragma DATA_SECTION(g_pfnVectors, ".intvecs")
 void (* const g_pfnVectors[])(void) =
@@ -85,7 +85,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    IntDefaultHandler,                      // UART0 Rx and Tx
+    bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
@@ -117,7 +117,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // SSI1 Rx and Tx
     IntDefaultHandler,                      // Timer 3 subtimer A
     IntDefaultHandler,                      // Timer 3 subtimer B
-    bmp085I2CIntHandler,                      // I2C1 Master and Slave
+    bmp085I2CIntHandler,                    // I2C1 Master and Slave
     IntDefaultHandler,                      // Quadrature Encoder 1
     IntDefaultHandler,                      // CAN0
     IntDefaultHandler,                      // CAN1

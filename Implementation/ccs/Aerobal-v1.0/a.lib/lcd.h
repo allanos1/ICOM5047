@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include "inc/hw_types.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
 #include "gpio.h"
 
 /****************************************************/
@@ -46,6 +47,14 @@
 //For Four line displays.
 #define LCD_CMD_CURSOR_POSITION_LINE_3 0x94
 #define LCD_CMD_CURSOR_POSITION_LINE_4 (0xA8 + LCD_CMD_POSITION_LINE_OFFSET+0x4)
+
+//////////////////////////////////////////
+// API Layer 5
+#define LCD_LINE_1 1
+#define LCD_LINE_2 2
+#define LCD_LINE_3 3
+#define LCD_LINE_4 4
+
 /****************************************************/
 /*	Variable Definitions							*/
 /****************************************************/
@@ -100,5 +109,9 @@ void lcdWriteString(char *letter);
 void lcdClearLine(uint32_t line);
 void lcdWriteNumber(double number);
 void lcdWriteNumberWithBounds(double number, int integerDigits, int rationalDigits);
+
+//////////////////////////////////////////
+// API Layer 5
+void lcdWriteStringInLine(uint32_t line, char* string);
 
 #endif /* LCD_H_ */

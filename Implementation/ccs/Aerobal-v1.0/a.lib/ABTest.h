@@ -20,9 +20,11 @@
 #include "lcd.h"
 #include "bmp085.h"
 #include "relay.h"
+#include "bluetooth.h"
 
 void ABTestDelay();
 void ABTestLog(char* line1, char* line2, char* line3, char* line4);
+void ABTestLogLineClear(char lineNumber);
 int ABTestBMP();
 int ABTestLCD();
 int ABTestRelay();

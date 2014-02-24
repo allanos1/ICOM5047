@@ -8,6 +8,7 @@ int main(void){
 	ABTestLCD();
 	ABTestBMP();
 	ABTestRelay();
+	ABTestBT();
 
 	// End Tests
 	/////////////////////
