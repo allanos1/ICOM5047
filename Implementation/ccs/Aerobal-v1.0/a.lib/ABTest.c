@@ -315,3 +315,54 @@ int ABTestAnalog(int init){
 	return 1;
 }
 
+/* Performs the test for the Servo module.
+ *
+ * v0.1
+ *
+ * Ports:
+ * PF2 - GPIO PWM Outputs.
+ *
+ */
+int ABTestServo(int init){
+	lcdClear();
+	if(init) servoSetupPWM();
+	ABTestLog("ABTL: Servo","Testing:","","");
+	ABTestDelay();
+	int count = 0;
+	int angle = 110;
+	while(count < 7){
+		servosetPositionPWM(angle,100); //Turn at full speed.
+		lcdWriteStringInLine(2,"Testing: ");
+		lcdWriteNumber(count);
+		lcdWriteString("/7");
+		lcdWriteStringInLine(3,"Angle: ");
+		lcdWriteNumber(angle);
+		ABTestDelay();
+		angle+= 10;
+		count++;
+	}
+	lcdClear();
+	ABTestLog("ABTL: Servo","Test Successful.","","");
+	ABTestDelay();
+	return 1;
+}
+
+int ABTestButtons(int init){
+	lcdClear();
+	if(init) buttonsInit();
+	ABTestLog("ABTL: Buttons","Testing:","","");
+	ABTestDelay();
+	int count = 0;
+	while(count < 10){
+		lcdWriteStringInLine(3,"Last: ");
+		lcdWriteNumber(buttonsLastPressed);
+		ABTestDelay();
+		count++;
+	}
+	lcdClear();
+	ABTestLog("ABTL: Buttons","Test Successful.","","");
+	ABTestDelay();
+	return 1;
+}
+
+

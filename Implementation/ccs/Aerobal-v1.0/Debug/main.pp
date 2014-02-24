@@ -33,6 +33,9 @@ main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h
 main.obj: ../a.lib/dht11.h
 main.obj: ../a.lib/loadCell.h
+main.obj: ../a.lib/servo.h
+main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/systick.h
+main.obj: ../a.lib/buttons.h
 
 ../main.c: 
 ../a.lib/ABTest.h: 
@@ -67,3 +70,6 @@ C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h:
 C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h: 
 ../a.lib/dht11.h: 
 ../a.lib/loadCell.h: 
+../a.lib/servo.h: 
+C:/ti/TivaWare_C_Series-1.0/driverlib/systick.h: 
+../a.lib/buttons.h: 

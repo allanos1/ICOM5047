@@ -23,6 +23,8 @@
 #include "bluetooth.h"
 #include "dht11.h"
 #include "loadCell.h"
+#include "servo.h"
+#include "buttons.h"
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
@@ -36,6 +38,9 @@ int ABTestRelay(int init);
 int ABTestBT(int init);
 int ABTestDHT(int init);
 int ABTestAnalog(int init);
+int ABTestServo(int init);
+int ABTestButtons(int init);
+
 
 
 #endif /* ABTEST_H_ */

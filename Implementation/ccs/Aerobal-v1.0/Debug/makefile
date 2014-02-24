@@ -8,11 +8,13 @@ CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/arm_5.1.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./a.lib/servo.obj" \
 "./a.lib/relay.obj" \
 "./a.lib/loadCell.obj" \
 "./a.lib/lcd.obj" \
 "./a.lib/gpio.obj" \
 "./a.lib/dht11.obj" \
+"./a.lib/buttons.obj" \
 "./a.lib/bmp085.obj" \
 "./a.lib/bluetooth.obj" \
 "./a.lib/ABTest.obj" \
@@ -139,8 +141,8 @@ Aerobal-v1.0.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "Aerobal-v1.0.out"
-	-$(RM) "main.pp" "startup_ccs.pp" "utils\uartstdio.pp" "a.lib\ABTest.pp" "a.lib\bluetooth.pp" "a.lib\bmp085.pp" "a.lib\dht11.pp" "a.lib\gpio.pp" "a.lib\lcd.pp" "a.lib\loadCell.pp" "a.lib\relay.pp" 
-	-$(RM) "main.obj" "startup_ccs.obj" "utils\uartstdio.obj" "a.lib\ABTest.obj" "a.lib\bluetooth.obj" "a.lib\bmp085.obj" "a.lib\dht11.obj" "a.lib\gpio.obj" "a.lib\lcd.obj" "a.lib\loadCell.obj" "a.lib\relay.obj" 
+	-$(RM) "main.pp" "startup_ccs.pp" "utils\uartstdio.pp" "a.lib\ABTest.pp" "a.lib\bluetooth.pp" "a.lib\bmp085.pp" "a.lib\buttons.pp" "a.lib\dht11.pp" "a.lib\gpio.pp" "a.lib\lcd.pp" "a.lib\loadCell.pp" "a.lib\relay.pp" "a.lib\servo.pp" 
+	-$(RM) "main.obj" "startup_ccs.obj" "utils\uartstdio.obj" "a.lib\ABTest.obj" "a.lib\bluetooth.obj" "a.lib\bmp085.obj" "a.lib\buttons.obj" "a.lib\dht11.obj" "a.lib\gpio.obj" "a.lib\lcd.obj" "a.lib\loadCell.obj" "a.lib\relay.obj" "a.lib\servo.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

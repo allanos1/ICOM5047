@@ -50,6 +50,7 @@ extern void bluetoothInterruptHandler(void);
 extern void dht11getData();
 extern void dht11count1uS();
 extern void readDataBit();
+extern void buttonsInterruptHandler();
 
 
 //*****************************************************************************
@@ -84,7 +85,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
     readDataBit,                      // GPIO Port A
-    IntDefaultHandler,                      // GPIO Port B
+    buttonsInterruptHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
