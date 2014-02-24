@@ -14,6 +14,6 @@ int main(void){
 	/////////////////////
 
 	lcdClear();
-	ABTestLog("ABTL","Testing Successful!","","");
+	ABTestLog("ABTL: Aerobal","-------------","Aerobal System","Testing Successful!");
 	while(1);
 }
