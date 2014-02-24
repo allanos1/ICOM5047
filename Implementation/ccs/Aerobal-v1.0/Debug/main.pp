@@ -27,9 +27,12 @@ main.obj: C:/ti/TivaWare_C_Series-1.0/sensorlib/i2cm_drv.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/sensorlib/bmp180.h
 main.obj: ../a.lib/relay.h
 main.obj: ../a.lib/bluetooth.h
+main.obj: C:/ti/TivaWare_C_Series-1.0/inc/hw_gpio.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/debug.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h
 main.obj: C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h
+main.obj: ../a.lib/dht11.h
+main.obj: ../a.lib/loadCell.h
 
 ../main.c: 
 ../a.lib/ABTest.h: 
@@ -58,6 +61,9 @@ C:/ti/TivaWare_C_Series-1.0/sensorlib/i2cm_drv.h:
 C:/ti/TivaWare_C_Series-1.0/sensorlib/bmp180.h: 
 ../a.lib/relay.h: 
 ../a.lib/bluetooth.h: 
+C:/ti/TivaWare_C_Series-1.0/inc/hw_gpio.h: 
 C:/ti/TivaWare_C_Series-1.0/driverlib/debug.h: 
 C:/ti/TivaWare_C_Series-1.0/driverlib/fpu.h: 
 C:/ti/TivaWare_C_Series-1.0/driverlib/uart.h: 
+../a.lib/dht11.h: 
+../a.lib/loadCell.h: 

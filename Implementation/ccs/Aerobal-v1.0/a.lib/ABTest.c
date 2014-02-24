@@ -23,7 +23,7 @@ void ABTestDelay(){
 	int i = 0;
 	for(i = 0; i < 18; i++){
 		lcdWriteString("=");
-		SysCtlDelay(700000);
+		SysCtlDelay(400000);
 	}
 	lcdWriteString("]");
 	SysCtlDelay(2000000);
@@ -90,9 +90,9 @@ void ABTestLogLineClear(char lineNumber){
  * PD0-PD3 - LCD D0-D3
  * PC4-PC7 - LCD D4-D7
  */
-int ABTestLCD(){
+int ABTestLCD(int init){
 
-	lcdInit(GPIO_PORTA, GPIO_PORTC, GPIO_PORTD);
+	if(init) lcdInit(GPIO_PORTA, GPIO_PORTC, GPIO_PORTD);
 	lcdClear();
 	ABTestLog("ABTL: LCD","Test Successful","","");
 	ABTestDelay();
@@ -110,10 +110,10 @@ int ABTestLCD(){
  * PA6 - BMP SCL
  * PA7 - BMP SDA
  */
-int ABTestBMP(){
+int ABTestBMP(int init){
 	lcdClear();
 	ABTestLog("ABTL: BMP085","Begin Test..","","");
-	bmp085Init();
+	if(init) bmp085Init();
 	int counter = 0;
 	while(1){
 		bmp085DataRead();
@@ -154,13 +154,13 @@ int ABTestBMP(){
  * PA5 - Relay In
  *
  */
-int ABTestRelay(){
+int ABTestRelay(int init){
 	lcdClear();
 	ABTestLog("ABTL: Relay","Testing Relay","","");
-	relayInit();
+	if(init) relayInit();
 	int rCounter = 0;
 	int rState = 0;
-	while(rCounter < 6){
+	while(rCounter < 4){
 		if(rState){
 			lcdWriteStringInLine(3,"Test On... ");
 			relayOn();
@@ -172,7 +172,7 @@ int ABTestRelay(){
 		lcdWriteString(" ");
 		lcdWriteNumber(rCounter+1);
 		lcdWriteString("/");
-		lcdWriteNumber(6);
+		lcdWriteNumber(4);
 		ABTestDelay();
 		rState = !rState;
 		ABTestLogLineClear(LCD_LINE_4);
@@ -203,10 +203,10 @@ int ABTestRelay(){
  * PA1 - UART0 TX
  * PF2 - GPIO LED
  */
-int ABTestBT(){
+int ABTestBT(int init){
 
 	lcdClear();
-	bluetoothInit();
+	if(init) bluetoothInit();
 	ABTestLog("ABTL: Bluetooth", "Write in terminal to","","");
 	int count = -1;
 	while(bluetoothEventCount < 5){
@@ -226,5 +226,92 @@ int ABTestBT(){
 	return 1;
 }
 
+/* Performs a test for the DHT11 Humidity and Temperature
+ * Sensor Module.
+ *
+ * v0.1
+ *
+ * Ports:
+ * PA4 - GPIO DHT.
+ *
+ * Interrupts:
+ * Timer 0A
+ * | extern void dht11getData();
+ *
+ * Timer 1A
+ * | extern void dht11count1uS()
+ *
+ * GPIOA IO - PIN 4
+ * | extern void readDataBit()
+ *
+ */
 
+int ABTestDHT(int init){
+	lcdClear();
+	if(init) dhtSetup();
+	ABTestLog("ABTL: DHT11 test","","","");
+	int count = 0;
+	while(count < 5){
+		dht11getData();
+		while(dhtIsActive());
+		lcdWriteStringInLine(2,"T: ");
+		lcdWriteNumber(dht11getTemperature());
+		lcdWriteStringInLine(3,"H: ");
+		lcdWriteNumber(dht11getHumidity());
+		lcdWriteString("   ");
+		lcdWriteNumber(count);
+		lcdWriteString("/");
+		lcdWriteNumber(5);
+		ABTestDelay();
+		count++ ;
+	}
+	lcdClear();
+	ABTestLog("ABTL: DHT11","Test Successful!","","");
+	ABTestDelay();
+	return 1;
+}
+
+
+/* Performs the test for the ADC module.
+ *
+ * v0.1
+ *
+ * Ports:
+ * PE0 - PE4 : ADC inputs.
+ *
+ */
+int ABTestAnalog(int init){
+	lcdClear();
+	if(init) loadCellSetup();
+	ABTestLog("ABTL: ADC","Test ADC Input","Beginning...","");
+	ABTestDelay();
+	int count = 0;
+	float adc0 ;
+	float adc1 ;
+	float adc2 ;
+	lcdClear();
+	while(count < 20){
+		loadCellgetData();
+		adc0 = loadCellgetValues(0,OUNCES); //PE3
+		adc1 = loadCellgetValues(1,OUNCES); //PE2
+		adc2 = loadCellgetValues(2,OUNCES); //PE1
+
+		lcdWriteStringInLine(1,"ADC0: ");
+		lcdWriteNumber(adc0);
+		lcdWriteStringInLine(2,"ADC1: ");
+		lcdWriteNumber(adc1);
+		lcdWriteStringInLine(3,"ADC2: ");
+		lcdWriteNumber(adc2);
+
+		lcdWriteStringInLine(4,"Test: ");
+		lcdWriteNumber(count);
+		lcdWriteString("/");
+		lcdWriteNumber(20);
+		count++;
+	}
+	lcdClear();
+	ABTestLog("ABTL: ADC", "Test Successful!","","");
+	ABTestDelay();
+	return 1;
+}
 
