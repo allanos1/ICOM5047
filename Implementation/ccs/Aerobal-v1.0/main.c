@@ -8,11 +8,12 @@ int main(void){
 	ABTestLCD();
 	ABTestBMP();
 	ABTestRelay();
+	ABTestBT();
 
 	// End Tests
 	/////////////////////
 
 	lcdClear();
-	ABTestLog("ABTL","Testing Successful!","","");
+	ABTestLog("ABTL: Aerobal","-------------","Aerobal System","Testing Successful!");
 	while(1);
 }

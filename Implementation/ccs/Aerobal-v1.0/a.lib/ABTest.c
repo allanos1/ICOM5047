@@ -17,8 +17,8 @@
  * v0.1
  */
 void ABTestDelay(){
-	lcdCursorLine4();
-	lcdWriteString("[");
+	ABTestLogLineClear(LCD_LINE_4);
+	lcdWriteStringInLine(4,"[");
 	SysCtlDelay(1000000);
 	int i = 0;
 	for(i = 0; i < 18; i++){
@@ -29,6 +29,25 @@ void ABTestDelay(){
 	SysCtlDelay(2000000);
 }
 
+/*
+ * Clears a line of the LCD at the specified
+ * line number.
+ */
+void ABTestLogLineClear(char lineNumber){
+	if(lineNumber == LCD_LINE_1){
+		lcdWriteStringInLine(1,"                    ");
+	}
+	else if(lineNumber == LCD_LINE_2){
+		lcdWriteStringInLine(2,"                    ");
+	}
+	else if(lineNumber == LCD_LINE_3){
+		lcdWriteStringInLine(3,"                    ");
+	}
+	else if(lineNumber == LCD_LINE_4){
+		lcdWriteStringInLine(4,"                    ");
+	}
+}
+
 /* Helper function to perform printouts of the
  * test results.
  *
@@ -36,43 +55,20 @@ void ABTestDelay(){
  */
 void ABTestLog(char* line1, char* line2, char* line3, char* line4){
 	if(line1 != ""){
-		lcdCursorLine1();
-		lcdWriteString(line1);
+		ABTestLogLineClear(1);
+		lcdWriteStringInLine(1,line1);
 	}
 	if(line2 != ""){
-		lcdCursorLine2();
-		lcdWriteString(line2);
+		ABTestLogLineClear(2);
+		lcdWriteStringInLine(2,line2);
 	}
 	if(line3 != ""){
-		lcdCursorLine3();
-		lcdWriteString(line3);
+		ABTestLogLineClear(3);
+		lcdWriteStringInLine(3,line3);
 	}
 	if(line4 != ""){
-		lcdCursorLine4();
-		lcdWriteString(line4);
-	}
-}
-
-/*
- * Clears a line of the LCD at the specified
- * line number.
- */
-void ABTestLogLineClear(char lineNumber){
-	if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_1){
-		lcdCursorLine1();
-		lcdWriteString("                    ");
-	}
-	else if(lineNumber == LCD_CMD_CURSOR_POSITION_LINE_2){
-		lcdCursorLine2();
-		lcdWriteString("                    ");
-	}
-	else if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_3){
-		lcdCursorLine3();
-		lcdWriteString("                    ");
-	}
-	else if(lineNumber <= LCD_CMD_CURSOR_POSITION_LINE_4){
-		lcdCursorLine4();
-		lcdWriteString("                    ");
+		ABTestLogLineClear(4);
+		lcdWriteStringInLine(4,line4);
 	}
 }
 
@@ -119,21 +115,35 @@ int ABTestBMP(){
 	ABTestLog("ABTL: BMP085","Begin Test..","","");
 	bmp085Init();
 	int counter = 0;
+	//int tests = 100000;
 	while(1){
 		bmp085DataRead();
 		if(counter %200 == 0){
-			lcdCursorLine2();
-	    	lcdWriteString("P: ");
+			lcdWriteStringInLine(2,"P: ");
 	    	lcdWriteNumber(bmp085GetPressure());
-	    	lcdCursorLine3();
-	    	lcdWriteString("T: ");
+	    	lcdWriteStringInLine(3,"T: ");
 	    	lcdWriteNumber(bmp085GetTemperature());
 	    	lcdCursorLine4();
 	    	lcdWriteNumber(counter);
 	    	lcdWriteString("/");
-	    	lcdWriteNumber(1000);
+
+	    	//Adding this code, slows the process.
+	    	lcdWriteNumber(3000);
+
+
+	    	//Adding this code. speeds up the process. But also damages it.
+	    	//WTFF? I have no idea why.
+	    	//lcdWriteNumber(tests);
+	    	//lcdWriteString(" [");
+	    	//if(counter >= tests*1/5) lcdWriteString("."); else lcdWriteString(" ");
+	    	//if(counter >= tests*2/5) lcdWriteString("."); else lcdWriteString(" ");
+	    	//if(counter >= tests*3/5) lcdWriteString("."); else lcdWriteString(" ");
+	    	//if(counter >= tests*4/5) lcdWriteString("."); else lcdWriteString(" ");
+	    	//lcdWriteString("]");
+	    	//
 		}
-		if(counter == 1000){
+		if(counter == 3000){
+		//if(counter == tests){
 			break;
 		}
 		counter++;
@@ -160,46 +170,119 @@ int ABTestRelay(){
 	relayInit();
 	int rCounter = 0;
 	int rState = 0;
-	while(rCounter < 6){
+	while(rCounter < 4){
 		if(rState){
-			ABTestLog("","","Testing On... ","");
+			lcdWriteStringInLine(3,"Test On... ");
 			relayOn();
-			ABTestDelay();
 		}
 		else{
-			ABTestLog("","","Testing Off...","");
+			lcdWriteStringInLine(3,"Test Off...");
 			relayOff();
-			ABTestDelay();
 		}
+		lcdWriteString(" ");
+		lcdWriteNumber(rCounter+1);
+		lcdWriteString("/");
+		lcdWriteNumber(4);
+		ABTestDelay();
 		rState = !rState;
-		ABTestLogLineClear(LCD_CMD_CURSOR_POSITION_LINE_4);
+		ABTestLogLineClear(LCD_LINE_4);
 		rCounter ++ ;
 	}
 	rCounter = 0;
-	while(rCounter < 6){
-		lcdCursorLine3();
-		lcdWriteString("Testing Toggle: ");
-		lcdWriteNumber(rCounter);
+	while(rCounter < 3){
+		lcdWriteStringInLine(3,"Testing Toggle: ");
+		lcdWriteNumber(rCounter+1);
+		lcdWriteString("/");
+		lcdWriteNumber(3);
 		relayToggle();
 		ABTestDelay();
-		ABTestLogLineClear(LCD_CMD_CURSOR_POSITION_LINE_4);
 		rCounter ++ ;
 	}
-	ABTestLog("","Relay Tests       ", "Successful!","");
+	relayOff();
+	lcdClear();
+	ABTestLog("ABTL: Relay","Relay Tests", "Successful!","");
 	ABTestDelay();
 	return 1;
 }
 
 /* Performs a test for the Bluetooth Module.
- *
  * v0.1
  *
  * Ports:
+ * PA0 - UART0 RX
+ * PA1 - UART0 TX
+ * PF2 - GPIO LED
+ *
+ * Interrupts:
+ *
+ * UART0
+ * | extern void bluetoothInterruptHandler();
  *
  */
 int ABTestBT(){
 
+	lcdClear();
+	bluetoothInit();
+	ABTestLog("ABTL: Bluetooth", "Write in terminal to","","");
+	int count = -1;
+	while(bluetoothEventCount < 5){
+		if(count != bluetoothEventCount){
+			lcdWriteStringInLine(LCD_LINE_3,"test.  ");
+			lcdWriteNumber(bluetoothEventCount);
+			lcdWriteString("/");
+			lcdWriteNumber(5);
+			count = bluetoothEventCount;
+		}
+		ABTestDelay();
+	}
+	lcdClear();
+	ABTestLog("ABTL: Bluetooth","Test Successful!","","");
+	ABTestDelay();
+
+	return 1;
 }
 
 
+/* Performs a test for the DHT11 Humidity and Temperature
+ * Sensor Module.
+ *
+ * v0.1
+ *
+ * Ports:
+ * PA4 - GPIO DHT.
+ *
+ * Interrupts:
+ * Timer 0A
+ * | extern void dht11getData();
+ *
+ * Timer 1A
+ * | extern void dht11count1uS()
+ *
+ * GPIOA IO - PIN 4
+ * | extern void readDataBit()
+ *
+ */
+/*
+int ABTestDHT(){
+	lcdClear();
+	dht11init();
+	ABTestLog("ABTL: DHT11","Testing DHT:.","","");
+	int count = 0;
+	while(count < 5){
+		dht11getData();
+		while(dhtIsActive());
+		lcdWriteStringInLine(2,"T: ");
+		lcdWriteNumber(dht11getTemperature());
+		lcdWriteStringInLine(3,"H: ");
+		lcdWriteNumber(dht11getHumidity());
+		lcdWriteString("   ");
+		lcdWriteNumber(count);
+		lcdWriteString("/");
+		lcdWriteNumber(5);
+		ABTestDelay();
+		count++ ;
+	}
 
+	return 1;
+}
+*/

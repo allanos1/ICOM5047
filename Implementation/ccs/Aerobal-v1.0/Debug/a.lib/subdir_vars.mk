@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../a.lib/ABTest.c \
+../a.lib/bluetooth.c \
 ../a.lib/bmp085.c \
 ../a.lib/gpio.c \
 ../a.lib/lcd.c \
@@ -12,6 +13,7 @@ C_SRCS += \
 
 OBJS += \
 ./a.lib/ABTest.obj \
+./a.lib/bluetooth.obj \
 ./a.lib/bmp085.obj \
 ./a.lib/gpio.obj \
 ./a.lib/lcd.obj \
@@ -19,6 +21,7 @@ OBJS += \
 
 C_DEPS += \
 ./a.lib/ABTest.pp \
+./a.lib/bluetooth.pp \
 ./a.lib/bmp085.pp \
 ./a.lib/gpio.pp \
 ./a.lib/lcd.pp \
@@ -26,6 +29,7 @@ C_DEPS += \
 
 C_DEPS__QUOTED += \
 "a.lib\ABTest.pp" \
+"a.lib\bluetooth.pp" \
 "a.lib\bmp085.pp" \
 "a.lib\gpio.pp" \
 "a.lib\lcd.pp" \
@@ -33,6 +37,7 @@ C_DEPS__QUOTED += \
 
 OBJS__QUOTED += \
 "a.lib\ABTest.obj" \
+"a.lib\bluetooth.obj" \
 "a.lib\bmp085.obj" \
 "a.lib\gpio.obj" \
 "a.lib\lcd.obj" \
@@ -40,6 +45,7 @@ OBJS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../a.lib/ABTest.c" \
+"../a.lib/bluetooth.c" \
 "../a.lib/bmp085.c" \
 "../a.lib/gpio.c" \
 "../a.lib/lcd.c" \

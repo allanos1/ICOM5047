@@ -6,7 +6,6 @@
  */
 
 #include "lcd.h"
-#include "driverlib/gpio.h"
 
 //////////////////////////////////////////
 // API Layer 0
@@ -20,10 +19,9 @@ void lcdWriteToPort(uint32_t hex){
 
 	//Using Upper: PINs: 7, 6, 5, 4
 	HWREG(_lcdPortDataUpper) = (HWREG(_lcdPortDataUpper) & 0x0F) | (hex & 0xF0) ;
-	//GPIOPinWrite(_lcdPortDataUpper & 0xF8, 0xF0,(hex&0xF0)>>4);
+
 	//Using Lower: PINs: 3, 2, 1, 0
 	HWREG(_lcdPortDataLower) = (HWREG(_lcdPortDataLower) & 0xF0) | (hex & 0x0F) ;
-	//GPIOPinWrite(_lcdPortDataLower & 0xF8, 0x0F,hex);
 }
 
 /* Private function.
@@ -38,6 +36,7 @@ void lcdWriteCommit(){
 	//Wait for LCD to accept data.
 	//SysCtlDelay(5000);
 	SysCtlDelay(20000);
+
 	//Set Enable (E) to low to finish
 	//data accept.
 	HWREG(_lcdPortControl) &= 0xF7 ;
@@ -403,4 +402,23 @@ void lcdWriteNumberWithBounds(double number, int integerDigits, int rationalDigi
 		}
 	}
 }
+
+//////////////////////////////////////////
+// API Layer 5
+void lcdWriteStringInLine(uint32_t line, char* string){
+	if(line == LCD_LINE_1){
+		lcdCursorLine1();
+	}
+	else if(line == LCD_LINE_2){
+		lcdCursorLine2();
+	}
+	else if(line == LCD_LINE_3){
+		lcdCursorLine3();
+	}
+	else{
+		lcdCursorLine4();
+	}
+	lcdWriteString(string);
+}
+
 
