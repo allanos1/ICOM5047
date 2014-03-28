@@ -11,31 +11,42 @@
 #include <stdlib.h>
 #include "timers.h"
 
-#define ABTIMER_RESOLUTION_MICROSECOND 0
+#define ABTIMER_BASE_TIMER_0 TIMER_0
+#define ABTIMER_BASE_TIMER_1 TIMER_1
+#define ABTIMER_BASE_TIMER_2 TIMER_2
+#define ABTIMER_BASE_TIMER_3 TIMER_3
+#define ABTIMER_BASE_TIMER_4 TIMER_4
+#define ABTIMER_BASE_TIMER_5 TIMER_5
+
+//#define ABTIMER_RESOLUTION_MICROSECOND 0 // TODO: Does not work.
 #define ABTIMER_RESOLUTION_MILLISECOND 1
 
 ////////////////////////////////////
 // API Layer 0
-struct abtime {
+typedef struct abtime {
 	int hours;
 	int minutes;
 	int seconds;
 	int milliseconds;
 	int microseconds;
-};
+} ABTime;
 
-typedef struct abtime ABTime;
-ABTime ABTimerMain ;
+uint32_t ABTimer_BaseTimer;
+ABTime ABTimerTimeMain ;
 int ABTimerResolution;
+int ABTimerRunning;
 
-ABTime ABTimerTimeMake();
 void ABTimerInit(uint32_t timer, uint32_t frequency);
 void ABTimerInterruptHandler_Counter();
+ABTime ABTimerTimeMake();
 ABTime ABTimerIncrease(ABTime time);
 ABTime ABTimerGetReference();
 ABTime ABTimerGetDelta(ABTime time1, ABTime time2);
 int ABTimerCompare(ABTime time1, ABTime time2);
-ABTime ABTimerGetMain();
-
+ABTime ABTimerTimeMainGet();
+void ABTimerStart();
+void ABTimerStop();
+void ABTimerReset();
+int ABTimerIsRunning();
 
 #endif /* ABTIMER_H_ */

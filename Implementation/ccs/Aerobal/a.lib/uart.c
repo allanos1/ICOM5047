@@ -17,15 +17,15 @@
  */
 uint32_t uartGetPeripheral(uint32_t uart){
 	switch(uart){
-	case UART0: return SYSCTL_PERIPH_UART0;
-	case UART1: return SYSCTL_PERIPH_UART1;
-	case UART2: return SYSCTL_PERIPH_UART2;
-	case UART3: return SYSCTL_PERIPH_UART3;
-	case UART4: return SYSCTL_PERIPH_UART4;
-	case UART5: return SYSCTL_PERIPH_UART5;
-	case UART6: return SYSCTL_PERIPH_UART6;
-	case UART7: return SYSCTL_PERIPH_UART7;
-	default: return 0;
+		case UART0: return SYSCTL_PERIPH_UART0;
+		case UART1: return SYSCTL_PERIPH_UART1;
+		case UART2: return SYSCTL_PERIPH_UART2;
+		case UART3: return SYSCTL_PERIPH_UART3;
+		case UART4: return SYSCTL_PERIPH_UART4;
+		case UART5: return SYSCTL_PERIPH_UART5;
+		case UART6: return SYSCTL_PERIPH_UART6;
+		case UART7: return SYSCTL_PERIPH_UART7;
+		default: return 0;
 	}
 }
 

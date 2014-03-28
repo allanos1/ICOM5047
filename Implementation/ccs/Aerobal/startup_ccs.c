@@ -51,6 +51,8 @@ extern void dht11getData();
 extern void dht11count1uS();
 extern void readDataBit();
 extern void buttonsInterruptHandler();
+extern void ABTimerInterruptHandler_Counter();
+extern void GPIOPortDHandler();
 
 //*****************************************************************************
 // Linker variable that marks the top of the stack.
@@ -86,7 +88,7 @@ void (* const g_pfnVectors[])(void) =
     readDataBit,                      // GPIO Port A
     buttonsInterruptHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    IntDefaultHandler,                      // GPIO Port D
+    GPIOPortDHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
@@ -102,7 +104,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    dht11getData,                      // Timer 0 subtimer A
+    ABTimerInterruptHandler_Counter,        // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
