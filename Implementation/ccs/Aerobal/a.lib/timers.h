@@ -28,6 +28,7 @@
 #define TIMER_CONFIG_PERIODIC 0x00
 #define TIMER_CONFIG_ONESHOT 0x01
 
+
 /////////////////////////////////
 // API Layer 1
 void timerPeripheralEnable(uint32_t timer);
@@ -45,4 +46,8 @@ void timerSetInterruptHandler(uint32_t timer, void (*pfnHandler)(void));
 void timerSetup(uint32_t timer, uint32_t periodicityType, float frequency);
 void timerStart(uint32_t timer);
 void timerStop(uint32_t timer);
+
+//////////////////////////////////
+// API Layer 3
+
 #endif /* TIMERS_H_ */

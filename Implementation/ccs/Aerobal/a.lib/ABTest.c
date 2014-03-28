@@ -205,23 +205,6 @@ int ABTestRelay(int init){
  */
 int ABTestBT(int init){
 
-	lcdClear();
-	if(init) bluetoothInit();
-	ABTestLog("ABTL: Bluetooth", "Write in terminal to","","");
-	int count = -1;
-	while(bluetoothEventCount < 5){
-		if(count != bluetoothEventCount){
-			lcdWriteStringInLine(LCD_LINE_3,"test.  ");
-			lcdWriteNumber(bluetoothEventCount);
-			lcdWriteString("/");
-			lcdWriteNumber(5);
-			count = bluetoothEventCount;
-		}
-		ABTestDelay();
-	}
-	lcdClear();
-	ABTestLog("ABTL: Bluetooth","Test Successful!","","");
-	ABTestDelay();
 
 	return 1;
 }

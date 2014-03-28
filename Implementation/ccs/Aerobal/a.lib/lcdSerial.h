@@ -5,8 +5,8 @@
  *      Author: Anthony
  */
 
-#ifndef LCD_H_
-#define LCD_H_
+#ifndef LCDSERIAL_H_
+#define LCDSERIAL_H_
 
 #include <stdint.h>
 #include <stdbool.h>

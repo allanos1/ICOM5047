@@ -219,3 +219,7 @@ void timerStop(uint32_t timer){
 	timerDisable(timer);
 	timerInterruptDisable(timer);
 }
+
+///////////////////////////////////////////
+// API Layer 3
+
