@@ -1,6 +1,6 @@
 Aerobal v2.0
 
-(Fix repo after Git Fail 'cause of Anthony)
+(Fix repo after Git Fail 'cause of Anthony: will not be using Eclipse's Git now. So confusing...)
 
 -----------------------------
 
