@@ -1,8 +1,14 @@
 /*
- * anemometer.h
+ * anemometer.c
+ * The Anemometer Time Library for
+ * Young 05103
+ *
+ * v0.8
  *
  *  Created on: Mar 27, 2014
- *      Author: Administrator
+ *      Author: Anthony
+ *
+ *  TODO: Expand comments.
  */
 
 #ifndef ANEMOMETER_H_
@@ -12,6 +18,7 @@
 #include <stdbool.h>
 #include "gpio.h"
 #include "timers.h"
+#include "ABTimer.h"
 
 
 #define ANEMOMETER_PORTA GPIO_PORTA
@@ -30,16 +37,42 @@
 #define ANEMOMETER_PIN6 0x40
 #define ANEMOMETER_PIN7 0x80
 
+#define ANEMOMETER_BUFFER_SIZE 40
+
+////////////////////////////////
+// API Layer 0
+typedef struct {
+	int bufferCount;
+	float buffer[ANEMOMETER_BUFFER_SIZE];
+	float sum;
+} FloatBuffer;
+
 uint32_t anemometerPort;
 uint32_t anemometerPin;
 uint32_t anemometerTimer;
 unsigned long anemometerCount;
+ABTime anemometerT0 ;
+ABTime anemometerT1 ;
 
-void anemometerInit();
+void anemometerInit(uint32_t gpioPort, uint32_t gpioPin);
 void anemometerInterruptHandler();
 void anemometerStart();
 void anemometerEnd();
-float anemometerGetSpeed();
+int anemometerGetCount();
+ABTime anemometerGetTimeDelta();
+ABTime anemometerGetCurrentDelta();
+float anemometerSpeedGet();
+void anemometerReset();
 
+/////////////////////////////
+// API Layer 1
+void anemometerSpeedBufferAdd(float speed);
+float anemometerSpeedBufferGetAverage();
+ABTime anemometerSpeedBufferRefresh();
+
+/////////////////////////////
+// API Layer 2
+float anemometerSpeedConvertMiH(float speed);
+float anemometerSpeedConvertKmH(float speed);
 
 #endif /* ANEMOMETER_H_ */

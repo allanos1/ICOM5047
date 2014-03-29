@@ -52,7 +52,7 @@ extern void dht11count1uS();
 extern void readDataBit();
 extern void buttonsInterruptHandler();
 extern void ABTimerInterruptHandler_Counter();
-extern void GPIOPortDHandler();
+extern void anemometerInterruptHandler_Counter();
 
 //*****************************************************************************
 // Linker variable that marks the top of the stack.
@@ -88,7 +88,7 @@ void (* const g_pfnVectors[])(void) =
     readDataBit,                      // GPIO Port A
     buttonsInterruptHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    GPIOPortDHandler,                      // GPIO Port D
+    anemometerInterruptHandler_Counter,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
@@ -104,7 +104,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    ABTimerInterruptHandler_Counter,        // Timer 0 subtimer A
+    IntDefaultHandler,        // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
@@ -177,7 +177,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     0,                                      // Reserved
     0,                                      // Reserved
-    IntDefaultHandler,                      // Timer 5 subtimer A
+    ABTimerInterruptHandler_Counter,                      // Timer 5 subtimer A
     IntDefaultHandler,                      // Timer 5 subtimer B
     IntDefaultHandler,                      // Wide Timer 0 subtimer A
     IntDefaultHandler,                      // Wide Timer 0 subtimer B

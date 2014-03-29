@@ -12,8 +12,6 @@
 /////////////////////////////////
 // API Layer 0
 
-/* Timer Initialization Variable - Testing for now.*/
-int ABTimerInited = 0;
 
 /*
  * Initalization routine. Initializes the main Aerobal
@@ -192,7 +190,7 @@ ABTime ABTimerTimeMainGet(){
 void ABTimerStart(){
 	if(ABTimerInited){
 		timerStart(ABTimer_BaseTimer);
-		ABTimerRunning = 0;
+		ABTimerRunning = 1;
 	}
 }
 
@@ -202,7 +200,7 @@ void ABTimerStart(){
 void ABTimerStop(){
 	if(ABTimerInited){
 		timerStop(ABTimer_BaseTimer);
-		ABTimerRunning = 1;
+		ABTimerRunning = 0;
 	}
 }
 
@@ -221,4 +219,11 @@ int ABTimerIsRunning(){
 	return ABTimerRunning;
 }
 
+/*
+ * Returns whether the ABTimer module has
+ * been inited.
+ */
+int ABTimerIsInited(){
+	return ABTimerInited;
+}
 

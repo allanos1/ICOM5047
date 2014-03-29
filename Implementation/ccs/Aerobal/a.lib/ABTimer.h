@@ -35,6 +35,7 @@ uint32_t ABTimer_BaseTimer;
 ABTime ABTimerTimeMain ;
 int ABTimerResolution;
 int ABTimerRunning;
+int ABTimerInited;
 
 void ABTimerInit(uint32_t timer, uint32_t frequency);
 void ABTimerInterruptHandler_Counter();
@@ -48,5 +49,6 @@ void ABTimerStart();
 void ABTimerStop();
 void ABTimerReset();
 int ABTimerIsRunning();
+int ABTimerIsInited();
 
 #endif /* ABTIMER_H_ */
