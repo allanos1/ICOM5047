@@ -1,23 +1,9 @@
 #include "a.lib/ABTest.h"
 #include "a.lib/lcdSerial.h"
 #include "a.lib/anemometer.h"
+#include "a.lib/adc.h"
 
-float getSpeed(int anemometerCount, ABTime now){
-
-	float seconds = (float) now.minutes*60
-			+ (float)now.seconds
-			+ ((float)now.milliseconds)/1000.0;
-	float anemometerRevolutions = ((float)anemometerCount) / 3.0;
-
-	float rev_s = anemometerRevolutions/seconds; //rev/s
-	float baseSpeed = 0.098 ; //m/s
-	float ms = rev_s *baseSpeed;
-	return ms*3.6;
-
-}
-int main(int argc, const char * argv[])
-{
-
+void anemometerTest(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
@@ -46,7 +32,32 @@ int main(int argc, const char * argv[])
 		lcdSerialWriteNumber(anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage()));
 
 	}
+}
 
+void adcTest(){
+	lcdSerialInit(LCDSERIAL_INIT_UART3);
+	lcdSerialSetContrast(0x44);
+	lcdSerialClear();
+	adcInit(ADC_0);
+	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN00_PE3);
+	int i = 0;
+	while(1){
+		i++;
+		adcRefresh();
+		int val = adcDataGet(ADC_PIN_IN00_PE3);
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("ADC Value: ");
+		lcdSerialWriteNumber(val);
+		lcdSerialWriteString("  ");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("Counter: ");
+		lcdSerialWriteNumber(i);
+		lcdSerialWriteString("  ");
+	}
+}
+
+int main(int argc, const char * argv[]){
+	adcTest();
 }
 
 
