@@ -116,7 +116,6 @@ float anemometerSpeedGet(){
 			+ (float)now.seconds
 			+ ((float)now.milliseconds)/1000.0;
 	float anemometerRevolutions = ((float)anemometerCount) / 3.0;
-
 	float rev_s = anemometerRevolutions/seconds; //rev/s
 	float baseSpeed = 0.098 ; //m/s
 	float ms = rev_s *baseSpeed;

@@ -29,6 +29,7 @@
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
 
+/*
 void ABTestDelay();
 void ABTestLog(char* line1, char* line2, char* line3, char* line4);
 void ABTestLogLineClear(char lineNumber);
@@ -42,7 +43,7 @@ int ABTestServo(int init);
 int ABTestButtons(int init);
 int ABTestWindVane(int init);
 int ABTestAnemometer(int init);
-
+*/
 
 
 #endif /* ABTEST_H_ */

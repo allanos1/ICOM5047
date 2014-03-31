@@ -220,6 +220,11 @@ uint32_t adcDataGet(uint32_t adc_pin_in){
 	return adcDataStruct[adcMuxConfig[adc_pin_in]];
 }
 
+////////////////////////////////////////
+// API Layer 2
 
+float adcGetVoltage(float adcValue){
+	return 3.3*adcValue/4096;
+}
 
 

@@ -110,7 +110,7 @@ float pow2(int base, int exp){
 	}
 	return result ;
 }
-float windVaneGetAngle(float x){
+float LCWindVaneGetAngle(float x){
 	/* WindVane Formula:
 	 *
 	 * ADCVal >=1159 : angle = (-1) 0.0338*ADCVal + 170.58
@@ -243,7 +243,7 @@ float loadCellgetValues(int sensorIndex, int units){
 			return loadCellgetWeight(averageValues(sensorIndex),units,sensorIndex);
 		case WIND_VANE:
 			loadCellgetData();
-			return windVaneGetAngle(pui32ADC0Value[4]);
+			return LCWindVaneGetAngle(pui32ADC0Value[4]);
 			//return averageValues(sensorIndex);
 			//break;
 	}

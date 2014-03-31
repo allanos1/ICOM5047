@@ -70,6 +70,7 @@
 uint32_t adcConfigured ;
 uint32_t adcDataStruct[8] ;
 uint32_t adcMuxConfig[8];
+
 //////////////////////////////////
 // API Layer 0
 uint32_t adcGetBase(uint32_t adc);
@@ -88,11 +89,16 @@ void adcInterruptEnable(uint32_t adc);
 void adcFIFOEnable(uint32_t adc);
 void adcClockADCEnable();
 void adcClockNormalEnable();
+
 ////////////////////////////////////
 // API Layer 1
 void adcInit(uint32_t adc);
 void adcMuxPinSet(uint32_t adc, uint32_t adc_mux, uint32_t adc_pin_in);
 void adcRefresh();
 uint32_t adcDataGet(uint32_t adc_pin_in);
+
+////////////////////////////////////
+// API Layer 2
+float adcGetVoltage(float adcValue);
 
 #endif /* ADC_H_ */
