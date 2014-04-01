@@ -36,6 +36,7 @@ void ABTestBMPSpeed(){
 }
 
 
+//HELLO WORLD!
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
