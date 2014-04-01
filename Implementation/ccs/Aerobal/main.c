@@ -9,7 +9,7 @@ void ABTestLCDInit(){
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 }
-
+//HELLO WORLD!
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
