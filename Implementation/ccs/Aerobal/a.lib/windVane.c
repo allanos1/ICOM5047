@@ -2,7 +2,7 @@
  * windVane.c
  *
  *  Created on: Mar 30, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #include "windVane.h"

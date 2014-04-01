@@ -4,11 +4,37 @@
 #include "a.lib/adc.h"
 #include "a.lib/windVane.h"
 
+void ABTestLCDInit();
+void ABTestBMPSpeed();
+void ABTestAnemometer();
+void ABTestADC();
+void ABTestWindVane();
+
+///////
+
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 }
+
+
+void ABTestBMPSpeed(){
+	ABTestLCDInit();
+	bmp085Init();
+	while(1){
+		bmp085DataRead();
+		float val = bmp085GetPressure();
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("P: ");
+		lcdSerialWriteNumber(val);
+		lcdSerialCursorLine2();
+		val = bmp085GetTemperature();
+		lcdSerialWriteString("T: ");
+		lcdSerialWriteNumber(val);
+	}
+}
+
 
 void ABTestAnemometer(){
 	ABTestLCDInit();
