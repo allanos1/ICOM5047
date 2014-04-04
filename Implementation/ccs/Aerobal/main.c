@@ -3,6 +3,9 @@
 #include "a.lib/anemometer.h"
 #include "a.lib/adc.h"
 #include "a.lib/windVane.h"
+#include "a.lib/bluetooth.h"
+#include "a.lib/gpio.h"
+#include "a.lib/timers.h"
 
 void ABTestLCDInit();
 void ABTestBMPSpeed();
@@ -12,19 +15,56 @@ void ABTestWindVane();
 
 ///////
 
+
+tI2CMInstance i2cInstance;
+tBMP180 bmpInstance;
+
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 }
 
+void ABTestBluetooth(){
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	bluetoothInit(BLUETOOTH_UART4,BLUETOOTH_UART_BAUD_9600);
+	while(1);
+}
+
 
 void ABTestBMPSpeed(){
+
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
 	ABTestLCDInit();
-	bmp085Init();
+	gpioSetData(GPIO_PORTF,0x0C,0x04);
+	bmp085Init(AB_I2C_MODULE_1);
+	gpioSetData(GPIO_PORTF,0x0C,0x08);
+	bmp085Init(AB_I2C_MODULE_1);
+	float max = 0;
+	float min = 1200000.0;
+	int togg = 0;
 	while(1){
-		bmp085DataRead();
+		SysCtlDelay(1000000);
+		if(togg){
+			togg = 0;
+			gpioSetData(GPIO_PORTF,0x0C,0x04);
+		}
+		else{
+			togg = 1;
+			gpioSetData(GPIO_PORTF,0x0C,0x08);
+		}
+		bmp085DataRead(togg);
 		float val = bmp085GetPressure();
+		if(val > max){
+			max = val;
+		}
+		if(val < min){
+			min = val;
+		}
 		lcdSerialCursorLine1();
 		lcdSerialWriteString("P: ");
 		lcdSerialWriteNumber(val);
@@ -32,6 +72,12 @@ void ABTestBMPSpeed(){
 		val = bmp085GetTemperature();
 		lcdSerialWriteString("T: ");
 		lcdSerialWriteNumber(val);
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("MinP: ");
+		lcdSerialWriteNumber(min);
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("MaxP: ");
+		lcdSerialWriteNumber(max);
 	}
 }
 
@@ -148,10 +194,22 @@ void ABTestWindVane(){
 		lcdSerialWriteString(" ");
 	}
 }
+void ABTimerTestInterruptHandler(){
+	gpioSetData(GPIO_PORTF,0x0C,~gpioGetData(GPIO_PORTF,0x0C));
+	timerInterruptClear(TIMER_4);
+}
+void ABTimerTest(){
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
+	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,1.0);
+	timerStart(TIMER_4);
+	while(1);
 
+}
 int main(int argc, const char * argv[]){
-	ABTestAnemometer();
 
+	ABTestBMPSpeed();
 }
 
 

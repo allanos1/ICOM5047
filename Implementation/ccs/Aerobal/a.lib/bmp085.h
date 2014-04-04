@@ -26,16 +26,22 @@
 #include "sensorlib/hw_bmp180.h"
 #include "sensorlib/i2cm_drv.h"
 #include "sensorlib/bmp180.h"
+#include "i2c.h"
 
 #define BMP085_I2C_ADDRESS  0x77
+
+#define AB_BMP_I2C_MODULE_0 AB_I2C_MODULE_0
+#define AB_BMP_I2C_MODULE_1 AB_I2C_MODULE_1
+#define AB_BMP_I2C_MODULE_2 AB_I2C_MODULE_2
+#define AB_BMP_I2C_MODULE_3 AB_I2C_MODULE_3
 
 float bmpTemperature;
 float bmpPressure;
 
 void bmp085AppCallback(void* bmp085CallbackData, uint_fast8_t bmp085Status);
 void bmp085I2CIntHandler(void);
-void bmp085Init();
-void bmp085DataRead();
+void bmp085Init(uint32_t i2cModule);
+void bmp085DataRead(int index);
 float bmp085GetTemperature();
 float bmp085GetPressure();
 

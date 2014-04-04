@@ -17,7 +17,7 @@
  * Initalization routine. Initializes the main Aerobal
  * Timer, using the given base timer and the given
  * resolution. One resolution is compatible which is
- * the microsecond, as of v0.5.
+ * the milliseconds, as of v0.5.
  */
 void ABTimerInit(uint32_t baseTimer, uint32_t resolution){
 

@@ -14,7 +14,7 @@ tI2CMInstance TII2C_ModuleInstance;
 /*
  * The struct for the BMP180 Application Instance.
  */
-tBMP180 TIBMP085_AppInstance;
+tBMP180 TIBMP085_AppInstance[20];
 
 /*
  * Data flag to indicate that data is ready. Used by the
@@ -22,7 +22,9 @@ tBMP180 TIBMP085_AppInstance;
  */
 volatile uint_fast8_t bmp085_dataFlag;
 
-
+int bmpI2CInited = 0;
+int bmpStructCounter = 0;
+int bmpCurrentInstance = 0;
 /* The BMP085 callback for the applicaton. Indicates that data
  * is ready.
  */
@@ -63,18 +65,16 @@ void bmp085I2CIntHandler(void){
  * none
  *
  */
-void bmp085Init(){
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C1);
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-	GPIOPinConfigure(GPIO_PA6_I2C1SCL);
-	GPIOPinConfigure(GPIO_PA7_I2C1SDA);
-	GPIOPinTypeI2CSCL(GPIO_PORTA_BASE, GPIO_PIN_6);
-	GPIOPinTypeI2C(GPIO_PORTA_BASE, GPIO_PIN_7);
-	IntMasterEnable();
-	I2CMInit(&TII2C_ModuleInstance, I2C1_BASE, INT_I2C1, 0xff, 0xff,
-	         ROM_SysCtlClockGet()); //ROM is needed???? Why the fuck?
-	BMP180Init(&TIBMP085_AppInstance, &TII2C_ModuleInstance, BMP085_I2C_ADDRESS,
-			bmp085AppCallback, &TIBMP085_AppInstance);
+void bmp085Init(uint32_t i2cModule){
+	if(!bmpI2CInited){
+		i2cInit(AB_I2C_MODULE_1);
+		I2CMInit(&TII2C_ModuleInstance, i2cGetBase(i2cModule), i2cGetInterruptID(i2cModule), 0xff, 0xff,
+	         ROM_SysCtlClockGet());
+		bmpI2CInited = 1;
+	}
+	BMP180Init(&TIBMP085_AppInstance[bmpStructCounter], &TII2C_ModuleInstance, BMP085_I2C_ADDRESS,
+			bmp085AppCallback, &TIBMP085_AppInstance[bmpStructCounter]);
+	bmpStructCounter++;
 	while(bmp085_dataFlag == 0);
 	bmp085_dataFlag = 0;
 }
@@ -89,12 +89,11 @@ void bmp085Init(){
  * Returns:
  *  none
  */
-void bmp085DataRead(){
-	BMP180DataRead(&TIBMP085_AppInstance, bmp085AppCallback, &TIBMP085_AppInstance);
-    while(bmp085_dataFlag == 0);
-    bmp085_dataFlag = 0;
-    BMP180DataTemperatureGetFloat(&TIBMP085_AppInstance, &bmpTemperature);
-    BMP180DataPressureGetFloat(&TIBMP085_AppInstance, &bmpPressure);
+void bmp085DataRead(int index){
+	BMP180DataRead(&TIBMP085_AppInstance[index], bmp085AppCallback, &TIBMP085_AppInstance[index]);
+    while(bmp085_dataFlag == 0); bmp085_dataFlag = 0;
+    BMP180DataTemperatureGetFloat(&TIBMP085_AppInstance[index], &bmpTemperature);
+    BMP180DataPressureGetFloat(&TIBMP085_AppInstance[index], &bmpPressure);
 }
 
 /* Returns the temperature stored in the library. To obtain
