@@ -20,14 +20,14 @@ tBMP180 TIBMP085_AppInstance;
  * Data flag to indicate that data is ready. Used by the
  * BMP085 App Callback.
  */
-volatile uint_fast8_t bmp085_dataFlag;
+volatile uint_fast8_t bmp085Array_dataFlag;
 
 
 /* The BMP085 callback for the applicaton. Indicates that data
  * is ready.
  */
 void bmp085AppCallback(void* bmp085CallbackData, uint_fast8_t bmp085Status){
-    if(bmp085Status == I2CM_STATUS_SUCCESS) bmp085_dataFlag = 1;
+    if(bmp085Status == I2CM_STATUS_SUCCESS) bmp085Array_dataFlag = 1;
 }
 
 
@@ -75,8 +75,8 @@ void bmp085Init(){
 	         ROM_SysCtlClockGet()); //ROM is needed???? Why the fuck?
 	BMP180Init(&TIBMP085_AppInstance, &TII2C_ModuleInstance, BMP085_I2C_ADDRESS,
 			bmp085AppCallback, &TIBMP085_AppInstance);
-	while(bmp085_dataFlag == 0);
-	bmp085_dataFlag = 0;
+	while(bmp085Array_dataFlag == 0);
+	bmp085Array_dataFlag = 0;
 }
 
 /* Reads the data using the BMP085 App Instance. This data is read an stored within
@@ -91,8 +91,8 @@ void bmp085Init(){
  */
 void bmp085DataRead(){
 	BMP180DataRead(&TIBMP085_AppInstance, bmp085AppCallback, &TIBMP085_AppInstance);
-    while(bmp085_dataFlag == 0);
-    bmp085_dataFlag = 0;
+    while(bmp085Array_dataFlag == 0);
+    bmp085Array_dataFlag = 0;
     BMP180DataTemperatureGetFloat(&TIBMP085_AppInstance, &bmpTemperature);
     BMP180DataPressureGetFloat(&TIBMP085_AppInstance, &bmpPressure);
 }

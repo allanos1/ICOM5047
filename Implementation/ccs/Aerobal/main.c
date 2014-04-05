@@ -3,13 +3,14 @@
 #include "a.lib/anemometer.h"
 #include "a.lib/adc.h"
 #include "a.lib/windVane.h"
+#include "a.lib/bmp085Array.h"
 
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 }
-//HELLO WORLD!
+
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
@@ -45,7 +46,6 @@ void ABTestAnemometer(){
 		lcdSerialCursorLine4();
 		lcdSerialWriteString("B-Speed MI: ");
 		lcdSerialWriteNumber(anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage()));
-
 	}
 }
 
@@ -122,9 +122,14 @@ void ABTestWindVane(){
 	}
 }
 
-int main(int argc, const char * argv[]){
-	ABTestAnemometer();
+void ABTestPressureSensorArray(){
+	bmp085ArrayInit();
+}
 
+int main(int argc, const char * argv[]){
+
+	ABTestPressureSensorArray();
+	while(1);
 }
 
 

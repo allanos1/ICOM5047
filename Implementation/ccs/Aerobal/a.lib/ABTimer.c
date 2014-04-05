@@ -42,7 +42,7 @@ void ABTimerInit(uint32_t baseTimer, uint32_t resolution){
  * | extern void ABTimerInterruptHandler_Counter();
  * ****************************
  *
- * Interrup handler that increases the resolution size
+ * Interrupt handler that increases the resolution size
  * count in ABTimer's Main Timer.
  *
  */
