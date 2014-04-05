@@ -25,6 +25,7 @@
 #include "driverlib/uart.h"
 #include "uart.h"
 #include "string.h"
+#include "gpio.h"
 
 #define BLUETOOTH_UART0 UART0 //RX: A0  TX: A1
 #define BLUETOOTH_UART1 UART1 //RX: C4  TX: C5

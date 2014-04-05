@@ -39,6 +39,9 @@
 
 #define ANEMOMETER_BUFFER_SIZE 40
 
+#define ANEMOMETER_CALIBRATION_YOUNG 3.0
+#define ANEMOMETER_CALIBRATION_INCI 4.0
+
 ////////////////////////////////
 // API Layer 0
 typedef struct {

@@ -207,6 +207,7 @@ void timerStart(uint32_t timer){
 	timerEnable(timer);
 }
 
+
 /*
  * Stop the timer.
  * Disables interrupt. Only use, start and stop.

@@ -53,7 +53,11 @@ extern void readDataBit();
 extern void buttonsInterruptHandler();
 extern void ABTimerInterruptHandler_Counter();
 extern void anemometerInterruptHandler_Counter();
+<<<<<<< HEAD
 extern void bmp085ArraySampleTimer();
+=======
+extern void ABTimerTestInterruptHandler();
+>>>>>>> 964f3934f26c54a98e6e191488ff46c3e10018c5
 
 //*****************************************************************************
 // Linker variable that marks the top of the stack.
@@ -146,7 +150,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // SSI2 Rx and Tx
     IntDefaultHandler,                      // SSI3 Rx and Tx
     IntDefaultHandler,                      // UART3 Rx and Tx
-    IntDefaultHandler,                      // UART4 Rx and Tx
+    bluetoothInterruptHandler,              // UART4 Rx and Tx
     IntDefaultHandler,                      // UART5 Rx and Tx
     IntDefaultHandler,                      // UART6 Rx and Tx
     IntDefaultHandler,                      // UART7 Rx and Tx
@@ -156,7 +160,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // I2C2 Master and Slave
     IntDefaultHandler,                      // I2C3 Master and Slave
-    IntDefaultHandler,                      // Timer 4 subtimer A
+    ABTimerTestInterruptHandler,                      // Timer 4 subtimer A
     IntDefaultHandler,                      // Timer 4 subtimer B
     0,                                      // Reserved
     0,                                      // Reserved

@@ -3,7 +3,25 @@
 #include "a.lib/anemometer.h"
 #include "a.lib/adc.h"
 #include "a.lib/windVane.h"
+<<<<<<< HEAD
 #include "a.lib/bmp085Array.h"
+=======
+#include "a.lib/bluetooth.h"
+#include "a.lib/gpio.h"
+#include "a.lib/timers.h"
+
+void ABTestLCDInit();
+void ABTestBMPSpeed();
+void ABTestAnemometer();
+void ABTestADC();
+void ABTestWindVane();
+
+///////
+
+
+tI2CMInstance i2cInstance;
+tBMP180 bmpInstance;
+>>>>>>> 964f3934f26c54a98e6e191488ff46c3e10018c5
 
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
@@ -11,6 +29,67 @@ void ABTestLCDInit(){
 	lcdSerialClear();
 }
 
+<<<<<<< HEAD
+=======
+void ABTestBluetooth(){
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	bluetoothInit(BLUETOOTH_UART4,BLUETOOTH_UART_BAUD_9600);
+	while(1);
+}
+
+
+void ABTestBMPSpeed(){
+
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
+	ABTestLCDInit();
+	gpioSetData(GPIO_PORTF,0x0C,0x04);
+	bmp085Init(AB_I2C_MODULE_1);
+	gpioSetData(GPIO_PORTF,0x0C,0x08);
+	bmp085Init(AB_I2C_MODULE_1);
+	float max = 0;
+	float min = 1200000.0;
+	int togg = 0;
+	while(1){
+		SysCtlDelay(1000000);
+		if(togg){
+			togg = 0;
+			gpioSetData(GPIO_PORTF,0x0C,0x04);
+		}
+		else{
+			togg = 1;
+			gpioSetData(GPIO_PORTF,0x0C,0x08);
+		}
+		bmp085DataRead(togg);
+		float val = bmp085GetPressure();
+		if(val > max){
+			max = val;
+		}
+		if(val < min){
+			min = val;
+		}
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("P: ");
+		lcdSerialWriteNumber(val);
+		lcdSerialCursorLine2();
+		val = bmp085GetTemperature();
+		lcdSerialWriteString("T: ");
+		lcdSerialWriteNumber(val);
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("MinP: ");
+		lcdSerialWriteNumber(min);
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("MaxP: ");
+		lcdSerialWriteNumber(max);
+	}
+}
+
+
+//HELLO WORLD!
+>>>>>>> 964f3934f26c54a98e6e191488ff46c3e10018c5
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
@@ -121,7 +200,19 @@ void ABTestWindVane(){
 		lcdSerialWriteString(" ");
 	}
 }
+void ABTimerTestInterruptHandler(){
+	gpioSetData(GPIO_PORTF,0x0C,~gpioGetData(GPIO_PORTF,0x0C));
+	timerInterruptClear(TIMER_4);
+}
+void ABTimerTest(){
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
+	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,1.0);
+	timerStart(TIMER_4);
+	while(1);
 
+<<<<<<< HEAD
 void ABTestPressureSensorArray(){
 	bmp085ArrayInit();
 }
@@ -130,6 +221,12 @@ int main(int argc, const char * argv[]){
 
 	ABTestPressureSensorArray();
 	while(1);
+=======
+}
+int main(int argc, const char * argv[]){
+
+	ABTestBMPSpeed();
+>>>>>>> 964f3934f26c54a98e6e191488ff46c3e10018c5
 }
 
 
