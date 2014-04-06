@@ -8,7 +8,6 @@
 #ifndef WINDVANE_H_
 #define WINDVANE_H_
 
-#include "ABTypes.h"
 #include "adc.h"
 
 #define WIND_VANE_ADC_0 ADC_0

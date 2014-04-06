@@ -28,22 +28,20 @@
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
-
 /*
-void ABTestDelay();
-void ABTestLog(char* line1, char* line2, char* line3, char* line4);
-void ABTestLogLineClear(char lineNumber);
-int ABTestBMP(int init);
-int ABTestLCD(int init);
-int ABTestRelay(int init);
-int ABTestBT(int init);
-int ABTestDHT(int init);
-int ABTestAnalog(int init);
-int ABTestServo(int init);
-int ABTestButtons(int init);
-int ABTestWindVane(int init);
-int ABTestAnemometer(int init);
-*/
+tI2CMInstance i2cInstance;
+tBMP180 bmpInstance;
 
+void ABTestLCDInit();
+void ABTestBluetooth();
+void ABTestBMPSpeed();
+void ABTestAnemometer();
+void ABTestADC();
+void ABTestWindVane();
+void ABTimerTestInterruptHandler();
+void ABTimerTest();
+void ABTestBinaryCounter();
+
+*/
 
 #endif /* ABTEST_H_ */

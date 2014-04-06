@@ -9,12 +9,12 @@
 /*
  * The struct for the I2C Module Instance.
  */
-tI2CMInstance TII2C_ModuleInstance;
+tI2CMInstance bmpI2cModuleInstance;
 
 /*
  * The struct for the BMP180 Application Instance.
  */
-tBMP180 TIBMP085_AppInstance[20];
+tBMP180 bmpAppInstance[20];
 
 /*
  * Data flag to indicate that data is ready. Used by the
@@ -46,7 +46,7 @@ void bmp085AppCallback(void* bmp085CallbackData, uint_fast8_t bmp085Status){
  *  none
  */
 void bmp085I2CIntHandler(void){
-    I2CMIntHandler(&TII2C_ModuleInstance);
+    I2CMIntHandler(&bmpI2cModuleInstance);
 }
 
 /* Initializes the BMP085 configuration to
@@ -54,26 +54,21 @@ void bmp085I2CIntHandler(void){
  * I2C1 module, and the GPIO A Peripheral, and the
  * callback application for the BMP085 created by TI.
  *
- * I2C1 is enabled.
- * GPIOA is enabled.
- * PA6 - I2C1 SCL
- * PA7 - I2C1 SDA
- *
  * Input:
- * none
+ * abI2cModule
  * Returns:
  * none
  *
  */
-void bmp085Init(uint32_t i2cModule){
+void bmp085Init(uint32_t abI2cModule){
 	if(!bmpI2CInited){
 		i2cInit(AB_I2C_MODULE_1);
-		I2CMInit(&TII2C_ModuleInstance, i2cGetBase(i2cModule), i2cGetInterruptID(i2cModule), 0xff, 0xff,
+		I2CMInit(&bmpI2cModuleInstance, i2cGetBase(abI2cModule), i2cGetInterruptID(abI2cModule), 0xff, 0xff,
 	         ROM_SysCtlClockGet());
 		bmpI2CInited = 1;
 	}
-	BMP180Init(&TIBMP085_AppInstance[bmpStructCounter], &TII2C_ModuleInstance, BMP085_I2C_ADDRESS,
-			bmp085AppCallback, &TIBMP085_AppInstance[bmpStructCounter]);
+	BMP180Init(&bmpAppInstance[bmpStructCounter], &bmpI2cModuleInstance, BMP085_I2C_ADDRESS,
+			bmp085AppCallback, &bmpAppInstance[bmpStructCounter]);
 	bmpStructCounter++;
 	while(bmp085_dataFlag == 0);
 	bmp085_dataFlag = 0;
@@ -90,14 +85,15 @@ void bmp085Init(uint32_t i2cModule){
  *  none
  */
 void bmp085DataRead(int index){
-	BMP180DataRead(&TIBMP085_AppInstance[index], bmp085AppCallback, &TIBMP085_AppInstance[index]);
+	BMP180DataRead(&bmpAppInstance[index], bmp085AppCallback, &bmpAppInstance[index]);
     while(bmp085_dataFlag == 0); bmp085_dataFlag = 0;
-    BMP180DataTemperatureGetFloat(&TIBMP085_AppInstance[index], &bmpTemperature);
-    BMP180DataPressureGetFloat(&TIBMP085_AppInstance[index], &bmpPressure);
+    BMP180DataTemperatureGetFloat(&bmpAppInstance[index], &bmpTemperature);
+    BMP180DataPressureGetFloat(&bmpAppInstance[index], &bmpPressure);
 }
 
 /* Returns the temperature stored in the library. To obtain
- * new values, 'bmp085DataRead()' must be called.
+ * new values, 'bmp085DataRead()' must be called. The values stored
+ * in the library are the ones from the last module read.
  *
  * Input:
  *  none

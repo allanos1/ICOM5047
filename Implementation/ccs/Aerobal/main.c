@@ -6,6 +6,8 @@
 #include "a.lib/bluetooth.h"
 #include "a.lib/gpio.h"
 #include "a.lib/timers.h"
+#include "a.lib/binCounter.h"
+#include "a.lib/buttons.h"
 
 void ABTestLCDInit();
 void ABTestBMPSpeed();
@@ -23,6 +25,10 @@ void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
+}
+
+void ABTestDAC(){
+
 }
 
 void ABTestBluetooth(){
@@ -207,9 +213,107 @@ void ABTimerTest(){
 	while(1);
 
 }
-int main(int argc, const char * argv[]){
 
-	ABTestBMPSpeed();
+
+void ABTestBinaryCounter(){
+	binCounterInit(BINCOUNTER_GPIO_PORTD,BINCOUNTER_GPIO_PIN_1,
+			BINCOUNTER_GPIO_PORTA,BINCOUNTER_GPIO_PIN_2,
+			BINCOUNTER_GPIO_PORTA,BINCOUNTER_GPIO_PIN_3);
+
+	int i = 0;
+	while(1){
+		binCounterClear();
+		SysCtlDelay(10000000);
+
+		for(i = 0; i < 254;i++){
+			binCounterIncrease();
+			SysCtlDelay(100000);
+		}
+		for(; i >=0;i--){
+			binCounterDecrease();
+			SysCtlDelay(100000);
+		}
+
+		for(i=127; i >=0;i--){
+			binCounterDecrease();
+			SysCtlDelay(100000);
+		}
+		SysCtlDelay(10000000);
+	}
+}
+void ABTestButtonsInit(){
+	ABTestLCDInit();
+	gpioSetMasterEnable(GPIO_PORTB);
+	gpioSetDigitalEnable(GPIO_PORTB,0x3F,0x3F);
+	gpioSetDirection(GPIO_PORTB,0x3F,0x00);
+}
+
+void ABTestButtonsPool(){
+	while(1){
+		SysCtlDelay(1000000);
+		lcdSerialClear();
+		lcdSerialWriteString("Buttons: ");
+		lcdSerialWriteNumber(gpioGetData(GPIO_PORTB,0x3F));
+	}
+}
+void ABTestButtonsT1(){
+	ABTestButtonsInit();
+	ABTestButtonsPool();
+}
+
+void ABTestButtonsT2(){
+	ABTestButtonsInit();
+	gpioSetPullUpSelect(GPIO_PORTB,0x3F,0x3F);
+	ABTestButtonsPool();
+}
+
+void ABTestButtonsCheckButton(char* msg, int result){
+	lcdSerialWriteString(msg);
+	if(result){
+		lcdSerialWriteString("Y ");
+	}
+	else{
+		lcdSerialWriteString("N ");
+	}
+}
+void ABTestButtons(){
+	ABTestLCDInit();
+	buttonsInit();
+	int pressed;
+	//PF0
+	//PF4
+	while(1){
+		lcdSerialCursorLine1();
+		pressed = buttonsWasPressed();
+		ABTestButtonsCheckButton("Buttons Pressed: ", pressed);
+		lcdSerialCursorLine2();
+		ABTestButtonsCheckButton("B0 ", buttonsWasPressedB0());
+		ABTestButtonsCheckButton("B1 ", buttonsWasPressedB1());
+		ABTestButtonsCheckButton("B2 ", buttonsWasPressedB2());
+		lcdSerialCursorLine3();
+		ABTestButtonsCheckButton("B3 ", buttonsWasPressedB3());
+		ABTestButtonsCheckButton("B4 ", buttonsWasPressedB4());
+		ABTestButtonsCheckButton("B5 ", buttonsWasPressedB5());
+		lcdSerialCursorLine4();
+
+		if(pressed){
+			lcdSerialWriteString("[");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("]");
+			SysCtlDelay(2000000);
+			lcdSerialClear();
+			buttonsEnable();
+		}
+	}
+}
+int main(int argc, const char * argv[]){
+	ABTestButtons();
 }
 
 

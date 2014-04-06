@@ -178,6 +178,15 @@ void gpioSetInterruptClear(uint32_t port, uint32_t pins, uint32_t clear){
 	HWREG(port | GPIO_OFFSET_INTERRUPT_CLEAR) = (HWREG(port | GPIO_OFFSET_INTERRUPT_CLEAR) & ~pins) | (clear&pins) ;
 }
 
+/* Sets the pull-up select pin in the register. A weak pull-up resistor on the
+ * corresponding GPIO pins are enabled.
+ *
+ * '1' - the resistor is enabled.
+ * '0' - the resistor is disabled.
+ */
+void gpioSetPullUpSelect(uint32_t port, uint32_t pins, uint32_t set){
+	HWREG(port | GPIO_OFFSET_PULL_UP_SELECT) = (HWREG(port | GPIO_OFFSET_PULL_UP_SELECT) & ~pins) | (set&pins) ;
+}
 
 //////////////////////////////////////////
 // API Layer 1

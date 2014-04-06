@@ -75,6 +75,7 @@ void gpioSetInterruptMaskDisable(uint32_t port, uint32_t pins, uint32_t disable)
 uint32_t gpioGetInterruptRawStatus(uint32_t port, uint32_t pins);
 uint32_t gpioGetInterruptMaskedStatus(uint32_t port, uint32_t pins);
 void gpioSetInterruptClear(uint32_t port, uint32_t pins, uint32_t clear);
+void gpioSetPullUpSelect(uint32_t port, uint32_t pins, uint32_t set);
 
 //Alternate Function
 
