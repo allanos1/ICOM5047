@@ -59,6 +59,17 @@
 #define GPIO_OFFSET_PRIMECELL_2  0x00000FF8
 #define GPIO_OFFSET_PRIMECELL_3  0x00000FFC
 
+#define GPIO_ENABLE_INTERRUPTS 0xFF
+#define GPIO_DISABLE_INTERRUPTS 0x00
+#define GPIO_INTERRUPT_RISING_EDGE 0xFF
+#define GPIO_INTERRUPT_FALLING_EDGE 0x00
+#define GPIO_DELEGATE_EVENT_REGISTER 0x00
+#define GPIO_DETECT_BOTH_EDGES 0xFF
+#define GPIO_ENABLE 0xFF
+#define GPIO_DISABLE 0x00
+#define GPIO_INPUT 0x00
+#define GPIO_OUTPUT 0xFF
+
 //////////////////////////////////////////
 // API Layer 0
 void gpioSetMasterEnable(uint32_t port);

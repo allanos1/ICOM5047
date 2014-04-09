@@ -52,12 +52,10 @@ extern void dht11count1uS();
 extern void readDataBit();
 extern void buttonsInterruptHandler();
 extern void ABTimerInterruptHandler_Counter();
-extern void anemometerInterruptHandler_Counter();
-<<<<<<< HEAD
+extern void InterruptHandlerPortD();
 extern void bmp085ArraySampleTimer();
-=======
 extern void ABTimerTestInterruptHandler();
->>>>>>> 964f3934f26c54a98e6e191488ff46c3e10018c5
+
 
 //*****************************************************************************
 // Linker variable that marks the top of the stack.
@@ -90,10 +88,10 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
-    readDataBit,                      // GPIO Port A
-    buttonsInterruptHandler,                      // GPIO Port B
+    readDataBit,                      		// GPIO Port A
+    buttonsInterruptHandler,                // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    anemometerInterruptHandler_Counter,                      // GPIO Port D
+    InterruptHandlerPortD,    				// GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
@@ -160,7 +158,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // I2C2 Master and Slave
     IntDefaultHandler,                      // I2C3 Master and Slave
-    ABTimerTestInterruptHandler,                      // Timer 4 subtimer A
+    ABTimerTestInterruptHandler,            // Timer 4 subtimer A
     IntDefaultHandler,                      // Timer 4 subtimer B
     0,                                      // Reserved
     0,                                      // Reserved
