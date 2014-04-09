@@ -90,7 +90,6 @@ void bmp085DataRead(int index){
     while(bmp085_dataFlag == 0); bmp085_dataFlag = 0;
     BMP180DataTemperatureGetFloat(&bmpAppInstance[index], &bmpTemperature);
     BMP180DataPressureGetFloat(&bmpAppInstance[index], &bmpPressure);
-
 }
 
 /* Returns the temperature stored in the library. To obtain

@@ -58,7 +58,7 @@ ABTime anemometerT0 ;
 ABTime anemometerT1 ;
 
 void anemometerInit(uint32_t gpioPort, uint32_t gpioPin);
-void anemometerInterruptHandler();
+void anemometerInterruptHandler_Counter();
 void anemometerStart();
 void anemometerEnd();
 int anemometerGetCount();

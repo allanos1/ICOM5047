@@ -10,6 +10,8 @@
 #include "a.lib/binCounter.h"
 #include "a.lib/buttons.h"
 #include "a.lib/ABUI.h"
+#include "a.lib/string.h"
+#include "a.lib/ABPortsInterruptHandler.h"
 
 void ABTestLCDInit();
 void ABTestBMPSpeed();
@@ -19,6 +21,8 @@ void ABTestWindVane();
 
 ///////
 
+tI2CMInstance i2cInstance;
+tBMP180 bmpInstance;
 
 
 void ABTestLCDInit(){
@@ -198,21 +202,28 @@ void ABTestWindVane(){
 		lcdSerialWriteString(" ");
 	}
 }
+
 void ABTimerTestInterruptHandler(){
 	gpioSetData(GPIO_PORTF,0x0C,~gpioGetData(GPIO_PORTF,0x0C));
 	timerInterruptClear(TIMER_4);
 }
+
 void ABTimerTest(){
 	gpioSetMasterEnable(GPIO_PORTF);
 	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
 	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
-	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,1.0);
+	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,2);
 	timerStart(TIMER_4);
 	while(1);
 }
 
 void ABTestPressureSensorArray(){
-	bmp085ArrayInit();
+
+	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 2);
+	//bmp085StartDataAdquisition(4);
+	//bmp085ArraySetCurrentSensor(5);
+
+	bmp085ArrayTest(2);
 }
 
 void ABTestBinaryCounter(){
@@ -340,6 +351,9 @@ int main(int argc, const char * argv[]){
 
 	ABTestUI();
 	//ABTestAnemometer();
+	//ABTestPressureSensorArray();
+	while(1);
+
 }
 
 
