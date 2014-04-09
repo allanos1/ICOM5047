@@ -12,7 +12,7 @@
 #include "gpio.h"
 
 #define BUTTONS_ENABLED_BUTTONS 0x3F
-#define BUTTONS_STANDARD_DELAY 200000
+#define BUTTONS_STANDARD_DELAY 500000
 
 #define BUTTONS_B0 0x01
 #define BUTTONS_B1 0x02
@@ -32,5 +32,7 @@ uint32_t buttonsWasPressedB5();
 int buttonsWasPressed();
 void buttonsDisable();
 void buttonsEnable();
+void buttonsMask();
+void buttonsUnmask();
 
 #endif /* BUTTONS_H_ */

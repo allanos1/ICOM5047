@@ -60,10 +60,10 @@ void bmp085I2CIntHandler(void){
  * none
  *
  */
-void bmp085Init(uint32_t abI2cModule){
+void bmp085Init(uint32_t i2cModule){
 	if(!bmpI2CInited){
 		i2cInit(AB_I2C_MODULE_1);
-		I2CMInit(&bmpI2cModuleInstance, i2cGetBase(abI2cModule), i2cGetInterruptID(abI2cModule), 0xff, 0xff,
+		I2CMInit(&bmpI2cModuleInstance, i2cGetBase(i2cModule), i2cGetInterruptID(i2cModule), 0xff, 0xff,
 	         ROM_SysCtlClockGet());
 		bmpI2CInited = 1;
 	}
@@ -84,11 +84,13 @@ void bmp085Init(uint32_t abI2cModule){
  * Returns:
  *  none
  */
+
 void bmp085DataRead(int index){
 	BMP180DataRead(&bmpAppInstance[index], bmp085AppCallback, &bmpAppInstance[index]);
     while(bmp085_dataFlag == 0); bmp085_dataFlag = 0;
     BMP180DataTemperatureGetFloat(&bmpAppInstance[index], &bmpTemperature);
     BMP180DataPressureGetFloat(&bmpAppInstance[index], &bmpPressure);
+
 }
 
 /* Returns the temperature stored in the library. To obtain

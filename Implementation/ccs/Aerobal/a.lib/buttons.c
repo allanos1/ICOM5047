@@ -23,8 +23,6 @@ uint32_t buttonsLastPressed ;
  */
 void buttonsInterruptHandler(){
 
-	//gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x00);
-
 	buttonsDisable();
 	int button_RIS = gpioGetInterruptRawStatus(GPIO_PORTB, BUTTONS_ENABLED_BUTTONS);
 	SysCtlDelay(BUTTONS_STANDARD_DELAY) ;
@@ -91,6 +89,15 @@ void buttonsEnable(){
 	gpioSetInterruptClear(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
 }
+
+
+void buttonsMask(){
+	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x00);
+}
+void buttonsUnmask(){
+	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
+}
+
 /* Initis the ports that use the buttons.
  *
  * Ports:

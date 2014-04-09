@@ -258,7 +258,6 @@ void lcdSerialSetNumberOfColumns20(){
 	lcdSerialWrite(LCDSERIAL_CONFIG_COLNUMBER_20);
 }
 
-
 ////////////////////////////////////////////
 // API Layer 1
 
@@ -310,6 +309,8 @@ void lcdSerialWriteString(char* string){
  * Writes a single digit to the LCD and the current
  * cursor.
  *
+ * Must ensure that number is not greater than 48+9
+ *
  */
 void lcdSerialWriteSingleDigit(char number){
 	lcdSerialWrite(number+48);
@@ -333,9 +334,13 @@ int lcdSerialMathPower(int number, int exponent){
 /* LCD Function to write the digits of a number.
  * Does not work on decimals, they must be multiplied
  * and then written.
- * Works to a six digit precision.
+ * Works to a seven. digit precision.
  */
 void lcdSerialWriteDigits(int number){
+	//Aparrently I wrote it to seven digits, but have never needed such
+	//range.
+
+	//(number/ (10^n) % 10 -> gives the (n+1)th digit.
 	if(number >= 1000000) lcdSerialWriteSingleDigit((number/1000000) % 10) ;
 	if(number >= 100000) lcdSerialWriteSingleDigit((number/100000) % 10) ;
 	if(number >= 10000) lcdSerialWriteSingleDigit((number/10000) % 10) ;
@@ -346,28 +351,42 @@ void lcdSerialWriteDigits(int number){
 }
 
 /*
- * Writes a rational number to the LCD with maximum of 6 digits on both
+ * Writes a rational number to the LCD with maximum of 7 digits on both
  * the integer and rational parts. Truncates zeros on both sides.
  */
 void lcdSerialWriteNumber(double number){
+	//Write '-' if negative.
 	if(number < 0) {
 		lcdSerialWriteLetter(45);
+		//Negative written, not needed anymore.
 		number *= -1;
 	}
+	//Use the function to write the integer part.
 	lcdSerialWriteDigits((int)number);
+
+	//Get the fractional part and shift it to the integer part.
+	//Done by eliminating the fractional part and subtracting
+	//that to the original number, leaving only the fractional
+	//part in the original number. Then, the number is shifted
+	//in this case, six places to the left into the integer part.
 	int decimals = (number - (double)((int) number)) * 1000000.0;
 
+	//If there was indeed a fractional part, write it.
 	if(decimals != 0){
+		//Write the dot '.' (46 happens to be the 'char' value for the '.')
 		lcdSerialWriteLetter(46);
+
+		//Eliminate the unnecesary non-significant trailing zeros.
 		while(decimals%10 == 0){
 			decimals /= 10;
 		}
+		//Use the function again to write the number.
 		lcdSerialWriteDigits(decimals);
 	}
 }
 /*
  * Writes a number to LCD with a bound in the number of digits displayed in the
- * integer part and the rational part. The limit of digits is six.
+ * integer part and the rational part. The limit of digits is seven.
  *
  */
 void lcdSerialWriteNumberWithBounds(double number, int integerDigits, int rationalDigits){

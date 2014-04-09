@@ -3,11 +3,13 @@
 #include "a.lib/anemometer.h"
 #include "a.lib/adc.h"
 #include "a.lib/windVane.h"
+#include "a.lib/bmp085Array.h"
 #include "a.lib/bluetooth.h"
 #include "a.lib/gpio.h"
 #include "a.lib/timers.h"
 #include "a.lib/binCounter.h"
 #include "a.lib/buttons.h"
+#include "a.lib/ABUI.h"
 
 void ABTestLCDInit();
 void ABTestBMPSpeed();
@@ -18,8 +20,6 @@ void ABTestWindVane();
 ///////
 
 
-tI2CMInstance i2cInstance;
-tBMP180 bmpInstance;
 
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
@@ -88,7 +88,6 @@ void ABTestBMPSpeed(){
 }
 
 
-//HELLO WORLD!
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
@@ -124,7 +123,6 @@ void ABTestAnemometer(){
 		lcdSerialCursorLine4();
 		lcdSerialWriteString("B-Speed MI: ");
 		lcdSerialWriteNumber(anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage()));
-
 	}
 }
 
@@ -211,9 +209,11 @@ void ABTimerTest(){
 	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,1.0);
 	timerStart(TIMER_4);
 	while(1);
-
 }
 
+void ABTestPressureSensorArray(){
+	bmp085ArrayInit();
+}
 
 void ABTestBinaryCounter(){
 	binCounterInit(BINCOUNTER_GPIO_PORTD,BINCOUNTER_GPIO_PIN_1,
@@ -282,6 +282,9 @@ void ABTestButtons(){
 	int pressed;
 	//PF0
 	//PF4
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x11,0x00);
+	gpioSetDigitalEnable(GPIO_PORTF,0x11,0x11);
 	while(1){
 		lcdSerialCursorLine1();
 		pressed = buttonsWasPressed();
@@ -295,6 +298,9 @@ void ABTestButtons(){
 		ABTestButtonsCheckButton("B4 ", buttonsWasPressedB4());
 		ABTestButtonsCheckButton("B5 ", buttonsWasPressedB5());
 		lcdSerialCursorLine4();
+		ABTestButtonsCheckButton("F0 ", gpioGetData(GPIO_PORTF,0x01));
+		ABTestButtonsCheckButton("F4 ", gpioGetData(GPIO_PORTF,0x10));
+
 
 		if(pressed){
 			lcdSerialWriteString("[");
@@ -312,8 +318,28 @@ void ABTestButtons(){
 		}
 	}
 }
+
+void ABTestUI(){
+	ABUIInit();
+	while(1){
+		ABUIStateMachineBackgroundRun();
+	}
+}
+
+void ABTestLCDHex(){
+	uint32_t number = 0x00;
+	ABTestLCDInit();
+	while(1){
+		SysCtlDelay(1000000);
+		lcdSerialCursorLine1();
+		lcdSerialWriteNumber(number++);
+	}
+}
+
 int main(int argc, const char * argv[]){
-	ABTestButtons();
+
+	ABTestUI();
+	//ABTestAnemometer();
 }
 
 
