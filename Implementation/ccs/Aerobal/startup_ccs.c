@@ -57,8 +57,8 @@ extern void bmp085ArraySampleTimer();
 extern void ABTimerTestInterruptHandler();
 extern void ABUIStateMachineSetNextState_InterruptHandler();
 extern void InterruptHandlerPortD();
-extern void bmp085ArraySampleTimer();
 extern void ABTimerTestInterruptHandler();
+extern void bmp085ArraySynchronize();
 
 
 //*****************************************************************************
@@ -95,7 +95,7 @@ void (* const g_pfnVectors[])(void) =
     readDataBit,                      		// GPIO Port A
     ABUIStateMachineSetNextState_InterruptHandler, // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    anemometerInterruptHandler_Counter,    	// GPIO Port D
+    /*anemometerInterruptHandler_Counter*/bmp085ArraySynchronize,    	// GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx

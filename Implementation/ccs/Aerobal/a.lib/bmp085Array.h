@@ -43,15 +43,15 @@ uint32_t bmp085ArrayGPIO_Pin_ZF;
 
 float bmp085ArrayTemperature;
 float bmp085ArrayPressure;
+int bmp085ArrayCurrentSensor;
 int bmp085ArraySensorQuantity;
 
-void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity);
-void bmp085ArraySampleTimer();
+void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity, int testNumber);
+void bmp085ArraySensorSetup(int sensorQuantity);
 void bmp085ArrayClockToggle();
 void bmp085ArrayNextSensor();
-void bmp085ArraySynchronize();
 void bmp085ArrayReset();
-void bmp085StartDataAdquisition(int frequency);
+void bmp085ArraySynchronize();
 void bmp085ArraySetSensorQuantity(int sensorQuantity);
 int bmp085ArrayGetSensorQuantity();
 void bmp085ArraySetCurrentSensor(int sensorIndex);
@@ -60,7 +60,8 @@ void bmp085ArrayDataRead();
 void bmp085ArrayDataReadPosition(int sensorIndex);
 float bmp085ArrayGetTemperature();
 float bmp085ArrayGetPressure();
-void bmp085ArraySensorSetup(int sensorQuantity);
-void bmp085ArrayTest(int sensorQuantity);
+void bmp085StartDataAdquisition(int frequency);
+void bmp085ArraySampleTimer();
+
 
 #endif /* BMP085ARRAY_H_ */

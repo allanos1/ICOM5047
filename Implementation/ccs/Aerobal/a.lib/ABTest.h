@@ -25,6 +25,7 @@
 #include "loadCell.h"
 #include "servo.h"
 #include "buttons.h"
+#include "bmp085Array.h"
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
@@ -43,5 +44,13 @@ void ABTimerTest();
 void ABTestBinaryCounter();
 
 */
+/* Test Case
+ *
+ * Reads data from the desire quantity of sensors and send it through UART0
+ * to the USB connected computer to be access by a serial monitor application.
+ *
+ */
+
+void bmp085ArrayTest(int sensorIndex,int testNumber);
 
 #endif /* ABTEST_H_ */
