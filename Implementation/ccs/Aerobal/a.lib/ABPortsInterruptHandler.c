@@ -30,7 +30,7 @@ void InterruptHandlerPortD(){
 	//Not handling the clear of the caller interrupt because of backward compatibility.
 
 	if(HWREG(GPIO_PORTD | GPIO_OFFSET_INTERRUPT_RAW_STATUS) & GPIO_PIN_0){
-		//anemometerInterruptHandler_Counter();
+		anemometerInterruptHandler_Counter();
 	}
 	if(HWREG(GPIO_PORTD | GPIO_OFFSET_INTERRUPT_RAW_STATUS) & GPIO_PIN_1){
 		//function to call

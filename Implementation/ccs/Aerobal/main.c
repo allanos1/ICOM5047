@@ -330,12 +330,32 @@ void ABTestButtons(){
 	}
 }
 
+
+
 void ABTestUI(){
 	ABUIInit();
 	while(1){
 		ABUIStateMachineBackgroundRun();
 	}
 }
+
+void ABTestDHT(){
+	ABTestLCDInit();
+	dhtSetup();
+	while(1){
+		dht11getData();
+		while(dhtIsActive());
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("Humidity Sensor:");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("%: ");
+		lcdSerialWriteNumber(dht11getHumidity());
+		lcdSerialWriteString("  ");
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("[Cancel]: Back");
+	}
+}
+
 
 void ABTestLCDHex(){
 	uint32_t number = 0x00;
@@ -350,6 +370,8 @@ void ABTestLCDHex(){
 int main(int argc, const char * argv[]){
 
 	ABTestUI();
+	//ABTestDHT();
+	//ABTestWindVane();
 	//ABTestAnemometer();
 	//ABTestPressureSensorArray();
 	while(1);

@@ -11,6 +11,10 @@
 #include "lcdSerial.h"
 #include "buttons.h"
 #include "string.h"
+#include "windVane.h"
+#include "anemometer.h"
+#include "dht11.h"
+#include "bmp085.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -83,9 +87,23 @@ typedef struct {
 	int frequencyHz;
 	int windSpeed;
 } ABUIExpSetup;
+
+uint32_t ABUIButtonNextStateB0_UP;
+uint32_t ABUIButtonNextStateB1_DOWN;
+uint32_t ABUIButtonNextStateB2_ENTER;
+uint32_t ABUIButtonNextStateB3_CANCEL;
+uint32_t ABUIButtonNextStateB4_MENU;
+uint32_t ABUIButtonNextStateB5_PANIC;
+uint32_t ABUIStateMachineNextState;
+uint32_t ABUIBackgroundNextState;
+
+int ABUIMenu_Main_OptionsSize;
+int ABUIMenu_Sensor_OptionsSize;
+
 /////////////////////////////////
 // API Layer 0
 void ABUIInit();
+void ABUIInitModules();
 void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4);
 void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option);
 void ABUIStateMachineRun();

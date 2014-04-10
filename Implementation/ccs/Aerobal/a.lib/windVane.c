@@ -64,5 +64,14 @@ float windVaneGetADCRawValue(){
  ******* Piecewise Characterization needed!
  */
 float windVaneGetAngle(){
-	return 0.1189*windVaneGetADCRawValue()+12.535;
+	float x = windVaneGetADCRawValue();
+
+	if(x <= 356) return 0.1271*x - 0.2542;
+	else if(x <= 753) return 0.1134*x + 4.6474;
+	else if(x <= 1133) return 0.1184*x + 0.8289;
+	else if(x <= 1514) return 0.1181*x + 1.1811;
+	else if(x <= 1908) return 0.1142*x + 7.0812;
+	else if(x <= 2315) return 0.1106*x + 14.042;
+	else if(x <= 2705) return 0.1154*x + 2.8846;
+	else return 0.1136*x + 7.6136;
 }

@@ -95,7 +95,7 @@ void (* const g_pfnVectors[])(void) =
     readDataBit,                      		// GPIO Port A
     ABUIStateMachineSetNextState_InterruptHandler, // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    InterruptHandlerPortD,    				// GPIO Port D
+    anemometerInterruptHandler_Counter,    	// GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx

@@ -112,7 +112,7 @@ void dhtSetup(){
 	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
 	IntEnable(INT_TIMER0A);
 
-	//Timer 1
+	//Timer 3
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
 	TimerConfigure(TIMER3_BASE, TIMER_CFG_PERIODIC);
 	TimerLoadSet(TIMER3_BASE, TIMER_A, SysCtlClockGet()/1000000);
