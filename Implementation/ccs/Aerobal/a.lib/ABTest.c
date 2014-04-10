@@ -231,4 +231,82 @@ void ABTestBinaryCounter(){
 }
 */
 
+/* Test Case
+ *
+ * Reads data from the desire quantity of sensors and send it through UART0
+ * to the USB connected computer to be access by a serial monitor application.
+ *
+ */
+void bmp085ArrayTest(int sensorIndex,int testNumber){
+
+	if(testNumber == 0){
+
+		uartMasterEnableNoInterrupt(UART0, UART_BAUD_9600);
+
+		bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorIndex, true);
+
+		int i;
+		char data[18];
+		char number[2];
+		char pressureSensorNumber[20];
+
+		while(1){
+
+			bmp085ArrayDataRead();
+			stringFTOA(bmp085ArrayGetTemperature() , data);
+			stringITOA(bmp085ArrayGetCurrentSensor(), number);
+			stringConcat( "\nTemperature\0", number, pressureSensorNumber);
+
+			for(i = 0 ; pressureSensorNumber[i] != '\0'; i++){
+				uartWriteCharSync(UART0, pressureSensorNumber[i]);
+			}
+
+			uartWriteCharSync(UART0, *":");
+
+			for(i = 0 ; data[i] != '\0'; i++){
+				uartWriteCharSync(UART0, data[i]);
+			}
+
+			bmp085ArrayNextSensor();
+			SysCtlDelay(100000);
+		}
+	}
+	else if(testNumber == 1){
+		bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorIndex, false);
+		bmp085ArraySetCurrentSensor(5);
+	}
+	else if(testNumber == 2){
+
+		uartMasterEnableNoInterrupt(UART0, UART_BAUD_9600);
+		bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 2 , true);
+
+		int i;
+		char data[18];
+		char number[2];
+		char pressureSensorNumber[20];
+
+		bmp085ArrayDataReadPosition(sensorIndex);
+		stringFTOA(bmp085ArrayGetTemperature() , data);
+		stringITOA(bmp085ArrayGetCurrentSensor(), number);
+		stringConcat( "\nPressure\0", number, pressureSensorNumber);
+
+		for(i = 0 ; pressureSensorNumber[i] != '\0'; i++){
+			uartWriteCharSync(UART0, pressureSensorNumber[i]);
+		}
+
+		uartWriteCharSync(UART0, *":");
+
+		for(i = 0 ; data[i] != '\0'; i++){
+			uartWriteCharSync(UART0, data[i]);
+		}
+	}
+	else if(testNumber == 3){
+
+			uartMasterEnableNoInterrupt(UART0, UART_BAUD_9600);
+			bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorIndex , false);
+			bmp085StartDataAdquisition(1);
+
+		}
+
+}
 

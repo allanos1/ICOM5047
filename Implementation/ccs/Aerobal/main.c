@@ -217,15 +217,6 @@ void ABTimerTest(){
 	while(1);
 }
 
-void ABTestPressureSensorArray(){
-
-	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 2);
-	//bmp085StartDataAdquisition(4);
-	//bmp085ArraySetCurrentSensor(5);
-
-	bmp085ArrayTest(2);
-}
-
 void ABTestBinaryCounter(){
 	binCounterInit(BINCOUNTER_GPIO_PORTD,BINCOUNTER_GPIO_PIN_1,
 			BINCOUNTER_GPIO_PORTA,BINCOUNTER_GPIO_PIN_2,
@@ -347,11 +338,16 @@ void ABTestLCDHex(){
 	}
 }
 
+void ABTestPressureSensorArray(){
+
+	bmp085ArrayTest(16,3);
+}
+
 int main(int argc, const char * argv[]){
 
-	ABTestUI();
+	//ABTestUI();
 	//ABTestAnemometer();
-	//ABTestPressureSensorArray();
+	ABTestPressureSensorArray();
 	while(1);
 
 }

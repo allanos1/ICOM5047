@@ -7,8 +7,7 @@
 
 #include "bmp085Array.h"
 
-uint32_t onPause = 1;
-uint32_t currentSensor = 0;
+int onPause = 1;
 char errorFlag = 0;
 
 /* Initializes the BMP085Array. Automatically enables interrupts,
@@ -24,7 +23,7 @@ char errorFlag = 0;
  * none
  *
  */
-void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity){
+void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity,int testNumber){
 
 	bmp085ArrayGPIO_PortCLK = gpioPortCLK;
 	bmp085ArrayGPIO_Pin_CLK = gpioPinCLK;
@@ -48,10 +47,10 @@ void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPor
 	gpioSetInterruptEvent(gpioPortZF,gpioPinZF , GPIO_INTERRUPT_RISING_EDGE);	//Event Register 40C //Detect Rising Edge
 	gpioSetInterruptEnable(gpioPortZF);
 	gpioHelperInterruptMasterEnable();
-
+	if(testNumber){
 	bmp085ArraySensorSetup(bmp085ArraySensorQuantity);
+	}
 }
-
 
 /* Reads calibration parameters for every sensor connected and store parameters
  * within BMP085 library for later reference when reading data.
@@ -104,12 +103,12 @@ void bmp085ArrayClockToggle(){
  */
 void bmp085ArrayNextSensor(){
 
-	if(currentSensor >= bmp085ArraySensorQuantity){
-		bmp085ArraySetCurrentSensor(currentSensor%bmp085ArraySensorQuantity);
+	if(bmp085ArrayCurrentSensor >= bmp085ArraySensorQuantity){
+		bmp085ArraySetCurrentSensor(bmp085ArrayCurrentSensor%bmp085ArraySensorQuantity);
 	}
 	else{
 		bmp085ArrayClockToggle();
-		currentSensor++;
+		bmp085ArrayCurrentSensor++;
 	}
 
 }
@@ -130,7 +129,7 @@ void bmp085ArrayReset(){
 		bmp085ArrayClockToggle();
 
 	}
-	currentSensor = 0;
+	bmp085ArrayCurrentSensor = 0;
 }
 
 /* Interrupt called function. Set errorFlag to high if current sensor value is not zero when called.
@@ -146,8 +145,8 @@ void bmp085ArraySynchronize(){
 
 	gpioSetInterruptClear(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF,bmp085ArrayGPIO_Pin_ZF);	//Clear PD3 InterruptFlag
 
-	if(currentSensor != 0 && onPause){
-		currentSensor = 0;
+	if(bmp085ArrayCurrentSensor != 0 && onPause){
+		bmp085ArrayCurrentSensor = 0;
 		errorFlag = 1;
 		onPause = 1;
 	}
@@ -199,7 +198,8 @@ void bmp085ArraySetCurrentSensor(int sensorIndex){
 			bmp085ArrayClockToggle();
 		}
 
-	currentSensor = sensorIndex;
+	bmp085ArrayCurrentSensor = sensorIndex;
+
 }
 
 /* Getter function for currentSensor.
@@ -212,7 +212,7 @@ void bmp085ArraySetCurrentSensor(int sensorIndex){
  *
  */
 int bmp085ArrayGetCurrentSensor(){
-	return currentSensor;
+	return bmp085ArrayCurrentSensor;
 }
 
 /* Reads the data using the BMP085 Library. This data is read an stored within
@@ -227,7 +227,7 @@ int bmp085ArrayGetCurrentSensor(){
  */
 void bmp085ArrayDataRead(){
 
-	bmp085DataRead(currentSensor);
+	bmp085DataRead(bmp085ArrayCurrentSensor);
 
 }
 
@@ -244,7 +244,7 @@ void bmp085ArrayDataRead(){
 void bmp085ArrayDataReadPosition(int sensorIndex){
 
 	bmp085ArraySetCurrentSensor(sensorIndex);
-	bmp085DataRead(sensorIndex);
+	bmp085ArrayDataRead();
 
 }
 
@@ -295,53 +295,11 @@ void bmp085StartDataAdquisition(int frequency){
 void bmp085ArraySampleTimer(){
 	timerInterruptClear(TIMER_0);
 
-	if(currentSensor < bmp085ArraySensorQuantity){
+	if(bmp085ArrayCurrentSensor <= bmp085ArraySensorQuantity){
 	bmp085ArrayNextSensor();
 	}
 	else{
 		timerStop(TIMER_0);
 	}
-}
-
-
-/* Test Case
- *
- * Reads data from the desire quantity of sensors and send it through UART0
- * to the USB connected computer to be access by a serial monitor application.
- *
- */
-
-void bmp085ArrayTest(int sensorQuantity){
-
-	uartMasterEnableNoInterrupt(UART0, UART_BAUD_9600);
-
-	bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorQuantity);
-
-	int i;
-	char data[18];
-	char number[2];
-	char pressureSensorNumber[20];
-
-	while(1){
-
-	bmp085ArrayDataRead();
-	stringFTOA(bmp085ArrayGetTemperature() , data);
-	stringITOA(bmp085ArrayGetCurrentSensor() , number);
-	stringConcat( "\nPressure\0", number, pressureSensorNumber);
-
-	for(i = 0 ; pressureSensorNumber[i] != '\0'; i++){
-		uartWriteCharSync(UART0, pressureSensorNumber[i]);
-	}
-
-	uartWriteCharSync(UART0, *":");
-
-	for(i = 0 ; data[i] != '\0'; i++){
-	uartWriteCharSync(UART0, data[i]);
-	}
-
-	bmp085ArrayNextSensor();
-	SysCtlDelay(1000000);
-	}
-
 }
 
