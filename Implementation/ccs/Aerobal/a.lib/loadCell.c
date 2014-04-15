@@ -83,7 +83,7 @@ void initializeADC(void){
 
 	ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
 							//[PE0,PE4,PE1, PE2 PE3]
-	HWREG(ADC0_BASE | 0x040) = 0x00039210; //Port Selection Port 9 / Port 2 / Port 1 / Port 0
+	HWREG(ADC0_BASE | 0x040) = 0x00000125; //Port Selection Port 9 / Port 2 / Port 1 / Port 0
 	HWREG(ADC0_BASE | 0x044) = 0b00000000000001100000000000000000; //Sample until port 3
 	HWREG(ADC0_BASE | 0x050) = 0x00000000; //Save Samples in FIFOn
 

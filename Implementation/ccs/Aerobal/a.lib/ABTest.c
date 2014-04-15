@@ -6,9 +6,7 @@
  */
 
 #include "ABTest.h"
-//tI2CMInstance i2cInstance;
-//tBMP180 bmpInstance;
-/*
+
 void ABTestLCDInit(){
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
@@ -76,7 +74,6 @@ void ABTestBMPSpeed(){
 }
 
 
-//HELLO WORLD!
 void ABTestAnemometer(){
 	ABTestLCDInit();
 	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
@@ -112,24 +109,42 @@ void ABTestAnemometer(){
 		lcdSerialCursorLine4();
 		lcdSerialWriteString("B-Speed MI: ");
 		lcdSerialWriteNumber(anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage()));
-
 	}
 }
 
 void ABTestADC(){
 	ABTestLCDInit();
 	adcInit(ADC_0);
-	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN00_PE3);
+	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN01_PE2);
+	adcMuxPinSet(ADC_0,ADC_MUX_2,ADC_PIN_IN02_PE1);
+	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN03_PE0);
+	adcMuxPinSet(ADC_0,ADC_MUX_0,ADC_PIN_IN08_PE5);
 	int i = 0;
 	while(1){
 		i++;
 		adcRefresh();
-		int val = adcDataGet(ADC_PIN_IN00_PE3);
+		int valPE2 = adcDataGet(ADC_PIN_IN01_PE2);
+		int valPE1 = adcDataGet(ADC_PIN_IN02_PE1);
+		int valPE0 = adcDataGet(ADC_PIN_IN03_PE0);
+		int valPE5 = adcDataGet(ADC_PIN_IN08_PE5);
+
 		lcdSerialCursorLine1();
 		lcdSerialWriteString("ADC Value: ");
-		lcdSerialWriteNumber(val);
-		lcdSerialWriteString("  ");
 		lcdSerialCursorLine2();
+		lcdSerialWriteString("E2: ");
+		lcdSerialWriteNumber(valPE2);
+		lcdSerialWriteString("  ");
+		lcdSerialWriteString("E1: ");
+		lcdSerialWriteNumber(valPE1);
+		lcdSerialWriteString(" ");
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("E0: ");
+		lcdSerialWriteNumber(valPE0);
+		lcdSerialWriteString("  ");
+		lcdSerialWriteString("E5: ");
+		lcdSerialWriteNumber(valPE5);
+		lcdSerialWriteString(" ");
+		lcdSerialCursorLine4();
 		lcdSerialWriteString("Counter: ");
 		lcdSerialWriteNumber(i);
 		lcdSerialWriteString("  ");
@@ -188,20 +203,20 @@ void ABTestWindVane(){
 		lcdSerialWriteString(" ");
 	}
 }
+
 void ABTimerTestInterruptHandler(){
 	gpioSetData(GPIO_PORTF,0x0C,~gpioGetData(GPIO_PORTF,0x0C));
 	timerInterruptClear(TIMER_4);
 }
+
 void ABTimerTest(){
 	gpioSetMasterEnable(GPIO_PORTF);
 	gpioSetDirection(GPIO_PORTF,0x0C,0x0C);
 	gpioSetDigitalEnable(GPIO_PORTF,0x0C,0x0C);
-	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,1.0);
+	timerSetup(TIMER_4,TIMER_CONFIG_PERIODIC,2);
 	timerStart(TIMER_4);
 	while(1);
-
 }
-
 
 void ABTestBinaryCounter(){
 	binCounterInit(BINCOUNTER_GPIO_PORTD,BINCOUNTER_GPIO_PIN_1,
@@ -229,7 +244,126 @@ void ABTestBinaryCounter(){
 		SysCtlDelay(10000000);
 	}
 }
-*/
+void ABTestButtonsInit(){
+	ABTestLCDInit();
+	gpioSetMasterEnable(GPIO_PORTB);
+	gpioSetDigitalEnable(GPIO_PORTB,0x3F,0x3F);
+	gpioSetDirection(GPIO_PORTB,0x3F,0x00);
+}
+
+void ABTestButtonsPool(){
+	while(1){
+		SysCtlDelay(1000000);
+		lcdSerialClear();
+		lcdSerialWriteString("Buttons: ");
+		lcdSerialWriteNumber(gpioGetData(GPIO_PORTB,0x3F));
+	}
+}
+void ABTestButtonsT1(){
+	ABTestButtonsInit();
+	ABTestButtonsPool();
+}
+
+void ABTestButtonsT2(){
+	ABTestButtonsInit();
+	gpioSetPullUpSelect(GPIO_PORTB,0x3F,0x3F);
+	ABTestButtonsPool();
+}
+
+void ABTestButtonsCheckButton(char* msg, int result){
+	lcdSerialWriteString(msg);
+	if(result){
+		lcdSerialWriteString("Y ");
+	}
+	else{
+		lcdSerialWriteString("N ");
+	}
+}
+void ABTestButtons(){
+	ABTestLCDInit();
+	buttonsInit();
+	int pressed;
+	//PF0
+	//PF4
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDirection(GPIO_PORTF,0x11,0x00);
+	gpioSetDigitalEnable(GPIO_PORTF,0x11,0x11);
+	while(1){
+		lcdSerialCursorLine1();
+		pressed = buttonsWasPressed();
+		ABTestButtonsCheckButton("Buttons Pressed: ", pressed);
+		lcdSerialCursorLine2();
+		ABTestButtonsCheckButton("B0 ", buttonsWasPressedB0());
+		ABTestButtonsCheckButton("B1 ", buttonsWasPressedB1());
+		ABTestButtonsCheckButton("B2 ", buttonsWasPressedB2());
+		lcdSerialCursorLine3();
+		ABTestButtonsCheckButton("B3 ", buttonsWasPressedB3());
+		ABTestButtonsCheckButton("B4 ", buttonsWasPressedB4());
+		ABTestButtonsCheckButton("B5 ", buttonsWasPressedB5());
+		lcdSerialCursorLine4();
+		ABTestButtonsCheckButton("F0 ", gpioGetData(GPIO_PORTF,0x01));
+		ABTestButtonsCheckButton("F4 ", gpioGetData(GPIO_PORTF,0x10));
+
+
+		if(pressed){
+			lcdSerialWriteString("[");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("=");
+			SysCtlDelay(2000000);
+			lcdSerialWriteString("]");
+			SysCtlDelay(2000000);
+			lcdSerialClear();
+			buttonsEnable();
+		}
+	}
+}
+
+
+
+void ABTestUI(){
+	ABUIInit();
+	while(1){
+		ABUIStateMachineBackgroundRun();
+	}
+}
+
+/*
+ *
+ */
+void ABTestDHT(){
+	ABTestLCDInit();
+	dhtSetup();
+	while(1){
+		dht11getData();
+		while(dhtIsActive());
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("Humidity Sensor:");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("%: ");
+		lcdSerialWriteNumber(dht11getHumidity());
+		lcdSerialWriteString("  ");
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("[Cancel]: Back");
+	}
+}
+
+
+void ABTestLCDHex(){
+	uint32_t number = 0x00;
+	ABTestLCDInit();
+	while(1){
+		SysCtlDelay(1000000);
+		lcdSerialCursorLine1();
+		lcdSerialWriteNumber(number++);
+	}
+}
+
+
+
 
 /* Test Case
  *
@@ -237,7 +371,20 @@ void ABTestBinaryCounter(){
  * to the USB connected computer to be access by a serial monitor application.
  *
  */
-void bmp085ArrayTest(int sensorIndex,int testNumber){
+void ABBmp085ArrayTest(int sensorIndex,int testNumber){
+	ABTestLCDInit();
+	lcdSerialClear();
+	lcdSerialWriteString("Running BMP tests");
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("on UART0. Connect");
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("to UART terminal.");
+
+	//
+	// Begin Juan's Testing...
+	// Requires activation of the bmp085ArraySynchronize interrupt
+	// handler on GPIO Port D. Unresolved conflict.
+	//
 
 	if(testNumber == 0){
 
@@ -304,7 +451,7 @@ void bmp085ArrayTest(int sensorIndex,int testNumber){
 
 			uartMasterEnableNoInterrupt(UART0, UART_BAUD_9600);
 			bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorIndex , false);
-			bmp085StartDataAdquisition(1);
+			bmp085StartDataAdquisition(sensorIndex);
 
 		}
 

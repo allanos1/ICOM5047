@@ -195,7 +195,7 @@ void adcInit(uint32_t adc){
  * ADC.
  */
 void adcMuxPinSet(uint32_t adc, uint32_t adc_mux, uint32_t adc_pin_in){
-	HWREG(adcGetBase(adc) | 0x040) = adc_pin_in << adcGetMuxShift(adc_mux) ;
+	HWREG(adcGetBase(adc) | 0x040) |= (adc_pin_in << adcGetMuxShift(adc_mux)) ;
 	adcMuxConfig[adc_pin_in] = adc_mux;
 
 }

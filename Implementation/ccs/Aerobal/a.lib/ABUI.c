@@ -771,7 +771,7 @@ void ABUIMenu_Experiment_MeasureConfirm(){
 	buttonsMask();
 	ABUILCDWrite("Comenzar Experimento:",
 			"Presione enter para",
-			"comenzar",
+			"comenzar.",
 			"[Enter]: Continuar");
 	buttonsUnmask();
 }
