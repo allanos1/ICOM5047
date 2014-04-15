@@ -1,6 +1,5 @@
-
 Aerobal-v1.0/Debug/utils/uartstdio.obj
-
 *.obj
-
 *.pp
+Debug/
+.DS_Store
