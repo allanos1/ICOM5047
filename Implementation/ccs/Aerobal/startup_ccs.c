@@ -95,7 +95,7 @@ void (* const g_pfnVectors[])(void) =
     readDataBit,                      		// GPIO Port A
     ABUIStateMachineSetNextState_InterruptHandler, // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    /*anemometerInterruptHandler_Counter*/bmp085ArraySynchronize,    	// GPIO Port D
+    bmp085ArraySynchronize,    				// GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     bluetoothInterruptHandler,              // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
@@ -111,7 +111,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    bmp085ArraySampleTimer/*dht11getData*/,        			// Timer 0 subtimer A
+    /*bmp085ArraySampleTimer*/dht11getData, // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
@@ -122,7 +122,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Analog Comparator 2
     IntDefaultHandler,                      // System Control (PLL, OSC, BO)
     IntDefaultHandler,                      // FLASH Control
-    IntDefaultHandler,                      // GPIO Port F
+    anemometerInterruptHandler_Counter,     // GPIO Port F
     IntDefaultHandler,                      // GPIO Port G
     IntDefaultHandler,                      // GPIO Port H
     bluetoothInterruptHandler,                      // UART2 Rx and Tx

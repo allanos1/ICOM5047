@@ -15,6 +15,7 @@
 #include "anemometer.h"
 #include "dht11.h"
 #include "bmp085.h"
+#include "bluetooth.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1

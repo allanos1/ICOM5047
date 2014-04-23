@@ -18,13 +18,15 @@ int main(int argc, const char * argv[]){
 	//ABTestDHT();
 	//ABTestBinaryCounter();
 
-	ABBmp085ArrayTest(2,0); //Remember startup_ccs.c! and above comment ABRun().
+	//ABBmp085ArrayTest(2,0); //Remember startup_ccs.c! and above comment ABRun().
 
 	//Easy Config.
 	//*************************
 	//ABTimerTestInterruptHandler();
 	//ABTimerTest();
-	//ABRun();
+
+	//AeroBal Software Main Routine.
+	ABRun();
 
 	while(1);
 
