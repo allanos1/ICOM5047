@@ -632,13 +632,21 @@ void ABUIMenu_Sensor_Velocity(){
 
 void ABUIMenu_Sensor_Humidity(){
 	buttonsMask();
+	ABUIEventCounter = (ABUIEventCounter + 1) % 10;
+	SysCtlDelay(3000000);
+	dht11init();
 	dht11getData();
 	while(dhtIsActive());
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("Humidity Sensor:");
+	lcdSerialWriteString("Humidity Sensor: [");
+	lcdSerialWriteNumber(ABUIEventCounter);
+	lcdSerialWriteString("]");
 	lcdSerialCursorLine2();
-	lcdSerialWriteString("%: ");
-	lcdSerialWriteNumber(dht11getHumidity());
+	lcdSerialWriteString("Humd. %: ");
+	lcdSerialWriteNumber(dht22GetHumidity());
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("Temp. C: ");
+	lcdSerialWriteNumber(dht22GetTemperature());
 	lcdSerialWriteString("  ");
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[Cancel]: Back");

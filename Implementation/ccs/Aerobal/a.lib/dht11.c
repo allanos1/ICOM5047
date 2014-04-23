@@ -83,6 +83,15 @@ int dhtIsActive(){
 int dht11getHumidity(){
 	return humidity;
 }
+
+float dht22GetHumidity(){
+	return (float) humidity + ((float) decimalHumidity)/10000000.0;
+}
+
+float dht22GetTemperature(){
+	return (float) temp + ((float) decimalTemp)/10000000.0;
+
+}
 int dht11getTemperature(){
 	return temp;
 }
@@ -128,7 +137,14 @@ void dhtSetup(){
 void dht11init(){
 
 	//HWREG(GPIO_PORTB | GPIO_OFFSET_DATA) |= 0x02; //Clean Data
+	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,GPIO_PIN_4);
 	GPIOPinWrite(GPIO_PORTA_BASE,0x10,0x10);
+
+	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
+
+	IntMasterEnable();
+	IntEnable(INT_TIMER0A);
+	IntEnable(INT_TIMER3A);
 
 	responseStatusOk0 = 0;
 	responseStatusOk1 = 0;
@@ -145,6 +161,7 @@ void dht11init(){
 
 	sum = 0;
 
+	dht11ClockSetup();
 }
 void dht11getData(){
 
@@ -244,8 +261,8 @@ void dht11responseStatus(){
 			; //DO NOTHING
 		}
 		else{
-			lcdClear();
-			lcdWriteLine("Bad Response.");
+			lcdSerialClear();
+			lcdSerialWriteString("Bad Response.");
 			SysCtlDelay(1000000);
 			dht11init();
 		}

@@ -10,19 +10,22 @@ void ABRun(){
 
 int main(int argc, const char * argv[]){
 
-	//ABRun();
+
 	//ABTestAnemometer();
 	//ABTestWindVane();
 	//ABTestADC();
 	//ABTestBluetooth();
 	//ABTestDHT();
 	//ABTestBinaryCounter();
+
 	ABBmp085ArrayTest(2,0); //Remember startup_ccs.c! and above comment ABRun().
 
 	//Easy Config.
 	//*************************
 	//ABTimerTestInterruptHandler();
 	//ABTimerTest();
+	//ABRun();
+
 	while(1);
 
 }
