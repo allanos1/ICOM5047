@@ -53,7 +53,7 @@ void anemometerInit(uint32_t gpioPort, uint32_t gpioPin){
  */
 void anemometerInterruptHandler_Counter(){
 	anemometerCount++;
-	gpioSetInterruptClear(anemometerPort,anemometerPin,0x01);
+	gpioSetInterruptClear(anemometerPort,anemometerPin,0xFF);
 }
 
 /*
@@ -65,7 +65,7 @@ void anemometerStart(){
 	anemometerCount = 0;
 	anemometerT0 = ABTimerGetReference();
 	if(!ABTimerIsRunning()) ABTimerStart();
-	gpioSetInterruptMaskDisable(anemometerPort,anemometerPin,0x01);
+	gpioSetInterruptMaskDisable(anemometerPort,anemometerPin,0xFF);
 
 }
 

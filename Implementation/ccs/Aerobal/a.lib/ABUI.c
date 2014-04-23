@@ -36,9 +36,9 @@ void ABUIInitModules(){
 	ABUIMenu_Load_Write();
 	SysCtlDelay(6000000);
 	//Anemometer
-	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Anemometer...");
+	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
 	SysCtlDelay(6000000);
 	//Wind Vane
 	lcdSerialCursorLine3();
@@ -53,6 +53,7 @@ void ABUIInitModules(){
 	adcMuxPinSet(ADC_0,ADC_MUX_4,ADC_PIN_IN00_PE3);
 	adcMuxPinSet(ADC_0,ADC_MUX_5,ADC_PIN_IN09_PE4);
 	adcMuxPinSet(ADC_0,ADC_MUX_6,ADC_PIN_IN08_PE5);
+	adcSetSequencerSize(ADC_0,7);
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Load Cells... ");
 	SysCtlDelay(6000000);
@@ -66,6 +67,8 @@ void ABUIInitModules(){
 	lcdSerialWriteString("Sensor: Pressure...");
 	bmp085Init(BMP_I2C_MODULE_1);
 	SysCtlDelay(6000000);
+	//Pressure Temperature
+	//Juan says to not do it right now.
 	//Bluetooth
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Com: Bluetooth...");
@@ -95,7 +98,7 @@ void ABUIInitModules(){
 	ABUIButtonNextStateB4_MENU = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB5_PANIC = ABUI_STATE_MAIN_1;
 	ABUIMenu_Main_OptionsSize = 3;
-	ABUIMenu_Sensor_OptionsSize = 6;
+	ABUIMenu_Sensor_OptionsSize = 7;
 	SysCtlDelay(6000000);
 	buttonsInit();
 	ABUIStateMachineRun();
@@ -319,8 +322,17 @@ void ABUIStateMachineRun(){
 		case ABUI_STATE_SENSOR_6:
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_6);
 			ABUIButtonsSetNextState(
-				ABUI_STATE_SENSOR_5,ABUI_STATE_SENSOR_6,
+				ABUI_STATE_SENSOR_5,ABUI_STATE_SENSOR_7,
 				ABUI_STATE_BG_SENSOR_DIRECTION,ABUI_STATE_MAIN_1,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			break;
+		case ABUI_STATE_SENSOR_7:
+			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_7);
+			ABUIButtonsSetNextState(
+				ABUI_STATE_SENSOR_6,ABUI_STATE_SENSOR_7,
+				ABUI_STATE_BG_SENSOR_MPSA,ABUI_STATE_MAIN_1,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -385,6 +397,16 @@ void ABUIStateMachineRun(){
 			buttonsEnable();
 			lcdSerialClear();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_DIRECTION);
+			break;
+		case ABUI_STATE_BG_SENSOR_MPSA:
+			ABUIButtonsSetNextState(
+				ABUI_STATE_NONE,ABUI_STATE_NONE,
+				ABUI_STATE_NONE,ABUI_STATE_SENSOR_7,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			lcdSerialClear();
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_MPSA);
 			break;
 		case ABUI_STATE_EXP_1_SETUP_TIME:
 			ABUIButtonsSetNextState(
@@ -539,6 +561,7 @@ void ABUIStateMachineBackgroundRun(){
 		case ABUI_STATE_BG_SENSOR_VELOCITY: ABUIMenu_Sensor_Velocity(); break;
 		case ABUI_STATE_BG_SENSOR_HUMIDITY: ABUIMenu_Sensor_Humidity(); break;
 		case ABUI_STATE_BG_SENSOR_DIRECTION: ABUIMenu_Sensor_Direction(); break;
+		case ABUI_STATE_BG_SENSOR_MPSA: ABUIMenu_Sensor_MPSA(); break;
 		case ABUI_STATE_BG_EXP_SETUP_TIME: ABUIMenu_Experiment_SetupTime(); break;
 		case ABUI_STATE_BG_EXP_SETUP_FREQUENCY: ABUIMenu_Experiment_SetupFrequency(); break;
 		case ABUI_STATE_BG_EXP_SETUP_WINDSPEED: ABUIMenu_Experiment_SetupWindSpeed(); break;
@@ -571,7 +594,7 @@ void ABUIMenu_LoadBar_Write(int delay, int lines){
 void ABUIMenu_Load_Write(){
 	ABUILCDWrite(" ---  AeroBal  ---  ",
 				 "====================",
-				 "Cargando Sistema...",
+				 "Loading System...",
 				 "");
 
 }
@@ -585,23 +608,24 @@ int ABUIMenu_Main_Size(){
 void ABUIMenu_Main_Write(int option){
 
 	char* ABUIMenu_Main_Options[] = {
-		"Comenzar Exp.", "Ver Sensores", "Iniciar Prueba"
+		"Begin Experiment", "View Sensors", "System Test"
 	};
-	ABUIWriteMenu("Menu Principal:",ABUIMenu_Main_Options,ABUIMenu_Main_OptionsSize,option);
+	ABUIWriteMenu("Principal Menu:",ABUIMenu_Main_Options,ABUIMenu_Main_OptionsSize,option);
 }
 
-//////////////////////////////////////////
-//int ABUIMenu_Sensor_OptionsSize = 6;
 int ABUIMenu_Sensor_Size(){
 	return ABUIMenu_Sensor_OptionsSize;
 }
+
 void ABUIMenu_Sensor_Write(int option){
 	char *ABUIMenu_Sensor_Options[] = {
-		"Fuerza", "Presion", "Temperatura", "Velocidad","Humedad","Direccion"
+		"Force", "Pressure", "Temperature",
+		"Velocity","Humidity","Direction",
+		"Pressure Array"
 	};
-	ABUIWriteMenu("Ver Sensores:",ABUIMenu_Sensor_Options,ABUIMenu_Sensor_OptionsSize,option);
+	ABUIWriteMenu("View Sensors:",ABUIMenu_Sensor_Options,ABUIMenu_Sensor_OptionsSize,option);
 }
-/////////////////////////////////////////
+
 void ABUIMenu_Sensor_Stub(char * sensor){
 	lcdSerialCursorLine1();
 	lcdSerialWriteString(sensor);
@@ -611,7 +635,38 @@ void ABUIMenu_Sensor_Stub(char * sensor){
 
 }
 void ABUIMenu_Sensor_Force(){
-	ABUIMenu_Sensor_Stub("Force");
+	buttonsMask();
+	adcRefresh();
+	int vE0 = adcDataGet(ADC_PIN_IN03_PE0);
+	int vE1 = adcDataGet(ADC_PIN_IN02_PE1);
+	int vE2 = adcDataGet(ADC_PIN_IN01_PE2);
+	int vE3 = adcDataGet(ADC_PIN_IN00_PE3);
+	int vE4 = adcDataGet(ADC_PIN_IN09_PE4);
+	int vE5 = adcDataGet(ADC_PIN_IN08_PE5);
+	lcdSerialCursorLine1();
+	lcdSerialWriteString("E0: ");
+	lcdSerialWriteNumber(vE0);
+	lcdSerialWriteString("  ");
+	lcdSerialWriteString("E1: ");
+	lcdSerialWriteNumber(vE1);
+	lcdSerialWriteString(" ");
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("E2: ");
+	lcdSerialWriteNumber(vE2);
+	lcdSerialWriteString("  ");
+	lcdSerialWriteString("E3: ");
+	lcdSerialWriteNumber(vE3);
+	lcdSerialWriteString(" ");
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("E4: ");
+	lcdSerialWriteNumber(vE4);
+	lcdSerialWriteString("  ");
+	lcdSerialWriteString("E5: ");
+	lcdSerialWriteNumber(vE5);
+	lcdSerialWriteString(" ");
+	lcdSerialCursorLine4();
+	lcdSerialWriteString("Force Raw Values");
+	buttonsUnmask();
 }
 
 void ABUIMenu_Sensor_Pressure(){
@@ -695,6 +750,12 @@ void ABUIMenu_Sensor_Direction(){
 	lcdSerialWriteString("[Cancel]: Back");
 	buttonsUnmask();
 
+}
+
+void ABUIMenu_Sensor_MPSA(){
+	buttonsMask();
+	ABUIMenu_Sensor_Stub("MPSA");
+	buttonsUnmask();
 }
 
 /////////////////////////////////////

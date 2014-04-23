@@ -115,23 +115,33 @@ void ABTestAnemometer(){
 void ABTestADC(){
 	ABTestLCDInit();
 	adcInit(ADC_0);
-	adcMuxPinSet(ADC_0,ADC_MUX_2,ADC_PIN_IN02_PE1);
-	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN01_PE2);
-	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN00_PE3);
+	adcMuxPinSet(ADC_0,ADC_MUX_0,ADC_PIN_IN03_PE0);
+	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN02_PE1);
+	adcMuxPinSet(ADC_0,ADC_MUX_2,ADC_PIN_IN01_PE2);
+	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN00_PE3);
 	adcMuxPinSet(ADC_0,ADC_MUX_4,ADC_PIN_IN09_PE4);
-	adcMuxPinSet(ADC_0,ADC_MUX_0,ADC_PIN_IN08_PE5);
+	adcMuxPinSet(ADC_0,ADC_MUX_5,ADC_PIN_IN08_PE5);
+	adcMuxPinSet(ADC_0,ADC_MUX_6,ADC_PIN_IN07_PD0);
+	adcSetSequencerSize(ADC_0, 7);
 	int i = 0;
 	while(1){
 		i++;
 		adcRefresh();
+		int vE0 = adcDataGet(ADC_PIN_IN03_PE0);
 		int vE1 = adcDataGet(ADC_PIN_IN02_PE1);
 		int vE2 = adcDataGet(ADC_PIN_IN01_PE2);
 		int vE3 = adcDataGet(ADC_PIN_IN00_PE3);
 		int vE4 = adcDataGet(ADC_PIN_IN09_PE4);
 		int vE5 = adcDataGet(ADC_PIN_IN08_PE5);
+		int vD0 = adcDataGet(ADC_PIN_IN07_PD0);
 
 		lcdSerialCursorLine1();
-		lcdSerialWriteString("ADC Value: ");
+		lcdSerialWriteString("E0: ");
+		lcdSerialWriteNumber(vE0);
+		lcdSerialWriteString("  ");
+		lcdSerialWriteString("D0: ");
+		lcdSerialWriteNumber(vD0);
+		lcdSerialWriteString(" ");
 		lcdSerialCursorLine2();
 		lcdSerialWriteString("E1: ");
 		lcdSerialWriteNumber(vE1);

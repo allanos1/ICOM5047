@@ -16,6 +16,7 @@
 #include "dht11.h"
 #include "bmp085.h"
 #include "bluetooth.h"
+#include "bmp085Array.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -41,12 +42,14 @@
 #define ABUI_STATE_SENSOR_4 0x0013
 #define ABUI_STATE_SENSOR_5 0x0014
 #define ABUI_STATE_SENSOR_6 0x0015
+#define ABUI_STATE_SENSOR_7 0x0016
 #define ABUI_STATE_BG_SENSOR_FORCE 0x0020
 #define ABUI_STATE_BG_SENSOR_PRESSURE 0x0021
 #define ABUI_STATE_BG_SENSOR_TEMPERATURE 0x0022
 #define ABUI_STATE_BG_SENSOR_VELOCITY 0x0023
 #define ABUI_STATE_BG_SENSOR_HUMIDITY 0x0024
 #define ABUI_STATE_BG_SENSOR_DIRECTION 0x0025
+#define ABUI_STATE_BG_SENSOR_MPSA 0x0026
 #define ABUI_STATE_EXP_1_SETUP_TIME 0x0100
 #define ABUI_STATE_EXP_2_SETUP_FREQUENCY 0x0110
 #define ABUI_STATE_EXP_3_SETUP_WIND_SPEED 0x0120
@@ -128,6 +131,7 @@ void ABUIMenu_Sensor_Temperature();
 void ABUIMenu_Sensor_Velocity();
 void ABUIMenu_Sensor_Humidity();
 void ABUIMenu_Sensor_Direction();
+void ABUIMenu_Sensor_MPSA();
 void ABUIMenu_Experiment_SetupTime();
 void ABUIMenu_Experiment_SetupFrequency();
 void ABUIMenu_Experiment_SetupWindSpeed();

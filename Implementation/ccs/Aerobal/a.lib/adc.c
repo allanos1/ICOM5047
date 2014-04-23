@@ -9,6 +9,9 @@
 
 #include "adc.h"
 
+///////////////////////////////////
+// API Layer 0
+
 /*
  * Returns the base of the ADC module given.
  *
@@ -195,6 +198,7 @@ void adcInit(uint32_t adc){
  * ADC.
  */
 void adcMuxPinSet(uint32_t adc, uint32_t adc_mux, uint32_t adc_pin_in){
+	//TODO: ERASE AND SET!!!
 	HWREG(adcGetBase(adc) | 0x040) |= (adc_pin_in << adcGetMuxShift(adc_mux)) ;
 	adcMuxConfig[adc_pin_in] = adc_mux;
 
@@ -211,6 +215,18 @@ void adcRefresh(){
 	adcInterruptClear(adcConfigured);
 	ADCSequenceDataGet(adcGetBase(adcConfigured), 0, adcDataStruct);
 	adcClockNormalEnable();
+}
+/*
+ * Sets the number of sequencers.
+ */
+void adcSetSequencerSize(uint32_t adc, int amount){
+	if(amount > 8) amount = 8;
+	int i = 0;
+	uint32_t size = 0b0110;
+	for(i = 0; i < amount-1; i++){
+		size = size << 4;
+	}
+	HWREG(adcGetBase(adc) | 0x044) = size;
 }
 
 /*
