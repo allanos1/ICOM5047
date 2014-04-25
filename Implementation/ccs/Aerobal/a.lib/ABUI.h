@@ -108,6 +108,7 @@ int ABUIMenu_Sensor_OptionsSize;
 // API Layer 0
 void ABUIInit();
 void ABUIInitModules();
+void ABUIPowerWait(uint32_t waitTime);
 void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4);
 void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option);
 void ABUIStateMachineRun();

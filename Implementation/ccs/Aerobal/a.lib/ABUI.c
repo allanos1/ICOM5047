@@ -24,27 +24,45 @@ ABUIExpSetup expSetup ;
 int ABUIEventCounter = 0;
 
 void ABUIInit(){
-	SysCtlDelay(5000000);
+	ABUIPowerWait(5000000);
 	ABUIInitModules();
 }
 
+void ABUIPowerWait(uint32_t waitTime){
+	gpioSetData(GPIO_PORTF,0x02,0x00);
+	SysCtlDelay(waitTime/4);
+	gpioSetData(GPIO_PORTF,0x02,~gpioGetData(GPIO_PORTF,0x02));
+	SysCtlDelay(waitTime/4);
+	gpioSetData(GPIO_PORTF,0x02,~gpioGetData(GPIO_PORTF,0x02));
+	SysCtlDelay(waitTime/4);
+	gpioSetData(GPIO_PORTF,0x02,~gpioGetData(GPIO_PORTF,0x02));
+	SysCtlDelay(waitTime/4);
+	gpioSetData(GPIO_PORTF,0x02,~gpioGetData(GPIO_PORTF,0x00));
+}
+
 void ABUIInitModules(){
+	//LEDs
+	gpioSetMasterEnable(GPIO_PORTF);
+	gpioSetDigitalEnable(GPIO_PORTF,0x0E,0x0E);
+	gpioSetDirection(GPIO_PORTF,0x0E,0x0E);
+	gpioSetData(GPIO_PORTF,0x0E,0x02);
+	SysCtlDelay(6000000);
 	//LCD
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 	ABUIMenu_Load_Write();
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//Anemometer
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Anemometer...");
 	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//Wind Vane
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Wind Vane... ");
 	windVaneInit(WIND_VANE_ADC_0,WIND_VANE_ADC_MUX_0,WIND_VANE_ADC_PIN07_PD0);
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	// Load Cells. TODO: Library.
 	adcInit(ADC_0);
 	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN03_PE0);
@@ -56,41 +74,33 @@ void ABUIInitModules(){
 	adcSetSequencerSize(ADC_0,7);
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Load Cells... ");
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//Humidity
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Humidity...");
+	lcdSerialWriteString("Sensor: Humidity...   ");
 	dhtSetup();
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//Pressure
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Pressure...");
-	bmp085Init(BMP_I2C_MODULE_1);
-	SysCtlDelay(6000000);
+	lcdSerialWriteString("Sensor: BMP Not Act.  ");
+	//bmp085Init(BMP_I2C_MODULE_1);
+	ABUIPowerWait(4000000);
 	//Pressure Temperature
 	//Juan says to not do it right now.
 	//Bluetooth
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("Com: Bluetooth...");
+	lcdSerialWriteString("Com: Bluetooth...      ");
 	bluetoothInit(BLUETOOTH_UART4,BLUETOOTH_UART_BAUD_9600);
-	SysCtlDelay(6000000);
-	//LEDs
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("UI: LEDs...      ");
-	gpioSetMasterEnable(GPIO_PORTF);
-	gpioSetDigitalEnable(GPIO_PORTF,0x0E,0x0E);
-	gpioSetDirection(GPIO_PORTF,0x0E,0x0E);
-	gpioSetData(GPIO_PORTF,0x0E,0x02);
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//State Machine
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("UI: State Machine...");
+	lcdSerialWriteString("UI: State Machine...   ");
 	ABUIStateMachineNextState = ABUI_STATE_MAIN_1;
 	ABUIBackgroundNextState = ABUI_STATE_NONE;
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	//Buttons
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("UI: Buttons...      ");
+	lcdSerialWriteString("UI: Buttons...         ");
 	ABUIButtonNextStateB0_UP = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB1_DOWN = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB2_ENTER = ABUI_STATE_MAIN_1;
@@ -99,7 +109,7 @@ void ABUIInitModules(){
 	ABUIButtonNextStateB5_PANIC = ABUI_STATE_MAIN_1;
 	ABUIMenu_Main_OptionsSize = 3;
 	ABUIMenu_Sensor_OptionsSize = 7;
-	SysCtlDelay(6000000);
+	ABUIPowerWait(4000000);
 	buttonsInit();
 	ABUIStateMachineRun();
 
@@ -128,11 +138,10 @@ void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4){
 void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option){
 
 	lcdSerialClear();
-	////////////
+	//////////////////////////////////
 	lcdSerialCursorLine1();
 	lcdSerialWriteString(menuTitle);
-
-	////////////
+	//////////////////////////////////
 	lcdSerialCursorLine2();
 	if(option < optionSize){
 		if(option < optionSize-2){

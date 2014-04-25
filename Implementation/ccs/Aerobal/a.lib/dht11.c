@@ -197,14 +197,14 @@ void dht11getData(){
 }
 
 void dht11request(){
-	switch(step){
+	switch
+	(step){
 	case REQUEST18MS:
 		//HWREG(GPIO_PORTA | GPIO_OFFSET_DATA) &= 0xFD;
 		GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,0x00);
 		TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/55); //Wait 18ms
 		TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 		TimerEnable(TIMER0_BASE, TIMER_A);
-
 		step++;
 		break;
 	case REQUEST40US:
@@ -213,7 +213,6 @@ void dht11request(){
 		TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/25000); //Wait 40us
 		TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 		TimerEnable(TIMER0_BASE, TIMER_A);
-
 		process++;
 		step = 0;
 		break;
