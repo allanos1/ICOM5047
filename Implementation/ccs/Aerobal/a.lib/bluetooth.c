@@ -201,7 +201,8 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET PS ok!
 			bluetoothSendAck();
-			stringFTOA(34.987/(float)bluetoothEventCount,out);
+			//TODO: Set Tunnel Pressure Sensor.
+			stringFTOA(ABSSGetBMPPressure(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			bluetoothSendAck();
@@ -214,7 +215,9 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET HM ok!
 			bluetoothSendAck();
-			stringFTOA(143.987/(float)bluetoothEventCount,out);
+			ABSSRefreshDHT();
+			stringFTOA(ABSSGetDHTHumidity(),out);
+			//stringFTOA(143.987/(float)bluetoothEventCount,out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			bluetoothSendAck();
@@ -227,7 +230,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET TM ok!
 			bluetoothSendAck();
-			stringFTOA(3234.987/(float)bluetoothEventCount,out);
+			stringFTOA(ABSSGetBMPTemperature(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			bluetoothSendAck();
@@ -237,11 +240,24 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 
 	}
+	else if(stringEquals("sp",command)){
+			if(bluetoothIsQuery(value)){
+				//GET WD ok!
+				bluetoothSendAck();
+				stringFTOA(ABSSGetAnemometerSpeed(),out);
+				bluetoothSendString(out);
+				bluetoothSendTerminator();
+				bluetoothSendAck();
+			}
+			else{
+				bluetoothSendErr();
+			}
+		}
 	else if(stringEquals("wd",command)){
 		if(bluetoothIsQuery(value)){
 			//GET WD ok!
 			bluetoothSendAck();
-			stringFTOA(324.123/(float)bluetoothEventCount,out);
+			stringFTOA(ABSSGetWindVaneDirection(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			bluetoothSendAck();
@@ -254,32 +270,33 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			if(stringEquals(value,"?front")){
 				bluetoothSendAck();
-				stringFTOA(424.123/(float)bluetoothEventCount,out);
+				stringFTOA(ABSSGetLoadCellDragFront(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?back")){
 				bluetoothSendAck();
-				stringFTOA(543.123/(float)bluetoothEventCount,out);
+				stringFTOA(ABSSGetLoadCellDragBack(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?up")){
 				bluetoothSendAck();
-				stringFTOA(144.123/(float)bluetoothEventCount,out);
+				stringFTOA(ABSSGetLoadCellLiftUp(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?down")){
 				bluetoothSendAck();
-				stringFTOA(444.12/(float)bluetoothEventCount,out);
+				stringFTOA(ABSSGetLoadCellLiftDown(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?left")){
 				bluetoothSendAck();
-				stringFTOA(242.163/(float)bluetoothEventCount,out);
+				stringFTOA(ABSSGetLoadCellSideLeft(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?right")){
 				bluetoothSendAck();
-				bluetoothSendErr();
+				stringFTOA(ABSSGetLoadCellSideRight(),out);
+				bluetoothSendString(out);
 			}
 			else{
 				bluetoothSendErr();

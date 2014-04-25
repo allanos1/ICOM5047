@@ -24,7 +24,7 @@ ABUIExpSetup expSetup ;
 int ABUIEventCounter = 0;
 
 void ABUIInit(){
-	ABUIPowerWait(5000000);
+	SysCtlDelay(3000000);
 	ABUIInitModules();
 }
 
@@ -64,6 +64,7 @@ void ABUIInitModules(){
 	windVaneInit(WIND_VANE_ADC_0,WIND_VANE_ADC_MUX_0,WIND_VANE_ADC_PIN07_PD0);
 	ABUIPowerWait(4000000);
 	// Load Cells. TODO: Library.
+	/*
 	adcInit(ADC_0);
 	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN03_PE0);
 	adcMuxPinSet(ADC_0,ADC_MUX_2,ADC_PIN_IN02_PE1);
@@ -72,8 +73,11 @@ void ABUIInitModules(){
 	adcMuxPinSet(ADC_0,ADC_MUX_5,ADC_PIN_IN09_PE4);
 	adcMuxPinSet(ADC_0,ADC_MUX_6,ADC_PIN_IN08_PE5);
 	adcSetSequencerSize(ADC_0,7);
+	*/
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Load Cells... ");
+	loadCellInit();
+	loadCellRefreshSetSize(10);
 	ABUIPowerWait(4000000);
 	//Humidity
 	lcdSerialCursorLine3();
@@ -82,10 +86,10 @@ void ABUIInitModules(){
 	ABUIPowerWait(4000000);
 	//Pressure
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: BMP Not Act.  ");
-	//bmp085Init(BMP_I2C_MODULE_1);
+	lcdSerialWriteString("Sensor: Pressure...  ");
+	bmp085Init(BMP_I2C_MODULE_1);
 	ABUIPowerWait(4000000);
-	//Pressure Temperature
+	//MPSA
 	//Juan says to not do it right now.
 	//Bluetooth
 	lcdSerialCursorLine3();
@@ -645,47 +649,42 @@ void ABUIMenu_Sensor_Stub(char * sensor){
 }
 void ABUIMenu_Sensor_Force(){
 	buttonsMask();
-	adcRefresh();
-	int vE0 = adcDataGet(ADC_PIN_IN03_PE0);
-	int vE1 = adcDataGet(ADC_PIN_IN02_PE1);
-	int vE2 = adcDataGet(ADC_PIN_IN01_PE2);
-	int vE3 = adcDataGet(ADC_PIN_IN00_PE3);
-	int vE4 = adcDataGet(ADC_PIN_IN09_PE4);
-	int vE5 = adcDataGet(ADC_PIN_IN08_PE5);
+	ABSSRefreshLoadCells();
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("E0: ");
-	lcdSerialWriteNumber(vE0);
+	lcdSerialWriteString("DF: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragFront(),0,1);
 	lcdSerialWriteString("  ");
-	lcdSerialWriteString("E1: ");
-	lcdSerialWriteNumber(vE1);
+	lcdSerialWriteString("DB: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragBack(),0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialCursorLine2();
-	lcdSerialWriteString("E2: ");
-	lcdSerialWriteNumber(vE2);
+	lcdSerialWriteString("LU: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftUp(),0,1);
 	lcdSerialWriteString("  ");
-	lcdSerialWriteString("E3: ");
-	lcdSerialWriteNumber(vE3);
+	lcdSerialWriteString("LD: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftDown(),0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("E4: ");
-	lcdSerialWriteNumber(vE4);
+	lcdSerialWriteString("SL: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideLeft(),0,1);
 	lcdSerialWriteString("  ");
-	lcdSerialWriteString("E5: ");
-	lcdSerialWriteNumber(vE5);
+	lcdSerialWriteString("SR: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideRight(),0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialCursorLine4();
-	lcdSerialWriteString("Force Raw Values");
+	lcdSerialWriteString("Force: Raw Averages");
 	buttonsUnmask();
 }
 
 void ABUIMenu_Sensor_Pressure(){
 	buttonsMask();
-	bmp085DataRead(0);
+	//bmp085DataRead(0);
+	ABSSRefreshBMP();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Pressure Sensor:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Pa: ");
-	lcdSerialWriteNumberWithBounds(bmp085GetPressure(),0,5);
+	lcdSerialWriteNumberWithBounds(ABSSGetBMPPressure(),0,5);
 	lcdSerialWriteString("  ");
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[Cancel]: Back");
@@ -694,12 +693,13 @@ void ABUIMenu_Sensor_Pressure(){
 }
 void ABUIMenu_Sensor_Temperature(){
 	buttonsMask();
-	bmp085DataRead(0);
+	//bmp085DataRead(0);
+	ABSSRefreshBMP();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Temperature Sensor:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("C: ");
-	lcdSerialWriteNumberWithBounds(bmp085GetTemperature(),0,5);
+	lcdSerialWriteNumberWithBounds(ABSSGetBMPTemperature(),0,5);
 	lcdSerialWriteString("  ");
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[Cancel]: Back");
@@ -708,12 +708,12 @@ void ABUIMenu_Sensor_Temperature(){
 
 void ABUIMenu_Sensor_Velocity(){
 	buttonsMask();
-	anemometerSpeedBufferRefresh();
+	ABSSRefreshAnemometer();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Anemometer Sensor:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("KM/H: ");
-	lcdSerialWriteNumberWithBounds(anemometerSpeedConvertKmH(anemometerSpeedBufferGetAverage()),0,5);
+	lcdSerialWriteNumberWithBounds(ABSSGetAnemometerSpeed(),0,5);
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("MI/H: ");
 	lcdSerialWriteNumberWithBounds(anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage()),0,5);
@@ -726,20 +726,17 @@ void ABUIMenu_Sensor_Velocity(){
 void ABUIMenu_Sensor_Humidity(){
 	buttonsMask();
 	ABUIEventCounter = (ABUIEventCounter + 1) % 10;
-	SysCtlDelay(3000000);
-	dht11init();
-	dht11getData();
-	while(dhtIsActive());
+	ABSSRefreshDHT();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Humidity Sensor: [");
 	lcdSerialWriteNumber(ABUIEventCounter);
 	lcdSerialWriteString("]");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Humd. %: ");
-	lcdSerialWriteNumber(dht22GetHumidity());
+	lcdSerialWriteNumber(ABSSGetDHTHumidity());
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Temp. C: ");
-	lcdSerialWriteNumber(dht22GetTemperature());
+	lcdSerialWriteNumber(ABSSGetDHTTemperature());
 	lcdSerialWriteString("  ");
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[Cancel]: Back");
@@ -749,12 +746,12 @@ void ABUIMenu_Sensor_Humidity(){
 
 void ABUIMenu_Sensor_Direction(){
 	buttonsMask();
-	windVaneRefresh(WIND_VANE_BUFFER_SIZE);
+	ABSSRefreshWindVane();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Wind Vane Sensor:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Angle: ");
-	lcdSerialWriteNumber(windVaneGetAngle());
+	lcdSerialWriteNumber(ABSSGetWindVaneDirection());
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[Cancel]: Back");
 	buttonsUnmask();

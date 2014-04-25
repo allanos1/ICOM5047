@@ -389,11 +389,6 @@ void ABTestLCDHex(){
 void ABBmp085ArrayTest(int sensorIndex,int testNumber){
 	ABTestLCDInit();
 	lcdSerialClear();
-	lcdSerialWriteString("Running BMP tests");
-	lcdSerialCursorLine2();
-	lcdSerialWriteString("on UART0. Connect");
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("to UART terminal.");
 
 	//
 	// Begin Juan's Testing...
@@ -407,30 +402,28 @@ void ABBmp085ArrayTest(int sensorIndex,int testNumber){
 
 		bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, sensorIndex, true);
 
-		int i;
-		char data[18];
-		char number[2];
-		char pressureSensorNumber[20];
-
+		lcdSerialClear();
 		while(1){
 
 			bmp085ArrayDataRead();
-			stringFTOA(bmp085ArrayGetTemperature() , data);
-			stringITOA(bmp085ArrayGetCurrentSensor(), number);
-			stringConcat( "\nTemperature\0", number, pressureSensorNumber);
 
-			for(i = 0 ; pressureSensorNumber[i] != '\0'; i++){
-				uartWriteCharSync(UART0, pressureSensorNumber[i]);
-			}
-
-			uartWriteCharSync(UART0, *":");
-
-			for(i = 0 ; data[i] != '\0'; i++){
-				uartWriteCharSync(UART0, data[i]);
-			}
+			lcdSerialCursorLine1();
+			lcdSerialWriteString("MPSA Test:");
+			lcdSerialCursorLine2();
+			lcdSerialWriteString("Sensor: ");
+			lcdSerialWriteNumber(bmp085ArrayGetCurrentSensor());
+			lcdSerialWriteString("   ");
+			lcdSerialCursorLine3();
+			lcdSerialWriteString("T: ");
+			lcdSerialWriteNumber(bmp085ArrayGetTemperature());
+			lcdSerialWriteString("   ");
+			lcdSerialCursorLine4();
+			lcdSerialWriteString("P: ");
+			lcdSerialWriteNumber(bmp085ArrayGetPressure());
+			lcdSerialWriteString("   ");
 
 			bmp085ArrayNextSensor();
-			SysCtlDelay(100000);
+			SysCtlDelay(100000*20);
 		}
 	}
 	else if(testNumber == 1){

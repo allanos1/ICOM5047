@@ -42,13 +42,14 @@ void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPor
 	gpioSetDirection(gpioPortCLK, gpioPinCLK , GPIO_OUTPUT);
 	gpioSetDirection(gpioPortZF, gpioPinZF , GPIO_INPUT);
 
-	gpioSetInterruptMaskDisable(gpioPortZF,gpioPinZF , GPIO_ENABLE_INTERRUPTS); //Interrupt mask 410 //Detect Interrupt in Port D3
-	gpioSetInterruptBothEdges(gpioPortZF,gpioPinZF , GPIO_DELEGATE_EVENT_REGISTER);
-	gpioSetInterruptEvent(gpioPortZF,gpioPinZF , GPIO_INTERRUPT_RISING_EDGE);	//Event Register 40C //Detect Rising Edge
-	gpioSetInterruptEnable(gpioPortZF);
-	gpioHelperInterruptMasterEnable();
+	 //Interrupt mask 410 //Detect Interrupt in Port D3
+	//gpioSetInterruptBothEdges(gpioPortZF,gpioPinZF , GPIO_DELEGATE_EVENT_REGISTER);
+	//gpioSetInterruptEvent(gpioPortZF,gpioPinZF , GPIO_INTERRUPT_RISING_EDGE);	//Event Register 40C //Detect Rising Edge
+	//gpioSetInterruptEnable(gpioPortZF);
+	//gpioSetInterruptMaskDisable(gpioPortZF,gpioPinZF , GPIO_ENABLE_INTERRUPTS);
+	//gpioHelperInterruptMasterEnable();
 	if(testNumber){
-	bmp085ArraySensorSetup(bmp085ArraySensorQuantity);
+		bmp085ArraySensorSetup(bmp085ArraySensorQuantity);
 	}
 }
 
@@ -104,7 +105,7 @@ void bmp085ArrayClockToggle(){
 void bmp085ArrayNextSensor(){
 
 	if(bmp085ArrayCurrentSensor >= bmp085ArraySensorQuantity){
-		bmp085ArraySetCurrentSensor(bmp085ArrayCurrentSensor%bmp085ArraySensorQuantity);
+		bmp085ArraySetCurrentSensor(0);
 	}
 	else{
 		bmp085ArrayClockToggle();
@@ -145,7 +146,7 @@ void bmp085ArraySynchronize(){
 
 	gpioSetInterruptClear(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF,bmp085ArrayGPIO_Pin_ZF);	//Clear PD3 InterruptFlag
 
-	if(bmp085ArrayCurrentSensor != 0 && onPause){
+	if(bmp085ArrayCurrentSensor != 0 /*&& onPause*/){
 		bmp085ArrayCurrentSensor = 0;
 		errorFlag = 1;
 		onPause = 1;

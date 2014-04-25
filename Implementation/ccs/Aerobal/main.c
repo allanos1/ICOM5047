@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]){
 	//ABTestDHT();
 	//ABTestBinaryCounter();
 
-	//ABBmp085ArrayTest(2,0); //Remember startup_ccs.c! and above comment ABRun().
+	//ABBmp085ArrayTest(16,0);
 
 	//Easy Config.
 	//*************************

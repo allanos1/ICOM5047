@@ -17,6 +17,8 @@
 #include "bmp085.h"
 #include "bluetooth.h"
 #include "bmp085Array.h"
+#include "loadCell.h"
+#include "ABSensorServer.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -106,6 +108,7 @@ int ABUIMenu_Sensor_OptionsSize;
 
 /////////////////////////////////
 // API Layer 0
+void ABUIPowerWait(uint32_t waitTime);
 void ABUIInit();
 void ABUIInitModules();
 void ABUIPowerWait(uint32_t waitTime);
@@ -118,6 +121,7 @@ void ABUIButtonsSetNextState(uint32_t nextStateB0,uint32_t nextStateB1,uint32_t 
 void ABUIStateMachineBackgroundSetNextState(uint32_t nextState);
 void ABUIStateMachineBackgroundReset();
 void ABUIStateMachineBackgroundRun();
+
 /////////////////////////////////
 // API Layer 1
 void ABUIMenu_LoadBar_Write(int delay, int lines);
