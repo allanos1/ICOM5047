@@ -340,7 +340,7 @@ void ABTestLCDHex(){
 
 void ABTestPressureSensorArray(){
 
-	bmp085ArrayTest(16,3);
+	bmp085ArrayTest(16,0);
 }
 
 int main(int argc, const char * argv[]){

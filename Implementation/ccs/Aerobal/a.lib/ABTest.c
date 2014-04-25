@@ -268,7 +268,7 @@ void bmp085ArrayTest(int sensorIndex,int testNumber){
 			}
 
 			bmp085ArrayNextSensor();
-			SysCtlDelay(100000);
+			SysCtlDelay(10000000);
 		}
 	}
 	else if(testNumber == 1){
