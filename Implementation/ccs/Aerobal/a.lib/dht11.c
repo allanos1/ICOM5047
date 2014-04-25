@@ -83,6 +83,15 @@ int dhtIsActive(){
 int dht11getHumidity(){
 	return humidity;
 }
+
+float dht22GetHumidity(){
+	return (float) humidity + ((float) decimalHumidity)/10000000.0;
+}
+
+float dht22GetTemperature(){
+	return (float) temp + ((float) decimalTemp)/10000000.0;
+
+}
 int dht11getTemperature(){
 	return temp;
 }
@@ -112,7 +121,7 @@ void dhtSetup(){
 	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
 	IntEnable(INT_TIMER0A);
 
-	//Timer 1
+	//Timer 3
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
 	TimerConfigure(TIMER3_BASE, TIMER_CFG_PERIODIC);
 	TimerLoadSet(TIMER3_BASE, TIMER_A, SysCtlClockGet()/1000000);
@@ -128,7 +137,14 @@ void dhtSetup(){
 void dht11init(){
 
 	//HWREG(GPIO_PORTB | GPIO_OFFSET_DATA) |= 0x02; //Clean Data
+	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,GPIO_PIN_4);
 	GPIOPinWrite(GPIO_PORTA_BASE,0x10,0x10);
+
+	TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet());
+
+	IntMasterEnable();
+	IntEnable(INT_TIMER0A);
+	IntEnable(INT_TIMER3A);
 
 	responseStatusOk0 = 0;
 	responseStatusOk1 = 0;
@@ -145,6 +161,7 @@ void dht11init(){
 
 	sum = 0;
 
+	dht11ClockSetup();
 }
 void dht11getData(){
 
@@ -180,14 +197,14 @@ void dht11getData(){
 }
 
 void dht11request(){
-	switch(step){
+	switch
+	(step){
 	case REQUEST18MS:
 		//HWREG(GPIO_PORTA | GPIO_OFFSET_DATA) &= 0xFD;
 		GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,0x00);
 		TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/55); //Wait 18ms
 		TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 		TimerEnable(TIMER0_BASE, TIMER_A);
-
 		step++;
 		break;
 	case REQUEST40US:
@@ -196,7 +213,6 @@ void dht11request(){
 		TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/25000); //Wait 40us
 		TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 		TimerEnable(TIMER0_BASE, TIMER_A);
-
 		process++;
 		step = 0;
 		break;
@@ -244,8 +260,8 @@ void dht11responseStatus(){
 			; //DO NOTHING
 		}
 		else{
-			lcdClear();
-			lcdWriteLine("Bad Response.");
+			lcdSerialClear();
+			lcdSerialWriteString("Bad Response.");
 			SysCtlDelay(1000000);
 			dht11init();
 		}

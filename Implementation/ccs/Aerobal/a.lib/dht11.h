@@ -22,7 +22,7 @@
 
 /****Self Made Libraries****/
 #include "gpio.h"
-#include "lcd.h"
+#include "lcdSerial.h"
 
 /****************************************************/
 /*	Constant Definitions							*/
@@ -75,6 +75,13 @@ void readDataBit();
 void bitTimeElapsed();
 void decodeData();
 void convertTimetoBits();
+
+/////////////////////////////////
+// API Layer 1
+float dht22GetTemperature();
+float dht22GetHumidity();
+
+
 //****Helper Functions****/
 
 void dht11ClockSetup();

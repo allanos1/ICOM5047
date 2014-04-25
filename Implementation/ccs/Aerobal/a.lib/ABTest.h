@@ -22,18 +22,29 @@
 #include "relay.h"
 #include "bluetooth.h"
 #include "dht11.h"
-#include "loadCell.h"
+//#include "loadCell.h"
 #include "servo.h"
 #include "buttons.h"
 #include "bmp085Array.h"
+#include "lcdSerial.h"
+#include "anemometer.h"
+#include "adc.h"
+#include "windVane.h"
+#include "bmp085Array.h"
+#include "bluetooth.h"
+#include "gpio.h"
+#include "timers.h"
+#include "binCounter.h"
+#include "buttons.h"
+#include "ABUI.h"
+#include "string.h"
+#include "ABPortsInterruptHandler.h"
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
-/*
-tI2CMInstance i2cInstance;
-tBMP180 bmpInstance;
 
 void ABTestLCDInit();
+void ABTestDAC();
 void ABTestBluetooth();
 void ABTestBMPSpeed();
 void ABTestAnemometer();
@@ -42,15 +53,15 @@ void ABTestWindVane();
 void ABTimerTestInterruptHandler();
 void ABTimerTest();
 void ABTestBinaryCounter();
-
-*/
-/* Test Case
- *
- * Reads data from the desire quantity of sensors and send it through UART0
- * to the USB connected computer to be access by a serial monitor application.
- *
- */
-
-void bmp085ArrayTest(int sensorIndex,int testNumber);
+void ABTestButtonsInit();
+void ABTestButtonsPool();
+void ABTestButtonsT1();
+void ABTestButtonsT2();
+void ABTestButtonsCheckButton(char* msg, int result);
+void ABTestButtons();
+void ABTestUI();
+void ABTestDHT();
+void ABTestLCDHex();
+void ABBmp085ArrayTest(int sensorIndex,int testNumber);
 
 #endif /* ABTEST_H_ */

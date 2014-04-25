@@ -11,6 +11,14 @@
 #include "lcdSerial.h"
 #include "buttons.h"
 #include "string.h"
+#include "windVane.h"
+#include "anemometer.h"
+#include "dht11.h"
+#include "bmp085.h"
+#include "bluetooth.h"
+#include "bmp085Array.h"
+#include "loadCell.h"
+#include "ABSensorServer.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -36,12 +44,14 @@
 #define ABUI_STATE_SENSOR_4 0x0013
 #define ABUI_STATE_SENSOR_5 0x0014
 #define ABUI_STATE_SENSOR_6 0x0015
+#define ABUI_STATE_SENSOR_7 0x0016
 #define ABUI_STATE_BG_SENSOR_FORCE 0x0020
 #define ABUI_STATE_BG_SENSOR_PRESSURE 0x0021
 #define ABUI_STATE_BG_SENSOR_TEMPERATURE 0x0022
 #define ABUI_STATE_BG_SENSOR_VELOCITY 0x0023
 #define ABUI_STATE_BG_SENSOR_HUMIDITY 0x0024
 #define ABUI_STATE_BG_SENSOR_DIRECTION 0x0025
+#define ABUI_STATE_BG_SENSOR_MPSA 0x0026
 #define ABUI_STATE_EXP_1_SETUP_TIME 0x0100
 #define ABUI_STATE_EXP_2_SETUP_FREQUENCY 0x0110
 #define ABUI_STATE_EXP_3_SETUP_WIND_SPEED 0x0120
@@ -83,9 +93,25 @@ typedef struct {
 	int frequencyHz;
 	int windSpeed;
 } ABUIExpSetup;
+
+uint32_t ABUIButtonNextStateB0_UP;
+uint32_t ABUIButtonNextStateB1_DOWN;
+uint32_t ABUIButtonNextStateB2_ENTER;
+uint32_t ABUIButtonNextStateB3_CANCEL;
+uint32_t ABUIButtonNextStateB4_MENU;
+uint32_t ABUIButtonNextStateB5_PANIC;
+uint32_t ABUIStateMachineNextState;
+uint32_t ABUIBackgroundNextState;
+
+int ABUIMenu_Main_OptionsSize;
+int ABUIMenu_Sensor_OptionsSize;
+
 /////////////////////////////////
 // API Layer 0
+void ABUIPowerWait(uint32_t waitTime);
 void ABUIInit();
+void ABUIInitModules();
+void ABUIPowerWait(uint32_t waitTime);
 void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4);
 void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option);
 void ABUIStateMachineRun();
@@ -95,6 +121,7 @@ void ABUIButtonsSetNextState(uint32_t nextStateB0,uint32_t nextStateB1,uint32_t 
 void ABUIStateMachineBackgroundSetNextState(uint32_t nextState);
 void ABUIStateMachineBackgroundReset();
 void ABUIStateMachineBackgroundRun();
+
 /////////////////////////////////
 // API Layer 1
 void ABUIMenu_LoadBar_Write(int delay, int lines);
@@ -109,6 +136,7 @@ void ABUIMenu_Sensor_Temperature();
 void ABUIMenu_Sensor_Velocity();
 void ABUIMenu_Sensor_Humidity();
 void ABUIMenu_Sensor_Direction();
+void ABUIMenu_Sensor_MPSA();
 void ABUIMenu_Experiment_SetupTime();
 void ABUIMenu_Experiment_SetupFrequency();
 void ABUIMenu_Experiment_SetupWindSpeed();

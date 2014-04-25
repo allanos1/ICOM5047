@@ -89,10 +89,10 @@ void adcInterruptEnable(uint32_t adc);
 void adcFIFOEnable(uint32_t adc);
 void adcClockADCEnable();
 void adcClockNormalEnable();
-
 ////////////////////////////////////
 // API Layer 1
 void adcInit(uint32_t adc);
+void adcSetSequencerSize(uint32_t adc, int amount);
 void adcMuxPinSet(uint32_t adc, uint32_t adc_mux, uint32_t adc_pin_in);
 void adcRefresh();
 uint32_t adcDataGet(uint32_t adc_pin_in);

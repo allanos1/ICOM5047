@@ -19,6 +19,7 @@ void windVaneInit(uint32_t wind_vane_adc,uint32_t wind_vane_adc_mux, uint32_t wi
 	windVaneADCPin = wind_vane_adc_pin;
 	adcInit(wind_vane_adc);
 	adcMuxPinSet(wind_vane_adc, wind_vane_adc_mux, wind_vane_adc_pin);
+	adcSetSequencerSize(wind_vane_adc,1);
 	windVaneBuffer.count = 0;
 	windVaneBuffer.sum = 0;
 }
@@ -58,11 +59,18 @@ float windVaneGetADCRawValue(){
  * Returns the average angle value read from the wind vane
  * ADC module.
  *
- * Registered Max Value: 2956.0 -> Maps to  3.3V*2953/4096 = 2.3815429
- * Registered Min Value: 0.82 -> Maps to 3.3*0.82/4096 = 6.6mV
+ * Need Piecewise Characterization Documentation.
  *
- ******* Piecewise Characterization needed!
  */
 float windVaneGetAngle(){
-	return 0.1189*windVaneGetADCRawValue()+12.535;
+	float x = windVaneGetADCRawValue();
+
+	if(x <= 356) return 0.1271*x - 0.2542;
+	else if(x <= 753) return 0.1134*x + 4.6474;
+	else if(x <= 1133) return 0.1184*x + 0.8289;
+	else if(x <= 1514) return 0.1181*x + 1.1811;
+	else if(x <= 1908) return 0.1142*x + 7.0812;
+	else if(x <= 2315) return 0.1106*x + 14.042;
+	else if(x <= 2705) return 0.1154*x + 2.8846;
+	else return 0.1136*x + 7.6136;
 }
