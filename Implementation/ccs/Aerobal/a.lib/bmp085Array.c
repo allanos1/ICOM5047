@@ -193,11 +193,11 @@ void bmp085ArraySetCurrentSensor(int sensorIndex){
 
 	int i;
 
-		bmp085ArrayReset();
+	bmp085ArrayReset();
 
-		for(i=0;i<sensorIndex;i++){
-			bmp085ArrayClockToggle();
-		}
+	for(i=0;i<sensorIndex;i++){
+		bmp085ArrayClockToggle();
+	}
 
 	bmp085ArrayCurrentSensor = sensorIndex;
 

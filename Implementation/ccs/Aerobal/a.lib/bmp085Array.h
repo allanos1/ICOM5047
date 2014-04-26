@@ -33,6 +33,21 @@
 #include "timers.h"
 #include "ABPortsInterruptHandler.h"
 
+#define MPSA_PORTA GPIO_PORTA
+#define MPSA_PORTB GPIO_PORTB
+#define MPSA_PORTC GPIO_PORTC
+#define MPSA_PORTD GPIO_PORTD
+#define MPSA_PORTE GPIO_PORTE
+#define MPSA_PORTF GPIO_PORTF
+
+#define MPSA_PIN0 0x01
+#define MPSA_PIN1 0x02
+#define MPSA_PIN2 0x04
+#define MPSA_PIN3 0x08
+#define MPSA_PIN4 0x10
+#define MPSA_PIN5 0x20
+#define MPSA_PIN6 0x40
+#define MPSA_PIN7 0x80
 
 #define BMP085_I2C_ADDRESS  0x77
 

@@ -64,16 +64,6 @@ void ABUIInitModules(){
 	windVaneInit(WIND_VANE_ADC_0,WIND_VANE_ADC_MUX_0,WIND_VANE_ADC_PIN07_PD0);
 	ABUIPowerWait(4000000);
 	// Load Cells. TODO: Library.
-	/*
-	adcInit(ADC_0);
-	adcMuxPinSet(ADC_0,ADC_MUX_1,ADC_PIN_IN03_PE0);
-	adcMuxPinSet(ADC_0,ADC_MUX_2,ADC_PIN_IN02_PE1);
-	adcMuxPinSet(ADC_0,ADC_MUX_3,ADC_PIN_IN01_PE2);
-	adcMuxPinSet(ADC_0,ADC_MUX_4,ADC_PIN_IN00_PE3);
-	adcMuxPinSet(ADC_0,ADC_MUX_5,ADC_PIN_IN09_PE4);
-	adcMuxPinSet(ADC_0,ADC_MUX_6,ADC_PIN_IN08_PE5);
-	adcSetSequencerSize(ADC_0,7);
-	*/
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Load Cells... ");
 	loadCellInit();
@@ -87,10 +77,14 @@ void ABUIInitModules(){
 	//Pressure
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Sensor: Pressure...  ");
-	bmp085Init(BMP_I2C_MODULE_1);
+	//bmp085Init(BMP_I2C_MODULE_1);
 	ABUIPowerWait(4000000);
 	//MPSA
-	//Juan says to not do it right now.
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("Sensor: MPSA...  ");
+	bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
+	bmp085ArraySetCurrentSensor(0);
+	ABUIPowerWait(4000000);
 	//Bluetooth
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Com: Bluetooth...      ");
@@ -419,6 +413,8 @@ void ABUIStateMachineRun(){
 			);
 			buttonsEnable();
 			lcdSerialClear();
+			bmp085ArrayReset();
+			ABUIEventCounter=0;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_MPSA);
 			break;
 		case ABUI_STATE_EXP_1_SETUP_TIME:
@@ -760,7 +756,22 @@ void ABUIMenu_Sensor_Direction(){
 
 void ABUIMenu_Sensor_MPSA(){
 	buttonsMask();
-	ABUIMenu_Sensor_Stub("MPSA");
+	bmp085ArrayDataRead();
+	if(ABUIEventCounter % 2 == 0)lcdSerialCursorLine1();
+	if(ABUIEventCounter % 2 == 1)lcdSerialCursorLine3();
+	lcdSerialWriteString("T");
+	lcdSerialWriteNumberWithBounds(bmp085ArrayGetCurrentSensor(),2,0);
+	lcdSerialWriteString(": ");
+	lcdSerialWriteNumberWithBounds(bmp085ArrayGetTemperature(),0,3);
+	if(ABUIEventCounter % 2 == 0)lcdSerialCursorLine2();
+	if(ABUIEventCounter % 2 == 1)lcdSerialCursorLine4();
+	lcdSerialWriteString("P");
+	lcdSerialWriteNumberWithBounds(ABUIEventCounter,2,0);
+	lcdSerialWriteString(": ");
+	lcdSerialWriteNumberWithBounds(bmp085ArrayGetPressure(),0,3);
+	bmp085ArrayNextSensor();
+	ABUIEventCounter = (ABUIEventCounter +1) % 16;
+	SysCtlDelay(100000*20);
 	buttonsUnmask();
 }
 

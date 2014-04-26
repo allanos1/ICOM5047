@@ -407,6 +407,7 @@ void lcdSerialWriteNumberWithBounds(double number, int integerDigits, int ration
 		lcdSerialWriteSingleDigit(0);
 		cap /= 10;
 	}
+	if(number != 0)
 	lcdSerialWriteDigits((int)number);
 
 	//Decimal Part VVVVV
