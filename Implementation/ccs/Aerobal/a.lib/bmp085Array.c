@@ -42,12 +42,12 @@ void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPor
 	gpioSetDirection(gpioPortCLK, gpioPinCLK , GPIO_OUTPUT);
 	gpioSetDirection(gpioPortZF, gpioPinZF , GPIO_INPUT);
 
-	 //Interrupt mask 410 //Detect Interrupt in Port D3
+	//gpioSetInterruptMaskDisable(gpioPortZF,gpioPinZF , GPIO_ENABLE_INTERRUPTS); //Interrupt mask 410 //Detect Interrupt in Port D3
 	//gpioSetInterruptBothEdges(gpioPortZF,gpioPinZF , GPIO_DELEGATE_EVENT_REGISTER);
 	//gpioSetInterruptEvent(gpioPortZF,gpioPinZF , GPIO_INTERRUPT_RISING_EDGE);	//Event Register 40C //Detect Rising Edge
 	//gpioSetInterruptEnable(gpioPortZF);
-	//gpioSetInterruptMaskDisable(gpioPortZF,gpioPinZF , GPIO_ENABLE_INTERRUPTS);
 	//gpioHelperInterruptMasterEnable();
+
 	if(testNumber){
 		bmp085ArraySensorSetup(bmp085ArraySensorQuantity);
 	}
@@ -72,6 +72,7 @@ void bmp085ArraySensorSetup(int sensorQuantity){
 	for(i=0;i<=sensorQuantity;i++){
 		bmp085Init(AB_I2C_MODULE_1);
 		bmp085ArrayNextSensor();
+		SysCtlDelay(100000);
 	}
 
 	bmp085ArrayReset();
@@ -125,11 +126,8 @@ void bmp085ArrayNextSensor(){
  */
 void bmp085ArrayReset(){
 
-	while(!(gpioGetData(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF) && 0xFF)){
+	bmp085ArraySynchronize(); //Reset to First Array Sensor
 
-		bmp085ArrayClockToggle();
-
-	}
 	bmp085ArrayCurrentSensor = 0;
 }
 
@@ -144,12 +142,10 @@ void bmp085ArrayReset(){
  */
 void bmp085ArraySynchronize(){
 
-	gpioSetInterruptClear(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF,bmp085ArrayGPIO_Pin_ZF);	//Clear PD3 InterruptFlag
+	while(!(gpioGetData(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF) && 0xFF)){
 
-	if(bmp085ArrayCurrentSensor != 0 /*&& onPause*/){
-		bmp085ArrayCurrentSensor = 0;
-		errorFlag = 1;
-		onPause = 1;
+			bmp085ArrayClockToggle();
+
 	}
 
 }

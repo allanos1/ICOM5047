@@ -10,14 +10,13 @@ void ABRun(){
 
 int main(int argc, const char * argv[]){
 
-
+	ABBmp085ArrayTest(16,0);
 	//ABTestAnemometer();
 	//ABTestWindVane();
 	//ABTestADC();
 	//ABTestBluetooth();
 	//ABTestDHT();
 	//ABTestBinaryCounter();
-
 	//ABBmp085ArrayTest(16,0);
 
 	//Easy Config.
