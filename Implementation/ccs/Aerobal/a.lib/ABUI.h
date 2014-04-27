@@ -106,10 +106,12 @@ uint32_t ABUIBackgroundNextState;
 
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
+int ABUIEventCounter;
 
 /////////////////////////////////
 // API Layer 0
 void ABUIPowerWait(uint32_t waitTime);
+void ABUIWriteWait(int step);
 void ABUIInit();
 void ABUIInitModules();
 void ABUIPowerWait(uint32_t waitTime);

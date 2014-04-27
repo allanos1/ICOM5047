@@ -41,8 +41,8 @@
 
 #define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_1 0x00 //Offset for line 1.
 #define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_2 0x40 //Offset for line 2.
-#define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_3 0x54 //Offset for line 3.
-#define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_4 0x55 //Offset for line 4.
+#define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_3 0x14 //Offset for line 3.
+#define LCDSERIAL_COMMAND_CURSOR_POSITION_LINE_4 0x54 //Offset for line 4.
 
 #define LCDSERIAL_CONFIG_BAUD 0x01 //Baud hardware configuration command.
 #define LCDSERIAL_CONFIG_BAUD_9600 0x00 //Baud rate 9600.

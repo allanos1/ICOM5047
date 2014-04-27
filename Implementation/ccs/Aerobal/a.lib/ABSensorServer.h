@@ -13,6 +13,7 @@
 #include "anemometer.h"
 #include "windVane.h"
 #include "loadCell.h"
+#include "bmp085Array.h"
 
 #define ABSENSORSERVER_BUFFER_SIZE 20 //TODO: CHECK
 
@@ -24,6 +25,8 @@ void ABSSRefreshWindVane();
 void ABSSRefreshAnemometer();
 void ABSSRefreshWindVane();
 void ABSSRefreshLoadCells();
+void ABSSRefreshMPSA();
+void ABSSRefreshMPSAIndex(int index);
 
 //////////////////////////////////////
 // API Layer 1 - Getter SS Library
@@ -39,6 +42,8 @@ float ABSSGetLoadCellLiftUp();
 float ABSSGetLoadCellLiftDown();
 float ABSSGetLoadCellSideLeft();
 float ABSSGetLoadCellSideRight();
+float ABSSGetMPSAIndexPressure(int index);
+float ABSSGetMPSAIndexTemperature(int index);
 
 //////////////////////////////////////
 // API Layer 2 - Sensor Buffers

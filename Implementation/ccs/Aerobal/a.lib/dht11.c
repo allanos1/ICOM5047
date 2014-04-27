@@ -38,32 +38,9 @@ int dhtIsActive();
 /****************************************************/
 /*	Variable Definitions							*/
 /****************************************************/
-int responseStatusOk0 = 0;
-int responseStatusOk1 = 0;
 
-int dataBitReadStatus = 0;
-int dataBitsReceived[40];
-int count1uS = 0;
-
-int bitEntryTime = 0;
-int bitExitTime = 0;
-int bitTimingStatus = 0;
 int bitsReceivedTiming[40];
-
-int process = 0;
-int step = 0;
-
-int status0 = 0;
-int status1 = 0;
-
-int temp = 0;
-int decimalTemp = 0;
-int humidity = 0;
-int decimalHumidity = 0;
-int sumDataCheck = 0;
-
-int sum = 0;
-int _dhtActive;
+int dataBitsReceived[40];
 
 /****************************************************/
 /*				Function Definitions				*/
@@ -84,12 +61,47 @@ int dht11getHumidity(){
 	return humidity;
 }
 
-float dht22GetHumidity(){
-	return (float) humidity + ((float) decimalHumidity)/10000000.0;
+/*
+ * Counts the number of digits in a number.
+ */
+int dhtCountDigits(int number){
+	if(number < 10){
+		return 1;
+	}
+	int count = 0;
+	while(number > 0){
+		number /= 10;
+		count++;
+	}
+	return count;
+}
+/*
+ * Returns  the decimal part of the humidity measurement.
+ */
+float dhtGetDecimalHumidity(){
+	return ((float)decimalHumidity)/dhtPow(10,dhtCountDigits(decimalHumidity));
 }
 
+/*
+ * Returns the decimal part of the temperature measurement.
+ */
+float dhtGetDecimalTemperature(){
+	return ((float)decimalTemp)/dhtPow(10,dhtCountDigits(decimalTemp));
+}
+
+/* Computes the DHT22 formula according to the AdaFruit Library
+ * (formula is not specified in datasheet).
+ */
+float dht22GetHumidity(){
+	return ((((float) humidity) * 256.0) + ((float) decimalHumidity))/10.0;
+}
+
+/*
+ * Computes the DHT22 formula according to the AdaFruit Library.
+ * (formula is not specified in datasheet.
+ */
 float dht22GetTemperature(){
-	return (float) temp + ((float) decimalTemp)/10000000.0;
+	return (((temp&0x7F)*256.0) + decimalTemp)/10.0;
 
 }
 int dht11getTemperature(){
@@ -395,7 +407,7 @@ void dht11count1uS(){
 	count1uS++;
 }
 
-int pow(int base, int exponent){
+float dhtPow(int base, int exponent){
 	int j = 1;
 	int power = 1;
 
@@ -415,19 +427,19 @@ void decodeData(){
 	sumDataCheck = 0;
 
 	for(i = 0; i < 8;i++){
-		humidity += dataBitsReceived[7 - i] * pow(2,i);
+		humidity += dataBitsReceived[7 - i] * dhtPow(2,i);
 	}
 	for(i = 8; i < 16;i++){
-		decimalHumidity += dataBitsReceived[15 - i + 8] * pow(2,i - 8);
+		decimalHumidity += dataBitsReceived[15 - i + 8] * dhtPow(2,i - 8);
 	}
 	for(i = 16; i < 24;i++){
-		temp += dataBitsReceived[23 - i + 16] * pow(2,i - 16);
+		temp += dataBitsReceived[23 - i + 16] * dhtPow(2,i - 16);
 	}
 	for(i = 24; i < 32;i++){
-		decimalTemp += dataBitsReceived[31 - i + 24] * pow(2,i - 24);
+		decimalTemp += dataBitsReceived[31 - i + 24] * dhtPow(2,i - 24);
 	}
 	for(i = 32; i < 40;i++){
-		sumDataCheck += dataBitsReceived[39 - i + 32] * pow(2,i - 32);
+		sumDataCheck += dataBitsReceived[39 - i + 32] * dhtPow(2,i - 32);
 	}
 
 	sum = temp + decimalTemp + humidity + decimalHumidity;

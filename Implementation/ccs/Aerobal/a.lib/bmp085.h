@@ -29,6 +29,7 @@
 #include "sensorlib/bmp180.h"
 #include "i2c.h"
 
+
 #define BMP085_I2C_ADDRESS  0x77
 
 #define BMP_I2C_MODULE_0 AB_I2C_MODULE_0
@@ -36,6 +37,7 @@
 #define BMP_I2C_MODULE_2 AB_I2C_MODULE_2
 #define BMP_I2C_MODULE_3 AB_I2C_MODULE_3
 
+int bmpStructCounter;
 float bmpTemperature;
 float bmpPressure;
 

@@ -10,7 +10,7 @@ void ABRun(){
 
 int main(int argc, const char * argv[]){
 
-	ABBmp085ArrayTest(16,0);
+	//ABBmp085ArrayTest(16,0);
 	//ABTestAnemometer();
 	//ABTestWindVane();
 	//ABTestADC();

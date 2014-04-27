@@ -53,6 +53,31 @@
 /*	Function Definitions							*/
 /****************************************************/
 
+int responseStatusOk0;
+int responseStatusOk1;
+
+int dataBitReadStatus;
+int count1uS;
+
+int bitEntryTime;
+int bitExitTime;
+int bitTimingStatus;
+
+int process;
+int step;
+
+int status0;
+int status1;
+
+int temp;
+int decimalTemp;
+int humidity;
+int decimalHumidity;
+int sumDataCheck;
+
+int sum;
+int _dhtActive;
+
 /****Main Functions****/
 void dhtSetup();
 void dht11init();
@@ -80,7 +105,10 @@ void convertTimetoBits();
 // API Layer 1
 float dht22GetTemperature();
 float dht22GetHumidity();
-
+int dhtCountDigits(int number);
+float dhtGetDecimalHumidity();
+float dhtGetDecimalTemperature();
+float dhtPow(int base, int exponent);
 
 //****Helper Functions****/
 

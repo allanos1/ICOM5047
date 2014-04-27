@@ -19,6 +19,8 @@ ABSensorServerBuffer ABSSBufferLCLiftUp;
 ABSensorServerBuffer ABSSBufferLCLiftDown;
 ABSensorServerBuffer ABSSBufferLCSideLeft;
 ABSensorServerBuffer ABSSBufferLCSideRight;
+ABSensorServerBuffer ABSSBufferMPSAPressure[16];
+ABSensorServerBuffer ABSSBufferMPSATemperature[16];
 
 
 /////////////////////////////////////
@@ -111,6 +113,32 @@ void ABSSRefreshLoadCells(){
 
 }
 
+void ABSSRefreshMPSA(){
+	int i = 0;
+	bmp085ArrayReset();
+	for(i = 0; i < 16; i++){
+		//Refresh Sequence.
+		bmp085ArrayDataRead();
+
+		//Buffer Storage
+		ABSSBufferRefresh(&ABSSBufferMPSAPressure[i],bmp085ArrayGetPressure());
+		ABSSBufferRefresh(&ABSSBufferMPSATemperature[i],bmp085ArrayGetTemperature());
+
+		//Next Sensor
+		bmp085ArrayNextSensor();
+	}
+
+}
+
+void ABSSRefreshMPSAIndex(int index){
+	//Refresh Sequence.
+	bmp085ArrayDataReadPosition(index);
+	//Buffer Storage;
+	ABSSBufferRefresh(&ABSSBufferMPSAPressure[index],bmp085ArrayGetPressure());
+	ABSSBufferRefresh(&ABSSBufferMPSATemperature[index],bmp085ArrayGetTemperature());
+
+}
+
 /*
 void ABSSRefresh<x>(){
 	//Refresh Sequence.
@@ -169,5 +197,13 @@ float ABSSGetLoadCellSideLeft(){
 
 float ABSSGetLoadCellSideRight(){
 	return ABSSBufferLCSideRight.average;
+}
+
+float ABSSGetMPSAIndexPressure(int index){
+	return ABSSBufferMPSAPressure[index].average;
+}
+
+float ABSSGetMPSAIndexTemperature(int index){
+	return ABSSBufferMPSATemperature[index].average;
 }
 

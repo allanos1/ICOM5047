@@ -23,7 +23,6 @@ tBMP180 bmpAppInstance[20];
 volatile uint_fast8_t bmp085_dataFlag;
 
 int bmpI2CInited = 0;
-int bmpStructCounter = 0;
 int bmpCurrentInstance = 0;
 /* The BMP085 callback for the applicaton. Indicates that data
  * is ready.
