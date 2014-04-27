@@ -72,7 +72,7 @@ void ABSSRefreshDHT(){
 void ABSSRefreshBMP(){
 
 	//Refresh Sequence.
-	bmp085DataRead(0);
+	ABSSRefreshMPSAIndex(0);
 
 	//Buffer Storage:
 

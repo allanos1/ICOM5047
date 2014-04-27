@@ -695,7 +695,6 @@ void ABUIMenu_Sensor_Force(){
 
 void ABUIMenu_Sensor_Pressure(){
 	buttonsMask();
-	//bmp085DataRead(0);
 	ABSSRefreshBMP();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Pressure Sensor:");
