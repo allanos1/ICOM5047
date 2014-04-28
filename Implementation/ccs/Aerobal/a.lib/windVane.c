@@ -33,7 +33,7 @@ void windVaneInit(uint32_t wind_vane_adc,uint32_t wind_vane_adc_mux, uint32_t wi
  */
 void windVaneRefresh(int refreshSize){
 	adcRefresh();
-	if(!refreshSize || refreshSize > WIND_VANE_BUFFER_SIZE){
+	if(refreshSize <= 0 || refreshSize > WIND_VANE_BUFFER_SIZE){
 		refreshSize = WIND_VANE_BUFFER_SIZE;
 	}
 	int i = 0;

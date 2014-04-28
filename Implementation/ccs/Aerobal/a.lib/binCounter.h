@@ -29,6 +29,15 @@
 #define BINCOUNTER_FUNCTION_INCREASE 1
 #define BINCOUNTER_FUNCTION_DECREASE 2
 
+
+uint32_t _binCounterClockPort;
+uint32_t _binCounterClockPin;
+uint32_t _binCounterFunction0Port;
+uint32_t _binCounterFunction0Pin;
+uint32_t _binCounterFunction1Port;
+uint32_t _binCounterFunction1Pin;
+uint32_t _binCounterDirection;
+
 ///////////////////////////////////////
 // API Layer 0
 void binCounterInit(uint32_t binCounterGpioPortClk, uint32_t binCounterGpioPinClk,

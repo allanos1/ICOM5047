@@ -117,6 +117,7 @@ void ABSSRefreshMPSA(){
 	int i = 0;
 	bmp085ArrayReset();
 	for(i = 0; i < 16; i++){
+		SysCtlDelay(10000);
 		//Refresh Sequence.
 		bmp085ArrayDataRead();
 
@@ -207,3 +208,28 @@ float ABSSGetMPSAIndexTemperature(int index){
 	return ABSSBufferMPSATemperature[index].average;
 }
 
+/////////////////////////////////////////////
+// API Layer 2 - Automatization Routines
+
+void ABSSRefreshSequential(){
+	switch(ABSSSequentialRefreshCount){
+	case 0: ABSSRefreshDHT(); break;
+	case 1: ABSSRefreshBMP(); break;
+	case 2: ABSSRefreshWindVane(); break;
+	case 3: ABSSRefreshAnemometer(); break;
+	case 4: ABSSRefreshLoadCells(); break;
+	case 5: ABSSRefreshMPSA(); break;
+	default: ABSSSequentialRefreshCount=-1; break;
+	}
+	ABSSSequentialRefreshCount++;
+}
+
+void ABSSRefreshAll(){
+	ABSSRefreshDHT();
+	ABSSRefreshBMP();
+	ABSSRefreshWindVane();
+	ABSSRefreshAnemometer();
+	ABSSRefreshWindVane();
+	ABSSRefreshLoadCells();
+	ABSSRefreshMPSA();
+}

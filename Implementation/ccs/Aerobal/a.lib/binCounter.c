@@ -16,13 +16,6 @@
 /////////////////////////////////
 // API Layer 0
 
-uint32_t _binCounterClockPort;
-uint32_t _binCounterClockPin;
-uint32_t _binCounterFunction0Port;
-uint32_t _binCounterFunction0Pin;
-uint32_t _binCounterFunction1Port;
-uint32_t _binCounterFunction1Pin;
-uint32_t _binCounterDirection;
 
 /*Initializes the binCounter0808's GPIO Port and Pins for its clock, and its
  * clear and direction function.

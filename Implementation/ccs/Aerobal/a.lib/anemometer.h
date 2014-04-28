@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #include "gpio.h"
 #include "timers.h"
-#include "ABTimer.h"
+#include "ABTime.h"
 
 
 #define ANEMOMETER_PORTA GPIO_PORTA

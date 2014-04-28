@@ -16,14 +16,7 @@ tI2CMInstance bmpI2cModuleInstance;
  */
 tBMP180 bmpAppInstance[20];
 
-/*
- * Data flag to indicate that data is ready. Used by the
- * BMP085 App Callback.
- */
-volatile uint_fast8_t bmp085_dataFlag;
 
-int bmpI2CInited = 0;
-int bmpCurrentInstance = 0;
 /* The BMP085 callback for the applicaton. Indicates that data
  * is ready.
  */

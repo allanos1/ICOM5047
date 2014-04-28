@@ -185,7 +185,9 @@ void bluetoothGetQuery(char * value){
 	value[i-1] = '\0';
 }
 
-
+int bluetoothGetNumber(char value){
+	return value-48;
+}
 /*
  * Evaluates the string coming from the
  * bluetooth communication.
@@ -199,10 +201,15 @@ void bluetoothEvaluateBuffer(char *buffer){
 
 	if(stringEquals("ps",command)){
 		if(bluetoothIsQuery(value)){
+			int pNumber = bluetoothGetNumber(value[1]);
+			if(value[2]!='\0'){
+				pNumber*=10;
+				pNumber+bluetoothGetNumber(value[2]);
+			}
 			//GET PS ok!
 			bluetoothSendAck();
 			//TODO: Set Tunnel Pressure Sensor.
-			stringFTOA(ABSSGetBMPPressure(),out);
+			stringFTOA(ABSSGetMPSAIndexPressure(pNumber),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			bluetoothSendAck();
@@ -215,7 +222,6 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET HM ok!
 			bluetoothSendAck();
-			ABSSRefreshDHT();
 			stringFTOA(ABSSGetDHTHumidity(),out);
 			//stringFTOA(143.987/(float)bluetoothEventCount,out);
 			bluetoothSendString(out);

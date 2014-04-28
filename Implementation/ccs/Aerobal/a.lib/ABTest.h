@@ -15,15 +15,14 @@
 #include "driverlib/rom.h"
 #include "driverlib/timer.h"
 #include "driverlib/sysctl.h"
-//
+
+//Self Made
 #include "gpio.h"
-#include "lcd.h"
 #include "bmp085.h"
 #include "relay.h"
 #include "bluetooth.h"
 #include "dht11.h"
-//#include "loadCell.h"
-#include "servo.h"
+#include "loadCell.h"
 #include "buttons.h"
 #include "bmp085Array.h"
 #include "lcdSerial.h"
@@ -38,7 +37,6 @@
 #include "buttons.h"
 #include "ABUI.h"
 #include "string.h"
-#include "ABPortsInterruptHandler.h"
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0

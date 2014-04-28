@@ -22,16 +22,7 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
-//#include "driverlib/debug.h"
-//#include "inc/hw_types.h"
-//#include "driverlib/systick.h"
-//#include "driverlib/uart.h"
-//#include "utils/uartstdio.h"
-//#include "sensorlib/hw_bmp180.h"
-//#include "sensorlib/i2cm_drv.h"
-//#include "sensorlib/bmp180.h"
 #include "timers.h"
-#include "ABPortsInterruptHandler.h"
 
 #define MPSA_PORTA GPIO_PORTA
 #define MPSA_PORTB GPIO_PORTB
@@ -60,6 +51,10 @@ float bmp085ArrayTemperature;
 float bmp085ArrayPressure;
 int bmp085ArrayCurrentSensor;
 int bmp085ArraySensorQuantity;
+
+
+int bmp085ArrayOnPause;
+char bmp085ArrayErrorFlag;
 
 void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity, int testNumber);
 void bmp085ArraySensorSetup(int sensorQuantity);

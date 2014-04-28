@@ -10,8 +10,6 @@
 
 #include "buttons.h"
 
-uint32_t buttonsLastPressed ;
-
 /*********************************
  * Interrupt handler.
  * | extern void buttonsInterruptHandler();

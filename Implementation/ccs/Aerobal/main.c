@@ -1,9 +1,11 @@
 #include "a.lib/ABTest.h"
 #include "a.lib/ABUI.h"
+#include "a.lib/ABSensorServer.h"
 
 void ABRun(){
 	ABUIInit();
 	while(1){
+		ABSSRefreshSequential();
 		ABUIStateMachineBackgroundRun();
 	}
 }

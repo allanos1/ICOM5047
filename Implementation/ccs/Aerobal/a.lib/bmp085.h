@@ -40,6 +40,9 @@
 int bmpStructCounter;
 float bmpTemperature;
 float bmpPressure;
+int bmpI2CInited;
+int bmpCurrentInstance;
+volatile uint_fast8_t bmp085_dataFlag;
 
 void bmp085AppCallback(void* bmp085CallbackData, uint_fast8_t bmp085Status);
 void bmp085I2CIntHandler(void);

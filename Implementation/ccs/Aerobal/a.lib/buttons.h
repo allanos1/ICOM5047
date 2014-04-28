@@ -8,7 +8,6 @@
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
 
-#include "lcd.h"
 #include "gpio.h"
 
 #define BUTTONS_ENABLED_BUTTONS 0x3F
@@ -20,6 +19,8 @@
 #define BUTTONS_B3 0x08
 #define BUTTONS_B4 0x10
 #define BUTTONS_B5 0x20
+
+uint32_t buttonsLastPressed ;
 
 void buttonsInit();
 void buttonsInterruptHandler();

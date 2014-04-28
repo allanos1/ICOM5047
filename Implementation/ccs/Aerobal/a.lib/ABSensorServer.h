@@ -17,13 +17,22 @@
 
 #define ABSENSORSERVER_BUFFER_SIZE 20 //TODO: CHECK
 
+
+typedef struct {
+	float sum ;
+	float buffer[ABSENSORSERVER_BUFFER_SIZE];
+	int count;
+	float average;
+} ABSensorServerBuffer;
+
+int ABSSSequentialRefreshCount;
+
 //////////////////////////////////////
 // API Layer 0 - Refresh SS Library
 void ABSSRefreshDHT();
 void ABSSRefreshBMP();
 void ABSSRefreshWindVane();
 void ABSSRefreshAnemometer();
-void ABSSRefreshWindVane();
 void ABSSRefreshLoadCells();
 void ABSSRefreshMPSA();
 void ABSSRefreshMPSAIndex(int index);
@@ -46,13 +55,9 @@ float ABSSGetMPSAIndexPressure(int index);
 float ABSSGetMPSAIndexTemperature(int index);
 
 //////////////////////////////////////
-// API Layer 2 - Sensor Buffers
-typedef struct {
-	float sum ;
-	float buffer[ABSENSORSERVER_BUFFER_SIZE];
-	int count;
-	float average;
-} ABSensorServerBuffer;
+// API Layer 2 - Automatization Routines
+void ABSSRefreshSequential();
+void ABSSRefreshAll();
 
 
 

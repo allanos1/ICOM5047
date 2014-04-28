@@ -629,8 +629,6 @@ void ABUIMenu_Load_Write(){
 
 }
 
-
-//int ABUIMenu_Main_OptionsSize = 3;
 int ABUIMenu_Main_Size(){
 	return ABUIMenu_Main_OptionsSize;
 }

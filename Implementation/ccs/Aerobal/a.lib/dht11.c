@@ -121,6 +121,7 @@ void dhtSetup(){
 
 	dht11ClockSetup();
 
+
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 	GPIOPinConfigure(GPIO_PORTA_BASE);
 	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,GPIO_PIN_4);
@@ -176,6 +177,7 @@ void dht11init(){
 	dht11ClockSetup();
 }
 void dht11getData(){
+
 
 	dhtSetActive();
 	TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);

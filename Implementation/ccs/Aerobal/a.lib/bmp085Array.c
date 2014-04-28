@@ -7,8 +7,6 @@
 
 #include "bmp085Array.h"
 
-int onPause = 1;
-char errorFlag = 0;
 
 /* Initializes the BMP085Array. Automatically enables interrupts,
  * and the GPIO Peripherals that are indicated by the input parameters.
@@ -24,7 +22,6 @@ char errorFlag = 0;
  *
  */
 void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPortZF, uint32_t gpioPinZF, int sensorQuantity,int testNumber){
-
 	bmp085ArrayGPIO_PortCLK = gpioPortCLK;
 	bmp085ArrayGPIO_Pin_CLK = gpioPinCLK;
 	bmp085ArrayGPIO_PortZF = gpioPortZF;
@@ -42,11 +39,8 @@ void bmp085ArrayInit(uint32_t gpioPortCLK, uint32_t gpioPinCLK, uint32_t gpioPor
 	gpioSetDirection(gpioPortCLK, gpioPinCLK , GPIO_OUTPUT);
 	gpioSetDirection(gpioPortZF, gpioPinZF , GPIO_INPUT);
 
-	//gpioSetInterruptMaskDisable(gpioPortZF,gpioPinZF , GPIO_ENABLE_INTERRUPTS); //Interrupt mask 410 //Detect Interrupt in Port D3
-	//gpioSetInterruptBothEdges(gpioPortZF,gpioPinZF , GPIO_DELEGATE_EVENT_REGISTER);
-	//gpioSetInterruptEvent(gpioPortZF,gpioPinZF , GPIO_INTERRUPT_RISING_EDGE);	//Event Register 40C //Detect Rising Edge
-	//gpioSetInterruptEnable(gpioPortZF);
-	//gpioHelperInterruptMasterEnable();
+	bmp085ArrayOnPause = 1;
+	bmp085ArrayErrorFlag = 0;
 
 	if(testNumber){
 		bmp085ArraySensorSetup(bmp085ArraySensorQuantity);
@@ -141,13 +135,9 @@ void bmp085ArrayReset(){
  *
  */
 void bmp085ArraySynchronize(){
-
 	while(!(gpioGetData(bmp085ArrayGPIO_PortZF,bmp085ArrayGPIO_Pin_ZF) && 0xFF)){
-
-			bmp085ArrayClockToggle();
-
+		bmp085ArrayClockToggle();
 	}
-
 }
 
 /* Setter function for sensorQuantity variable.
@@ -239,10 +229,8 @@ void bmp085ArrayDataRead(){
  *  none
  */
 void bmp085ArrayDataReadPosition(int sensorIndex){
-
 	bmp085ArraySetCurrentSensor(sensorIndex);
 	bmp085ArrayDataRead();
-
 }
 
 /* Returns the temperature stored in the library. To obtain
@@ -284,14 +272,13 @@ float bmp085ArrayGetPressure(){
  */
 void bmp085StartDataAdquisition(int frequency){
 	bmp085ArrayReset();
-	onPause = 0;
+	bmp085ArrayOnPause = 0;
 	timerSetup(TIMER_0,TIMER_CONFIG_PERIODIC, frequency);
 	timerStart(TIMER_0);
 }
 
 void bmp085ArraySampleTimer(){
 	timerInterruptClear(TIMER_0);
-
 	if(bmp085ArrayCurrentSensor <= bmp085ArraySensorQuantity){
 	bmp085ArrayNextSensor();
 	}
