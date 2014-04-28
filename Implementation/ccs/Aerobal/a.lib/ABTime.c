@@ -1,5 +1,5 @@
 /*
- * ABTimer.c
+ * ABTime.c
  *
  * Aerobal Time Library
  *
@@ -18,36 +18,36 @@
  * resolution. One resolution is compatible which is
  * the milliseconds, as of v0.5.
  */
-void ABTimerInit(uint32_t baseTimer, uint32_t resolution){
+void ABTimeInit(uint32_t baseTimer, uint32_t resolution){
 
-	ABTimerResolution = resolution;
-	ABTimer_BaseTimer = baseTimer;
-	switch(ABTimerResolution){
+	ABTimeResolution = resolution;
+	ABTime_BaseTimer = baseTimer;
+	switch(ABTimeResolution){
 		//case ABTIMER_RESOLUTION_MICROSECOND:
 		//	timerSetup(baseTimer,TIMER_CONFIG_PERIODIC,1000000);
 		//	break;
-		case ABTIMER_RESOLUTION_MILLISECOND:
+		case ABTIME_RESOLUTION_MILLISECOND:
 			timerSetup(baseTimer, TIMER_CONFIG_PERIODIC,1000);
 			break;
 		default:
 			return;
 	}
-	ABTimerTimeMain = ABTimerTimeMake();
-	ABTimerInited = 1;
+	ABTimeTimeMain = ABTimeTimeMake();
+	ABTimeInited = 1;
 }
 
 /******************************
  * Interrupt Handler:
- * | extern void ABTimerInterruptHandler_Counter();
+ * | extern void ABTimeInterruptHandler_Counter();
  * ****************************
  *
  * Interrupt handler that increases the resolution size
- * count in ABTimer's Main Timer.
+ * count in ABTime's Main Timer.
  *
  */
-void ABTimerInterruptHandler_Counter(){
-	ABTimerTimeMain = ABTimerIncrease(ABTimerTimeMain);
-	timerInterruptClear(ABTimer_BaseTimer);
+void ABTimeInterruptHandler_Counter(){
+	ABTimeTimeMain = ABTimeIncrease(ABTimeTimeMain);
+	timerInterruptClear(ABTime_BaseTimer);
 }
 
 /*
@@ -58,7 +58,7 @@ void ABTimerInterruptHandler_Counter(){
  * Returns:
  * 	ABTime
  */
-ABTime ABTimerTimeMake(){
+ABTime ABTimeTimeMake(){
 	ABTime abt ;
 	abt.hours = 0;
 	abt.minutes = 0;
@@ -73,11 +73,11 @@ ABTime ABTimerTimeMake(){
  * Increases by one resolution unit a given
  * ABTime struct and returns the result.
  */
-ABTime ABTimerIncrease(ABTime time){
-	switch(ABTimerResolution){
-		//case ABTIMER_RESOLUTION_MICROSECOND:
+ABTime ABTimeIncrease(ABTime time){
+	switch(ABTimeResolution){
+		//case ABTime_RESOLUTION_MICROSECOND:
 		//	time.microseconds+=1; break;
-		case ABTIMER_RESOLUTION_MILLISECOND: time.milliseconds+=1; break;
+		case ABTIME_RESOLUTION_MILLISECOND: time.milliseconds+=1; break;
 		default: break;
 	}
 	if(time.microseconds >= 1000){
@@ -103,13 +103,13 @@ ABTime ABTimerIncrease(ABTime time){
 /*
  * Returns the current time as reference.
  */
-ABTime  ABTimerGetReference(){
+ABTime  ABTimeGetReference(){
 	ABTime referenceTime;
-	referenceTime.hours = ABTimerTimeMain.hours;
-	referenceTime.minutes = ABTimerTimeMain.minutes;
-	referenceTime.seconds = ABTimerTimeMain.seconds;
-	referenceTime.milliseconds = ABTimerTimeMain.milliseconds;
-	referenceTime.microseconds = ABTimerTimeMain.microseconds;
+	referenceTime.hours = ABTimeTimeMain.hours;
+	referenceTime.minutes = ABTimeTimeMain.minutes;
+	referenceTime.seconds = ABTimeTimeMain.seconds;
+	referenceTime.milliseconds = ABTimeTimeMain.milliseconds;
+	referenceTime.microseconds = ABTimeTimeMain.microseconds;
 	return referenceTime;
 }
 
@@ -117,7 +117,7 @@ ABTime  ABTimerGetReference(){
  * Calculates the delta from two time structs
  * and returns the result as an ABTime Struct.
  */
-ABTime ABTimerGetDelta(ABTime time1, ABTime time2){
+ABTime ABTimeGetDelta(ABTime time1, ABTime time2){
 	ABTime delta;
 	delta.hours = time1.hours - time2.hours;
 	delta.minutes = time1.minutes - time2.minutes;
@@ -150,7 +150,7 @@ ABTime ABTimerGetDelta(ABTime time1, ABTime time2){
  * is less than time two, 0 if equal, and 1 if
  * greater.
  */
-int ABTimerCompare(ABTime time1, ABTime time2){
+int ABTimeCompare(ABTime time1, ABTime time2){
 	if(time1.hours > time2.hours) return 1;
 	else if(time1.hours == time2.hours){
 		if(time1.minutes > time2.minutes) return 1;
@@ -176,53 +176,53 @@ int ABTimerCompare(ABTime time1, ABTime time2){
 
 /*
  * Returns the main ABTime struct used
- * by the ABTimer module library.
+ * by the ABTime module library.
  */
-ABTime ABTimerTimeMainGet(){
-	return ABTimerTimeMain;
+ABTime ABTimeTimeMainGet(){
+	return ABTimeTimeMain;
 }
 
 /*
  * Starts the timer that counts at the given
  * initialization resolution rate.
  */
-void ABTimerStart(){
-	if(ABTimerInited){
-		timerStart(ABTimer_BaseTimer);
-		ABTimerRunning = 1;
+void ABTimeStart(){
+	if(ABTimeInited){
+		timerStart(ABTime_BaseTimer);
+		ABTimeRunning = 1;
 	}
 }
 
 /*
  * Stops the timer.
  */
-void ABTimerStop(){
-	if(ABTimerInited){
-		timerStop(ABTimer_BaseTimer);
-		ABTimerRunning = 0;
+void ABTimeStop(){
+	if(ABTimeInited){
+		timerStop(ABTime_BaseTimer);
+		ABTimeRunning = 0;
 	}
 }
 
 /*
  * Resets the timer value.
  */
-void ABTimerReset(){
-	ABTimerTimeMain = ABTimerTimeMake();
+void ABTimeReset(){
+	ABTimeTimeMain = ABTimeTimeMake();
 }
 
 /*
- * Returns whether the ABTimer module is
+ * Returns whether the ABTime module is
  * running.
  */
-int ABTimerIsRunning(){
-	return ABTimerRunning;
+int ABTimeIsRunning(){
+	return ABTimeRunning;
 }
 
 /*
- * Returns whether the ABTimer module has
+ * Returns whether the ABTime module has
  * been inited.
  */
-int ABTimerIsInited(){
-	return ABTimerInited;
+int ABTimeIsInited(){
+	return ABTimeInited;
 }
 

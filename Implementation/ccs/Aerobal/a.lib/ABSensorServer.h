@@ -15,7 +15,7 @@
 #include "loadCell.h"
 #include "bmp085Array.h"
 
-#define ABSENSORSERVER_BUFFER_SIZE 20 //TODO: CHECK
+#define ABSENSORSERVER_BUFFER_SIZE 10 //TODO: CHECK
 
 
 typedef struct {

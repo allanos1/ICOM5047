@@ -20,6 +20,7 @@
 #include "loadCell.h"
 #include "ABSensorServer.h"
 #include "bmp085Array.h"
+#include "ABTime.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1

@@ -48,11 +48,6 @@
 /****************************************************/
 /*	Variable Definitions							*/
 /****************************************************/
-//NONE
-
-/****************************************************/
-/*	Function Definitions							*/
-/****************************************************/
 
 int responseStatusOk0;
 int responseStatusOk1;
@@ -79,20 +74,24 @@ int sumDataCheck;
 int sum;
 int _dhtActive;
 
+ABTime dhtRefreshT0;
+
+/****************************************************/
+/*	Function Definitions							*/
+/****************************************************/
+
+
 /****Main Functions****/
 void dhtSetup();
 void dht11init();
+int dht11getHumidity();
+int dht11getTemperature();
 void dht11getData();
 void dht11request();
 void dht11response();
 void dht11responseStatus();
 void dht11dataReading();
 void dht11count1uS();
-void dhtSetActive();
-void dhtSetInactive();
-int dhtIsActive();
-int dht11getHumidity();
-int dht11getTemperature();
 void initTimer0Module();
 void initTimer1Module();
 void initTimeControlModule();
@@ -101,7 +100,10 @@ void readDataBit();
 void bitTimeElapsed();
 void decodeData();
 void convertTimetoBits();
-
+void dhtSetActive();
+void dhtSetInactive();
+int dhtIsActive();
+int dht11CanRefresh();
 /////////////////////////////////
 // API Layer 1
 float dht22GetTemperature();

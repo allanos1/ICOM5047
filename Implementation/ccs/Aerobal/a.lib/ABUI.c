@@ -100,7 +100,7 @@ void ABUIInitModules(){
 	//Timer Library
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("Time: ABTimer...    ");
-	//ABTimerStart();
+	ABTimeStart();
 	ABUIWriteWait(12);
 	ABUIPowerWait(4000000);
 	//Bluetooth

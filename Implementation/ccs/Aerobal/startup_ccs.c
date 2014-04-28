@@ -51,7 +51,7 @@ extern void dht11getData();
 extern void dht11count1uS();
 extern void readDataBit();
 extern void buttonsInterruptHandler();
-extern void ABTimerInterruptHandler_Counter();
+extern void ABTimeInterruptHandler_Counter();
 extern void anemometerInterruptHandler_Counter();
 extern void bmp085ArraySampleTimer();
 extern void ABTimerTestInterruptHandler();
@@ -184,7 +184,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     0,                                      // Reserved
     0,                                      // Reserved
-    ABTimerInterruptHandler_Counter,        // Timer 5 subtimer A
+    ABTimeInterruptHandler_Counter,        // Timer 5 subtimer A
     IntDefaultHandler,                      // Timer 5 subtimer B
     IntDefaultHandler,                      // Wide Timer 0 subtimer A
     IntDefaultHandler,                      // Wide Timer 0 subtimer B

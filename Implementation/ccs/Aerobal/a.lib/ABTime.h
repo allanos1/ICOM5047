@@ -1,29 +1,29 @@
 /*
- * ABTimer.h
+ * ABTime.h
  *
  *  Created on: Mar 28, 2014
  *      Author: Administrator
  */
 
-#ifndef ABTIMER_H_
-#define ABTIMER_H_
+#ifndef ABTIME_H_
+#define ABTIME_H_
 
 #include <stdlib.h>
 #include "timers.h"
 
-#define ABTIMER_BASE_TIMER_0 TIMER_0
-#define ABTIMER_BASE_TIMER_1 TIMER_1
-#define ABTIMER_BASE_TIMER_2 TIMER_2
-#define ABTIMER_BASE_TIMER_3 TIMER_3
-#define ABTIMER_BASE_TIMER_4 TIMER_4
-#define ABTIMER_BASE_TIMER_5 TIMER_5
+#define ABTIME_BASE_TIMER_0 TIMER_0
+#define ABTIME_BASE_TIMER_1 TIMER_1
+#define ABTIME_BASE_TIMER_2 TIMER_2
+#define ABTIME_BASE_TIMER_3 TIMER_3
+#define ABTIME_BASE_TIMER_4 TIMER_4
+#define ABTIME_BASE_TIMER_5 TIMER_5
 
-//#define ABTIMER_RESOLUTION_MICROSECOND 0 // TODO: Does not work.
-#define ABTIMER_RESOLUTION_MILLISECOND 1
+//#define ABTIME_RESOLUTION_MICROSECOND 0 // TODO: Does not work.
+#define ABTIME_RESOLUTION_MILLISECOND 1
 
 ////////////////////////////////////
 // API Layer 0
-typedef struct abtime {
+typedef struct {
 	int hours;
 	int minutes;
 	int seconds;
@@ -31,24 +31,24 @@ typedef struct abtime {
 	int microseconds;
 } ABTime;
 
-uint32_t ABTimer_BaseTimer;
-ABTime ABTimerTimeMain ;
-int ABTimerResolution;
-int ABTimerRunning;
-int ABTimerInited;
+uint32_t ABTime_BaseTimer;
+ABTime ABTimeTimeMain ;
+int ABTimeResolution;
+int ABTimeRunning;
+int ABTimeInited;
 
-void ABTimerInit(uint32_t timer, uint32_t frequency);
-void ABTimerInterruptHandler_Counter();
-ABTime ABTimerTimeMake();
-ABTime ABTimerIncrease(ABTime time);
-ABTime ABTimerGetReference();
-ABTime ABTimerGetDelta(ABTime time1, ABTime time2);
-int ABTimerCompare(ABTime time1, ABTime time2);
-ABTime ABTimerTimeMainGet();
-void ABTimerStart();
-void ABTimerStop();
-void ABTimerReset();
-int ABTimerIsRunning();
-int ABTimerIsInited();
+void ABTimeInit(uint32_t timer, uint32_t frequency);
+void ABTimeInterruptHandler_Counter();
+ABTime ABTimeTimeMake();
+ABTime ABTimeIncrease(ABTime time);
+ABTime ABTimeGetReference();
+ABTime ABTimeGetDelta(ABTime time1, ABTime time2);
+int ABTimeCompare(ABTime time1, ABTime time2);
+ABTime ABTimeTimeMainGet();
+void ABTimeStart();
+void ABTimeStop();
+void ABTimeReset();
+int ABTimeIsRunning();
+int ABTimeIsInited();
 
-#endif /* ABTIMER_H_ */
+#endif /* ABTIME_H_ */

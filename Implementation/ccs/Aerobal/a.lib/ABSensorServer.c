@@ -55,10 +55,12 @@ void ABSSBufferRefresh(ABSensorServerBuffer* sensorBuffer, float newValue){
 void ABSSRefreshDHT(){
 
 	//Refresh Sequence.
-	SysCtlDelay(3000000);
-	dht11init();
-	dht11getData();
-	while(dhtIsActive());
+	if(dht11CanRefresh()){
+		//SysCtlDelay(3000000);
+		dht11init();
+		dht11getData();
+		while(dhtIsActive());
+	}
 
 	//Buffer Storage:
 

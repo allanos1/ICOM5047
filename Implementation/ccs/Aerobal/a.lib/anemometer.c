@@ -30,10 +30,10 @@ FloatBuffer anemometerBuffer ;
  */
 void anemometerInit(uint32_t gpioPort, uint32_t gpioPin){
 
-	if(!ABTimerIsInited()){
+	if(!ABTimeIsInited()){
 		anemometerPort = gpioPort;
 		anemometerPin = gpioPin;
-		ABTimerInit(ABTIMER_BASE_TIMER_5,ABTIMER_RESOLUTION_MILLISECOND);
+		ABTimeInit(ABTIME_BASE_TIMER_5,ABTIME_RESOLUTION_MILLISECOND);
 		gpioSetMasterEnable(anemometerPort);
 		gpioSetDigitalEnable(anemometerPort,anemometerPin,0xFF);
 		gpioSetDirection(anemometerPort,anemometerPin,0x00);
@@ -63,8 +63,8 @@ void anemometerInterruptHandler_Counter(){
  */
 void anemometerStart(){
 	anemometerCount = 0;
-	anemometerT0 = ABTimerGetReference();
-	if(!ABTimerIsRunning()) ABTimerStart();
+	anemometerT0 = ABTimeGetReference();
+	if(!ABTimeIsRunning()) ABTimeStart();
 	gpioSetInterruptMaskDisable(anemometerPort,anemometerPin,0xFF);
 
 }
@@ -75,7 +75,7 @@ void anemometerStart(){
  */
 void anemometerEnd(){
 	gpioSetInterruptMaskDisable(anemometerPort,anemometerPin,0x00);
-	anemometerT1 = ABTimerGetReference();
+	anemometerT1 = ABTimeGetReference();
 
 }
 /*
@@ -94,7 +94,7 @@ int anemometerGetCount(){
  * end.
  */
 ABTime anemometerGetTimeDelta(){
-	return ABTimerGetDelta(anemometerT1,anemometerT0);
+	return ABTimeGetDelta(anemometerT1,anemometerT0);
 }
 
 /*
@@ -102,7 +102,7 @@ ABTime anemometerGetTimeDelta(){
  *this function is executed.
  */
 ABTime anemometerGetCurrentDelta(){
-	return ABTimerGetDelta(ABTimerGetReference(),anemometerT0);
+	return ABTimeGetDelta(ABTimeGetReference(),anemometerT0);
 }
 
 /*
@@ -129,7 +129,7 @@ float anemometerSpeedGet(){
  * function is executed.
  */
 void anemometerReset(){
-	anemometerT0 = ABTimerGetReference();
+	anemometerT0 = ABTimeGetReference();
 	anemometerCount = 0;
 }
 

@@ -15,24 +15,7 @@
 
 #include "dht11.h"
 
-void dht11init();
-void dht11getData();
-void dht11request();
-void dht11response();
-void dht11responseStatus();
-void dht11dataReading();
-void dht11count1uS();
-void initTimer0Module();
-void initTimer1Module();
-void initTimeControlModule();
-void endTimeControlModule();
-void readDataBit();
-void bitTimeElapsed();
-void decodeData();
-void convertTimetoBits();
-void dhtSetActive();
-void dhtSetInactive();
-int dhtIsActive();
+
 
 
 /****************************************************/
@@ -121,6 +104,7 @@ void dhtSetup(){
 
 	dht11ClockSetup();
 
+	dhtRefreshT0 = ABTimeGetReference();
 
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 	GPIOPinConfigure(GPIO_PORTA_BASE);
@@ -183,36 +167,36 @@ void dht11getData(){
 	TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 
 	switch(process){
-
 	case REQUEST:
 		dht11request();
-
 		break;
-
 	case RESPONSE:
-
 		dht11response();
-
 		break;
-
 	case CHECKIFRESPONSEISOK:
-
 		dht11responseStatus();
-
 		break;
-
 	case DATAREADING:
-
 		dht11dataReading();
 		break;
-
 	}
 
 }
 
+int dht11CanRefresh(){
+	ABTime t2 = ABTimeGetReference();
+	ABTime delta = ABTimeGetDelta(t2,dhtRefreshT0);
+	if(delta.seconds >= 2){
+		dhtRefreshT0 = ABTimeGetReference();
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
 void dht11request(){
-	switch
-	(step){
+	switch(step){
 	case REQUEST18MS:
 		//HWREG(GPIO_PORTA | GPIO_OFFSET_DATA) &= 0xFD;
 		GPIOPinWrite(GPIO_PORTA_BASE,GPIO_PIN_4,0x00);
