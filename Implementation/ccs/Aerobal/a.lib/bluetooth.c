@@ -204,15 +204,21 @@ void bluetoothEvaluateBuffer(char *buffer){
 			int pNumber = bluetoothGetNumber(value[1]);
 			if(value[2]!='\0'){
 				pNumber*=10;
-				pNumber+bluetoothGetNumber(value[2]);
+				pNumber+=bluetoothGetNumber(value[2]);
+			}
+			if(pNumber < 0 || pNumber > 15){
+				pNumber = 0;
 			}
 			//GET PS ok!
-			bluetoothSendAck();
 			//TODO: Set Tunnel Pressure Sensor.
+			bluetoothSendString("ps");
+			stringITOA(pNumber,out);
+			bluetoothSendString(out);
+			bluetoothSendString("=");
 			stringFTOA(ABSSGetMPSAIndexPressure(pNumber),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			bluetoothSendAck();
+			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
@@ -221,12 +227,12 @@ void bluetoothEvaluateBuffer(char *buffer){
 	else if(stringEquals("hm",command)){
 		if(bluetoothIsQuery(value)){
 			//GET HM ok!
-			bluetoothSendAck();
+			bluetoothSendString("hm=");
 			stringFTOA(ABSSGetDHTHumidity(),out);
 			//stringFTOA(143.987/(float)bluetoothEventCount,out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			bluetoothSendAck();
+			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
@@ -235,38 +241,64 @@ void bluetoothEvaluateBuffer(char *buffer){
 	else if(stringEquals("tm",command)){
 		if(bluetoothIsQuery(value)){
 			//GET TM ok!
-			bluetoothSendAck();
-			stringFTOA(ABSSGetBMPTemperature(),out);
+			int pNumber = bluetoothGetNumber(value[1]);
+			if(value[2]!='\0'){
+				pNumber*=10;
+				pNumber+=bluetoothGetNumber(value[2]);
+			}
+			if(pNumber < 0 || pNumber > 15){
+				pNumber = 0;
+			}
+			//GET PS ok!
+			//TODO: Set Tunnel Pressure Sensor.
+			bluetoothSendString("tm");
+			stringITOA(pNumber,out);
+			bluetoothSendString(out);
+			bluetoothSendString("=");
+			stringFTOA(ABSSGetMPSAIndexTemperature(pNumber),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			bluetoothSendAck();
+			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
 		}
 
 	}
-	else if(stringEquals("sp",command)){
-			if(bluetoothIsQuery(value)){
-				//GET WD ok!
-				bluetoothSendAck();
-				stringFTOA(ABSSGetAnemometerSpeed(),out);
-				bluetoothSendString(out);
-				bluetoothSendTerminator();
-				bluetoothSendAck();
-			}
-			else{
-				bluetoothSendErr();
-			}
+	else if(stringEquals("spda",command)){
+		if(bluetoothIsQuery(value)){
+			//GET WD ok!
+			bluetoothSendString("spda=");
+			stringFTOA(ABSSGetAnemometerSpeed(),out);
+			bluetoothSendString(out);
+			bluetoothSendTerminator();
+			//bluetoothSendAck();
 		}
+		else{
+			bluetoothSendErr();
+		}
+	}
+	else if(stringEquals("spdp",command)){
+		if(bluetoothIsQuery(value)){
+			//GET WD ok!
+			bluetoothSendString("spdp=");
+			stringFTOA(ABSSGetMPSAIndexPressure(1) - ABSSGetMPSAIndexPressure(0),out);
+			bluetoothSendString(out);
+			bluetoothSendTerminator();
+			//bluetoothSendAck();
+		}
+		else{
+			bluetoothSendErr();
+		}
+	}
 	else if(stringEquals("wd",command)){
 		if(bluetoothIsQuery(value)){
 			//GET WD ok!
-			bluetoothSendAck();
+			bluetoothSendString("wd=");
 			stringFTOA(ABSSGetWindVaneDirection(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			bluetoothSendAck();
+			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
@@ -275,32 +307,32 @@ void bluetoothEvaluateBuffer(char *buffer){
 	else if(stringEquals("lc",command)){
 		if(bluetoothIsQuery(value)){
 			if(stringEquals(value,"?front")){
-				bluetoothSendAck();
+				bluetoothSendString("lcf=");
 				stringFTOA(ABSSGetLoadCellDragFront(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?back")){
-				bluetoothSendAck();
+				bluetoothSendString("lcb=");
 				stringFTOA(ABSSGetLoadCellDragBack(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?up")){
-				bluetoothSendAck();
+				bluetoothSendString("lcu=");
 				stringFTOA(ABSSGetLoadCellLiftUp(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?down")){
-				bluetoothSendAck();
+				bluetoothSendString("lcd=");
 				stringFTOA(ABSSGetLoadCellLiftDown(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?left")){
-				bluetoothSendAck();
+				bluetoothSendString("lcl=");
 				stringFTOA(ABSSGetLoadCellSideLeft(),out);
 				bluetoothSendString(out);
 			}
 			else if(stringEquals(value,"?right")){
-				bluetoothSendAck();
+				bluetoothSendString("lcr=");
 				stringFTOA(ABSSGetLoadCellSideRight(),out);
 				bluetoothSendString(out);
 			}
@@ -309,17 +341,6 @@ void bluetoothEvaluateBuffer(char *buffer){
 				return;
 			}
 			bluetoothSendTerminator();
-			bluetoothSendAck();
-		}
-		else{
-			bluetoothSendErr();
-		}
-	}
-	else if(stringEquals("pss",command)){
-		if(bluetoothIsQuery(value)){
-			//GET PSS ok!
-			bluetoothSendAck();
-			bluetoothSendErr();
 		}
 		else{
 			bluetoothSendErr();
@@ -327,11 +348,17 @@ void bluetoothEvaluateBuffer(char *buffer){
 	}
 	else if(stringEquals("fan",command)){
 		//SET FAN ok!
-		if(stringEquals(value,"on") || stringEquals(value,"off")){
+		if(stringEquals(value,"on")){
 			bluetoothSendString("fan:");
 			bluetoothSendString(value);
+			bluetoothSettingFanStatus = 1;
 			bluetoothSendTerminator();
-			bluetoothSendAck();
+		}
+		else if(stringEquals(value,"off")){
+			bluetoothSendString("fan:");
+			bluetoothSendString(value);
+			bluetoothSettingFanStatus = 0;
+			bluetoothSendTerminator();
 		}
 		else{
 			bluetoothSendErr();
@@ -341,36 +368,43 @@ void bluetoothEvaluateBuffer(char *buffer){
 		//Write to LCD Line 1 ok!
 		bluetoothSendString("line1=");
 		bluetoothSendString(value);
+		lcdSerialCursorLine1();
+		lcdSerialWriteString(value);
 		bluetoothSendTerminator();
-		bluetoothSendAck();
+		//bluetoothSendAck();
 	}
 	else if(stringEquals("ln2",command)){
 		//Write to LCD Line 2
 		bluetoothSendString("line2=");
 		bluetoothSendString(value);
+		lcdSerialCursorLine2();
+		lcdSerialWriteString(value);
 		bluetoothSendTerminator();
-		bluetoothSendAck();
+		//bluetoothSendAck();
 	}
 	else if(stringEquals("ln3",command)){
 		//Write to LCD Line 3
 		bluetoothSendString("line3=");
 		bluetoothSendString(value);
+		lcdSerialCursorLine3();
+		lcdSerialWriteString(value);
 		bluetoothSendTerminator();
-		bluetoothSendAck();
+		//bluetoothSendAck();
 	}
 	else if(stringEquals("ln4",command)){
 		//Write to LCD Line 4 ok
 		bluetoothSendString("line4=");
 		bluetoothSendString(value);
+		lcdSerialCursorLine4();
+		lcdSerialWriteString(value);
 		bluetoothSendTerminator();
-		bluetoothSendAck();
 	}
 	else if(stringEquals("ws",command)){
 		//Set WS ok
 		bluetoothSendString("ws:");
+		bluetoothSettingExpWindSpeed = stringSTOD(value);
 		bluetoothSendString(value);
 		bluetoothSendTerminator();
-		bluetoothSendAck();
 	}
 	else if(stringEquals("ack",command)){
 		//Not Sure Yet.

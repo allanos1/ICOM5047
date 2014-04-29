@@ -51,6 +51,9 @@ uint8_t bluetoothReset;
 char bluetoothBuffer[20];
 int bluetoothState;
 
+int bluetoothSettingFanStatus ;
+float bluetoothSettingExpWindSpeed ;
+
 ///////////////////////////////////
 // API Layer 0
 void bluetoothInit(uint32_t uart, uint32_t uartBaud);
