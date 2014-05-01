@@ -37,10 +37,13 @@
 #include "buttons.h"
 #include "ABUI.h"
 #include "string.h"
+#include "ABTime.h"
+#include "motorAtv.h"
 
 #define ABTEST_BOOL_TRUE 1
 #define ABTEST_BOOL_FALSE 0
 
+void ABTestFanRelay();
 void ABTestLCDInit();
 void ABTestDAC();
 void ABTestBluetooth();

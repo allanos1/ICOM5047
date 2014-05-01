@@ -22,6 +22,8 @@ void relayInit(){
 	gpioSetMasterEnable(AB_MODULE_RELAY_PORT);
 	gpioSetDigitalEnable(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0xFF);
 	gpioSetDirection(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0xFF);
+	ABTimeInit(ABTIME_BASE_TIMER_5,ABTIME_RESOLUTION_MILLISECOND);
+	ABTimeStart();
 }
 
 //Toggles the state of the relay;
@@ -36,7 +38,10 @@ void relayToggle(){
 }
 
 void relayOn(){
-	gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0x00);
+	gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PIN_STOP,0x00);
+	ABTime t0 = ABTimeGetReference();
+	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < 1);
+	gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PIN_START,0x00);
 }
 
 void relayOff(){

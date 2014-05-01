@@ -43,9 +43,9 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
  */
 void bluetoothInterruptHandler(void){
 	uartInterruptClear(bluetoothUART);
-	gpioSetData(GPIO_PORTF,0x0C,0x0C);
-	SysCtlDelay(100000);
-	gpioSetData(GPIO_PORTF,0x0C,0x00);
+	//gpioSetData(GPIO_PORTF,0x0C,0x0C);
+	//SysCtlDelay(100000);
+	//gpioSetData(GPIO_PORTF,0x0C,0x00);
 	bluetoothEventCount++;
 	while(uartHasAvailable(bluetoothUART)){
 		//uartWriteCharSync(bluetoothUART,uartGetBufferCharSync(bluetoothUART));

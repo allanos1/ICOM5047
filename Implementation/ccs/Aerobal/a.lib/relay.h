@@ -13,9 +13,12 @@
 #define RELAY_H_
 
 #include "gpio.h"
+#include "ABTime.h"
 
 #define AB_MODULE_RELAY_PORT GPIO_PORTA
-#define AB_MODULE_RELAY_PINS 0x20 //PIN A5
+#define AB_MODULE_RELAY_PINS 0x0C //PIN A2 A3
+#define AB_MODULE_RELAY_PIN_STOP 0x04
+#define AB_MODULE_RELAY_PIN_START 0x08
 
 void relayInit();
 void relayToggle();

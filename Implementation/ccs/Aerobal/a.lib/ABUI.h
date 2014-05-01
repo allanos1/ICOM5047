@@ -21,6 +21,8 @@
 #include "ABSensorServer.h"
 #include "bmp085Array.h"
 #include "ABTime.h"
+#include "relay.h"
+#include "motorAtv.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -40,6 +42,7 @@
 #define ABUI_STATE_MAIN_1 0x0000
 #define ABUI_STATE_MAIN_2 0x0001
 #define ABUI_STATE_MAIN_3 0x0002
+#define ABUI_STATE_MAIN_4 0x0003
 #define ABUI_STATE_SENSOR_1 0x0010
 #define ABUI_STATE_SENSOR_2 0x0011
 #define ABUI_STATE_SENSOR_3 0x0012
@@ -66,6 +69,7 @@
 #define ABUI_STATE_EXP_10_OBJECT_WIND_CONFIRM 0x0180
 #define ABUI_STATE_EXP_11_OBJECT_WIND_MEASURE 0x0190
 #define ABUI_STATE_EXP_12_DISPLAY_RESULTS 0x01A0
+
 #define ABUI_STATE_BG_SM_FG_RUN 0x200
 #define ABUI_STATE_BG_EXP_SETUP_TIME 0x0210
 #define ABUI_STATE_BG_EXP_SETUP_FREQUENCY 0x0220
@@ -76,12 +80,9 @@
 #define ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND 0x0270
 #define ABUI_STATE_BG_EXP_RESULTS 0x0280
 
+#define ABUI_STATE_CONTROL_1 0x0400
+#define ABUI_STATE_BG_CTL_FAN 0x0480
 
-#define ABUI_STATE_EXP_1 0x0230
-#define ABUI_STATE_EXP_2 0x0240
-#define ABUI_STATE_EXP_3 0x0250
-#define ABUI_STATE_EXP_4 0x0260
-#define ABUI_STATE_EXP_5 0x0270
 #define ABUI_STATE_BUTTON_INCREASE 0xFD00
 #define ABUI_STATE_BUTTON_DECREASE 0xFD01
 #define ABUI_STATE_BTCONTROL 0xFE00
@@ -102,12 +103,16 @@ uint32_t ABUIButtonNextStateB2_ENTER;
 uint32_t ABUIButtonNextStateB3_CANCEL;
 uint32_t ABUIButtonNextStateB4_MENU;
 uint32_t ABUIButtonNextStateB5_PANIC;
+
 uint32_t ABUIStateMachineNextState;
 uint32_t ABUIBackgroundNextState;
 
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
+int ABUIMenu_Control_OptionsSize;
+
 int ABUIEventCounter;
+int ABUIResetMotor;
 
 /////////////////////////////////
 // API Layer 0
@@ -134,6 +139,10 @@ int ABUIMenu_Main_Size();
 void ABUIMenu_Main_Write(int option);
 int ABUIMenu_Sensor_Size();
 void ABUIMenu_Sensor_Write(int option);
+int ABUIMenu_Control_Size();
+void ABUIMenu_Control_Write(int option);
+
+//Sensors
 void ABUIMenu_Sensor_Force();
 void ABUIMenu_Sensor_Pressure();
 void ABUIMenu_Sensor_Temperature();
@@ -141,6 +150,11 @@ void ABUIMenu_Sensor_Velocity();
 void ABUIMenu_Sensor_Humidity();
 void ABUIMenu_Sensor_Direction();
 void ABUIMenu_Sensor_MPSA();
+
+//Control
+void ABUIMenu_Control_Motor();
+
+//Experiment
 void ABUIMenu_Experiment_SetupTime();
 void ABUIMenu_Experiment_SetupFrequency();
 void ABUIMenu_Experiment_SetupWindSpeed();
@@ -154,4 +168,5 @@ void ABUIMenu_Experiment_CalibrationObject();
 void ABUIMenu_Experiment_MeasureConfirm();
 void ABUIMenu_Experiment_Measure();
 void ABUIMenu_Experiment_ShowResults();
+
 #endif /* ABUI_H_ */

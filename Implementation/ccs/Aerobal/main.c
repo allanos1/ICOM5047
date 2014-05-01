@@ -5,13 +5,14 @@
 void ABRun(){
 	ABUIInit();
 	while(1){
-		ABSSRefreshSequential();
+		//ABSSRefreshSequential();
 		ABUIStateMachineBackgroundRun();
 	}
 }
 
 int main(int argc, const char * argv[]){
 
+	//ABTestFanRelay();
 	//ABBmp085ArrayTest(16,0);
 	//ABTestAnemometer();
 	//ABTestWindVane();

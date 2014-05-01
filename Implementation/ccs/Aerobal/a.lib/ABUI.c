@@ -50,6 +50,15 @@ void ABUIWriteWait(int step){
 
 }
 
+void ABUIWriteLoadMessage(char *message){
+	lcdSerialCursorLine3();
+	lcdSerialWriteString(message);
+	int i = stringLength(message);
+	for(; i<20;i++){
+		lcdSerialWriteString(" ");
+	}
+}
+
 
 void ABUIInitModules(){
 	//LEDs
@@ -66,67 +75,67 @@ void ABUIInitModules(){
 	ABUIWriteWait(0);
 	ABUIPowerWait(4000000);
 	//Anemometer
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Anemometer...");
+	ABUIWriteLoadMessage("Sensor: Anemometer...");
 	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
-	ABUIWriteWait(2);
+	ABUIWriteWait(1);
 	ABUIPowerWait(4000000);
 	//Wind Vane
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Wind Vane... ");
+	ABUIWriteLoadMessage("Sensor: Wind Vane...");
 	windVaneInit(WIND_VANE_ADC_0,WIND_VANE_ADC_MUX_0,WIND_VANE_ADC_PIN07_PD0);
-	ABUIWriteWait(4);
+	ABUIWriteWait(2);
 	ABUIPowerWait(4000000);
 	// Load Cells. TODO: Library.
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Load Cells... ");
+	ABUIWriteLoadMessage("Sensor: Load Cells...");
 	loadCellInit();
 	loadCellRefreshSetSize(10);
-	ABUIWriteWait(6);
+	ABUIWriteWait(3);
 	ABUIPowerWait(4000000);
 	//Humidity
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: Humidity...   ");
+	ABUIWriteLoadMessage("Sensor: Humidity...");
 	dhtSetup();
-	ABUIWriteWait(8);
+	ABUIWriteWait(4);
 	ABUIPowerWait(4000000);
 	//MPSA
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Sensor: MPSA...  ");
-	bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
-	bmp085ArraySetCurrentSensor(0);
-	ABUIWriteWait(10);
+	ABUIWriteLoadMessage("Sensor: MPSA...");
+	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
+	//bmp085ArraySetCurrentSensor(0);
+	ABUIWriteWait(5);
+	ABUIPowerWait(4000000);
+	//Relay
+	ABUIWriteLoadMessage("Control: Motor...");
+	motorAtvInit();
+	ABUIWriteWait(6);
 	ABUIPowerWait(4000000);
 	//Timer Library
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Time: ABTimer...    ");
+	ABUIWriteLoadMessage("Time: ABTime...");
 	ABTimeStart();
 	ABUIWriteWait(12);
 	ABUIPowerWait(4000000);
 	//Bluetooth
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Com: Bluetooth...      ");
+	ABUIWriteLoadMessage("Com: Bluetooth...");
 	bluetoothInit(BLUETOOTH_UART4,BLUETOOTH_UART_BAUD_9600);
 	ABUIWriteWait(13);
 	ABUIPowerWait(4000000);
 	//State Machine
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("UI: State Machine...   ");
+	ABUIWriteLoadMessage("UI: State Machine...");
 	ABUIStateMachineNextState = ABUI_STATE_MAIN_1;
 	ABUIBackgroundNextState = ABUI_STATE_NONE;
 	ABUIWriteWait(14);
 	ABUIPowerWait(4000000);
 	//Buttons
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("UI: Buttons...         ");
+	ABUIWriteLoadMessage("UI: Buttons...");
 	ABUIButtonNextStateB0_UP = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB1_DOWN = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB2_ENTER = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB3_CANCEL = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB4_MENU = ABUI_STATE_MAIN_1;
 	ABUIButtonNextStateB5_PANIC = ABUI_STATE_MAIN_1;
-	ABUIMenu_Main_OptionsSize = 3;
+
+	//UI Config
+	ABUIMenu_Main_OptionsSize = 4;
 	ABUIMenu_Sensor_OptionsSize = 7;
+	ABUIMenu_Control_OptionsSize = 1;
+
 	ABUIWriteWait(16);
 	ABUIPowerWait(4000000);
 	buttonsInit();
@@ -170,13 +179,27 @@ void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option)
 			lcdSerialWriteString(options[option]);
 		}
 		else{
-			if(option == optionSize-3)
-			lcdSerialWriteString(">");
-			else
-			lcdSerialWriteString(" ");
-			lcdSerialWriteNumber(optionSize-2);
-			lcdSerialWriteString(".");
-			lcdSerialWriteString(options[optionSize-3]);
+			////////
+			if(optionSize >= 3){
+				if(option == optionSize-3)
+				lcdSerialWriteString(">");
+				else
+				lcdSerialWriteString(" ");
+				lcdSerialWriteNumber(optionSize-2);
+				lcdSerialWriteString(".");
+				lcdSerialWriteString(options[optionSize-3]);
+			}
+			else{
+				if(option < optionSize && optionSize > 0){
+					if(option == 0)
+					lcdSerialWriteString(">");
+					else
+					lcdSerialWriteString(" ");
+					lcdSerialWriteNumber(1);
+					lcdSerialWriteString(".");
+					lcdSerialWriteString(options[0]);
+				}
+			}
 		}
 	}
 
@@ -190,13 +213,26 @@ void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option)
 			lcdSerialWriteString(options[option+1]);
 		}
 		else{
-			if(option == optionSize-2)
-			lcdSerialWriteString(">");
-			else
-			lcdSerialWriteString(" ");
-			lcdSerialWriteNumber(optionSize-1);
-			lcdSerialWriteString(".");
-			lcdSerialWriteString(options[optionSize-2]);
+			if(optionSize >= 3){
+				if(option == optionSize-2)
+				lcdSerialWriteString(">");
+				else
+				lcdSerialWriteString(" ");
+				lcdSerialWriteNumber(optionSize-1);
+				lcdSerialWriteString(".");
+				lcdSerialWriteString(options[optionSize-2]);
+			}
+			else{
+				if(option < optionSize && optionSize > 1){
+					if(option == 1)
+					lcdSerialWriteString(">");
+					else
+					lcdSerialWriteString(" ");
+					lcdSerialWriteNumber(2);
+					lcdSerialWriteString(".");
+					lcdSerialWriteString(options[1]);
+				}
+			}
 		}
 	}
 
@@ -210,13 +246,18 @@ void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option)
 			lcdSerialWriteString(options[option+2]);
 		}
 		else{
-			if(option == optionSize-1)
-			lcdSerialWriteString(">");
-			else
-			lcdSerialWriteString(" ");
-			lcdSerialWriteNumber(optionSize);
-			lcdSerialWriteString(".");
-			lcdSerialWriteString(options[optionSize-1]);
+			if(optionSize >= 3){
+				if(option == optionSize-1)
+				lcdSerialWriteString(">");
+				else
+				lcdSerialWriteString(" ");
+				lcdSerialWriteNumber(optionSize);
+				lcdSerialWriteString(".");
+				lcdSerialWriteString(options[optionSize-1]);
+			}
+			else{
+
+			}
 		}
 	}
 
@@ -273,6 +314,10 @@ void ABUIStateMachineRun(){
 		lcdSerialClear();
 		ABUIStateMachineBackgroundReset();
 	}
+	if(ABUIResetMotor){
+		motorAtvTurnOff();
+		ABUIResetMotor=0;
+	}
 	switch(ABUIStateMachineNextState){
 		case ABUI_STATE_MAIN_1:
 			ABUIMenu_Main_Write(0xF & ABUI_STATE_MAIN_1);
@@ -288,16 +333,25 @@ void ABUIStateMachineRun(){
 			ABUIButtonsSetNextState(
 					ABUI_STATE_MAIN_1,ABUI_STATE_MAIN_3,
 					ABUI_STATE_SENSOR_1,ABUI_STATE_MAIN_2,
-					ABUI_STATE_MAIN_2,ABUI_STATE_PANIC
+					ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
 			break;
-			case ABUI_STATE_MAIN_3:
+		case ABUI_STATE_MAIN_3:
 			ABUIMenu_Main_Write(0xF & ABUI_STATE_MAIN_3);
 			ABUIButtonsSetNextState(
-					ABUI_STATE_MAIN_2,ABUI_STATE_MAIN_3,
-					ABUI_STATE_SENSOR_1,ABUI_STATE_MAIN_3,
-					ABUI_STATE_MAIN_3,ABUI_STATE_PANIC
+					ABUI_STATE_MAIN_2,ABUI_STATE_MAIN_4,
+					ABUI_STATE_CONTROL_1,ABUI_STATE_MAIN_3,
+					ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			break;
+		case ABUI_STATE_MAIN_4:
+			ABUIMenu_Main_Write(0xF & ABUI_STATE_MAIN_4);
+			ABUIButtonsSetNextState(
+					ABUI_STATE_MAIN_3,ABUI_STATE_MAIN_4,
+					ABUI_STATE_MAIN_4,ABUI_STATE_MAIN_4,
+					ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
 			break;
@@ -361,6 +415,15 @@ void ABUIStateMachineRun(){
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_6,ABUI_STATE_SENSOR_7,
 				ABUI_STATE_BG_SENSOR_MPSA,ABUI_STATE_MAIN_1,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			break;
+		case ABUI_STATE_CONTROL_1:
+			ABUIMenu_Control_Write(0xF & ABUI_STATE_CONTROL_1);
+			ABUIButtonsSetNextState(
+				ABUI_STATE_CONTROL_1,ABUI_STATE_CONTROL_1,
+				ABUI_STATE_BG_CTL_FAN,ABUI_STATE_MAIN_1,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -437,6 +500,21 @@ void ABUIStateMachineRun(){
 			bmp085ArrayReset();
 			ABUIEventCounter=0;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_MPSA);
+			break;
+		case ABUI_STATE_BG_CTL_FAN:
+			ABUIButtonsSetNextState(
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
+				ABUI_STATE_NONE,ABUI_STATE_CONTROL_1,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			lcdSerialClear();
+			anemometerStart();
+			motorAtvSpeedReset();
+			motorAtvTurnOn();
+			ABUIEventCounter=0;
+			ABUIResetMotor=1;
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_FAN);
 			break;
 		case ABUI_STATE_EXP_1_SETUP_TIME:
 			ABUIButtonsSetNextState(
@@ -555,6 +633,7 @@ void ABUIStateMachineRun(){
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_RESULTS);
 			buttonsEnable();
 			break;
+
 		case ABUI_STATE_BUTTON_INCREASE:
 			ABUIEventCounter++;
 			buttonsEnable();
@@ -566,8 +645,21 @@ void ABUIStateMachineRun(){
 		case ABUI_STATE_BTCONTROL:
 			break;
 		case ABUI_STATE_PANIC:
+			relayOff();
+			motorAtvSpeedReset();
 			lcdSerialClear();
-			lcdSerialWriteString("PANIC State");
+			lcdSerialWriteString("AeroBal PANIC State");
+			lcdSerialCursorLine2();
+			lcdSerialWriteString("====================");
+			lcdSerialCursorLine3();
+			lcdSerialWriteString("VFD has been reset.");
+			lcdSerialCursorLine4();
+			lcdSerialWriteString("Press any button.");
+			ABUIButtonsSetNextState(
+						ABUI_STATE_MAIN_1,ABUI_STATE_MAIN_1,
+						ABUI_STATE_MAIN_1,ABUI_STATE_MAIN_1,
+						ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
 			buttonsEnable();
 			break;
 		case ABUI_STATE_ERROR:
@@ -575,8 +667,6 @@ void ABUIStateMachineRun(){
 		case ABUI_STATE_RESET:
 			break;
 		case ABUI_STATE_NONE:
-			//lcdSerialClear();
-			//lcdSerialWriteString("Reset State");
 			buttonsEnable();
 			break;
 
@@ -600,6 +690,7 @@ void ABUIStateMachineBackgroundRun(){
 		case ABUI_STATE_BG_EXP_CALIBRATE_OBJECT: ABUIMenu_Experiment_CalibrationObject(); break;
 		case ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND: ABUIMenu_Experiment_Measure(); break;
 		case ABUI_STATE_BG_EXP_RESULTS: ABUIMenu_Experiment_ShowResults(); break;
+		case ABUI_STATE_BG_CTL_FAN: ABUIMenu_Control_Motor(); break;
 		case ABUI_STATE_NONE: break;
 	}
 }
@@ -636,7 +727,7 @@ int ABUIMenu_Main_Size(){
 void ABUIMenu_Main_Write(int option){
 
 	char* ABUIMenu_Main_Options[] = {
-		"Begin Experiment", "View Sensors", "System Test"
+		"Begin Experiment", "View Sensors", "View Controls", "System Test"
 	};
 	ABUIWriteMenu("Principal Menu:",ABUIMenu_Main_Options,ABUIMenu_Main_OptionsSize,option);
 }
@@ -652,6 +743,17 @@ void ABUIMenu_Sensor_Write(int option){
 		"Pressure Array"
 	};
 	ABUIWriteMenu("View Sensors:",ABUIMenu_Sensor_Options,ABUIMenu_Sensor_OptionsSize,option);
+}
+
+int ABUIMenu_Control_Size(){
+	return ABUIMenu_Control_OptionsSize;
+}
+
+void ABUIMenu_Control_Write(int option){
+	char *ABUIMenu_Control_Options[] = {
+		"Motor"
+	};
+	ABUIWriteMenu("View Controls:",ABUIMenu_Control_Options,ABUIMenu_Control_OptionsSize,option);
 }
 
 void ABUIMenu_Sensor_Stub(char * sensor){
@@ -798,7 +900,41 @@ void ABUIMenu_Sensor_MPSA(){
 }
 
 /////////////////////////////////////
+// Control
 
+void ABUIMenu_Control_Motor(){
+	buttonsMask();
+	ABSSRefreshAnemometer();
+	int step = 0;
+	if(ABUIEventCounter > 0){
+		ABUIEventCounter = 0;
+		step = 1;
+	}
+	else if(ABUIEventCounter < 0){
+		ABUIEventCounter = 0;
+		step = -1;
+	}
+	lcdSerialCursorLine1();
+	lcdSerialWriteString("Motor Control: ");
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("KM/H: ");
+	lcdSerialWriteNumberWithBounds(ABSSGetAnemometerSpeed(),0,5);
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("[Up/Down] Change.");
+	lcdSerialCursorLine4();
+	lcdSerialWriteString("[Cancel]: Back.");
+	if(step < 0){
+		motorAtvSpeedDec();
+	}
+	if(step > 0){
+		motorAtvSpeedInc();
+	}
+	step = 0;
+	buttonsUnmask();
+}
+
+/////////////////////////////////////
+// Experiment
 
 void ABUIMenu_Experiment_SetupTime(){
 	buttonsMask();

@@ -8,13 +8,68 @@
 #include "ABTest.h"
 
 void ABTestLCDInit(){
+	SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
 	lcdSerialInit(LCDSERIAL_INIT_UART3);
 	lcdSerialSetContrast(0x44);
 	lcdSerialClear();
 }
 
-void ABTestDAC(){
+void ABTestFanRelay(){
+	ABTestLCDInit();
+	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
+	anemometerStart();
 
+	lcdSerialWriteString("Fan Relay Test:");
+	motorAtvInit();
+	gpioSetMasterEnable(GPIO_PORTB);
+	gpioSetDirection(GPIO_PORTB,0x07,0x00);
+	gpioSetDigitalEnable(GPIO_PORTB,0x07,0x07);
+	gpioSetPullUpSelect(GPIO_PORTB,0x07,0x07);
+	int state = 0;
+	int toggle = 0;
+	while(1){
+		anemometerSpeedBufferRefresh();
+
+		if(!gpioGetData(GPIO_PORTB,0x01) && !toggle){
+			if(!state){
+				motorAtvTurnOn();
+				state = 1;
+				lcdSerialCursorLine2();
+				lcdSerialWriteString("Fan: On  ");
+				lcdSerialCursorLine3();
+				lcdSerialWriteString("B0: Pushed.   ");
+			}
+			else{
+				motorAtvTurnOff();
+				lcdSerialCursorLine2();
+				lcdSerialWriteString("Fan: Off  ");
+				lcdSerialCursorLine3();
+				lcdSerialWriteString("B0: Pushed.   ");
+				state = 0;
+			}
+			toggle = 1;
+		}
+		else if(!gpioGetData(GPIO_PORTB,0x01) && !toggle){
+			lcdSerialCursorLine3();
+			lcdSerialWriteString("B0: Pushed.   ");
+		}
+		else{
+			lcdSerialCursorLine3();
+			lcdSerialWriteString("B0: Not Pushed.");
+			toggle = 0;
+		}
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("KM/H: ");
+		lcdSerialWriteNumberWithBounds(anemometerSpeedConvertKmH(anemometerSpeedBufferGetAverage()),0,5);
+
+		if(!gpioGetData(GPIO_PORTB,0x02)){
+			motorAtvSpeedInc();
+		}
+		else if(!gpioGetData(GPIO_PORTB,0x04)){
+			motorAtvSpeedDec();
+
+		}
+	}
 }
 
 void ABTestBluetooth(){
@@ -76,7 +131,7 @@ void ABTestBMPSpeed(){
 
 void ABTestAnemometer(){
 	ABTestLCDInit();
-	anemometerInit(ANEMOMETER_PORTD,ANEMOMETER_PIN0);
+	anemometerInit(ANEMOMETER_PORTF,ANEMOMETER_PIN4);
 	anemometerStart();
 	ABTime now;
 	int count = 0;
