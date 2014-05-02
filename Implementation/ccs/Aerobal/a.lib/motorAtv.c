@@ -34,10 +34,14 @@ void motorAtvTurnOff(){
 void motorAtvSpeedReset(){
 	lcdSerialClear();
 	lcdSerialCursorLine1();
+	lcdSerialWriteString("AeroBal Motor Ctl");
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("====================");
+	lcdSerialCursorLine3();
 	lcdSerialWriteString("Resetting Speed...");
 	int i = 0;
 	while(i < 64){
-		lcdSerialCursorLine2();
+		lcdSerialCursorLine4();
 		lcdSerialWriteNumber(i);
 		lcdSerialWriteString("/64");
 		motorAtvSpeedDec();
@@ -48,22 +52,22 @@ void motorAtvSpeedReset(){
 }
 
 void motorAtvSpeedInc(){
-	ABTime t0 = ABTimeGetReference();
 	gpioSetData(MOTORATV_PORT_SPEED_POT_INC,MOTORATV_PIN_SPEED_POT_INC,0x00);
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).milliseconds < 200);
+	SysCtlDelay(500000);
 	gpioSetData(MOTORATV_PORT_SPEED_POT_INC,MOTORATV_PIN_SPEED_POT_INC,0xFF);
 }
 void motorAtvSpeedDec(){
 	gpioSetData(MOTORATV_PORT_SPEED_POT_DEC,MOTORATV_PIN_SPEED_POT_DEC,0x00);
-	ABTime mt0 = ABTimeGetReference();
-	ABTime mt1 = ABTimeGetReference();
-	while(ABTimeGetDelta(mt1,mt0).milliseconds < 200){
-		mt1 = ABTimeGetReference();
-	}
+	SysCtlDelay(500000);
 	gpioSetData(MOTORATV_PORT_SPEED_POT_DEC,MOTORATV_PIN_SPEED_POT_DEC,0xFF);
 }
+void motorAtvSetTargetSpeed(int speed){
+	motorAtvTargetSpeed = speed;
+}
 
-
+int motorAtvGetTargetSpeed(){
+	return motorAtvTargetSpeed;
+}
 ///////////////////////////////////
 // API Layer 1
 

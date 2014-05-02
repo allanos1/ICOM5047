@@ -81,7 +81,10 @@
 #define ABUI_STATE_BG_EXP_RESULTS 0x0280
 
 #define ABUI_STATE_CONTROL_1 0x0400
+#define ABUI_STATE_CONTROL_2 0x0401
 #define ABUI_STATE_BG_CTL_FAN 0x0480
+#define ABUI_STATE_BG_CTL_WIND_SPEED 0x0481
+
 
 #define ABUI_STATE_BUTTON_INCREASE 0xFD00
 #define ABUI_STATE_BUTTON_DECREASE 0xFD01
@@ -106,6 +109,13 @@ uint32_t ABUIButtonNextStateB5_PANIC;
 
 uint32_t ABUIStateMachineNextState;
 uint32_t ABUIBackgroundNextState;
+uint32_t ABUIBackgroundStateSlot1;
+uint32_t ABUIBackgroundStateSlot2;
+uint32_t ABUIBackgroundStateSlot3;
+uint32_t ABUIBackgroundStateSlot4;
+
+ABTime ABUIT0;
+ABTime ABUIT1;
 
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
@@ -113,6 +123,8 @@ int ABUIMenu_Control_OptionsSize;
 
 int ABUIEventCounter;
 int ABUIResetMotor;
+int ABUICounter01;
+int ABUIIntVariable01;
 
 /////////////////////////////////
 // API Layer 0
@@ -153,6 +165,7 @@ void ABUIMenu_Sensor_MPSA();
 
 //Control
 void ABUIMenu_Control_Motor();
+void ABSetMotorWindSpeed();
 
 //Experiment
 void ABUIMenu_Experiment_SetupTime();

@@ -18,22 +18,24 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/pin_map.h"
 #include "gpio.h"
 #include "relay.h"
 #include "ABTime.h"
-#include "driverlib/pin_map.h"
 #include "lcdSerial.h"
 
 #define MOTORATV_PORT_R_STOP GPIO_PORTA
 #define MOTORATV_PIN_R_STOP 0x04 //A2
 #define MOTORATV_PORT_F_FORWARD GPIO_PORTA
 #define MOTORATV_PIN_F_FORWARD 0x08 //A3
+///
 #define MOTORATV_PORT_SPEED_POT_INC GPIO_PORTF
-#define MOTORATV_PIN_SPEED_POT_INC 0x08
-#define MOTORATV_PORT_SPEED_POT_DEC GPIO_PORTA
-#define MOTORATV_PIN_SPEED_POT_DEC 0x20
+#define MOTORATV_PIN_SPEED_POT_INC 0x04
+#define MOTORATV_PORT_SPEED_POT_DEC GPIO_PORTF
+#define MOTORATV_PIN_SPEED_POT_DEC 0x02
 
 int motorAtvCurrentStep;
+int motorAtvTargetSpeed;
 /////////////////////////////////
 // API Layer 0
 void motorAtvInit();
@@ -42,6 +44,8 @@ void motorAtvTurnOff();
 void motorAtvSpeedInc();
 void motorAtvSpeedDec();
 void motorAtvSpeedReset();
+void motorAtvSetTargetSpeed(int speed);
+int motorAtvGetTargetSpeed();
 
 /////////////////////////////////
 // API Layer 1

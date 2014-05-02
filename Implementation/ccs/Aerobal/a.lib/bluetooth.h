@@ -26,6 +26,7 @@
 #include "uart.h"
 #include "string.h"
 #include "gpio.h"
+#include "motorAtv.h"
 #include "ABSensorServer.h"
 
 #define BLUETOOTH_UART0 UART0 //RX: A0  TX: A1
@@ -50,6 +51,7 @@ int bluetoothEventCount;
 uint8_t bluetoothReset;
 char bluetoothBuffer[20];
 int bluetoothState;
+int bluetoothEnabled;
 
 int bluetoothSettingFanStatus ;
 float bluetoothSettingExpWindSpeed ;
@@ -69,5 +71,12 @@ int bluetoothIsQuery(char *value);
 void bluetoothGetQuery(char * value);
 void bluetoothEvaluateBuffer(char *buffer);
 
+////////////////////////////////////
+// API Layer 1
+int bluetoothGetSettingFanStatus();
+void bluetoothSetSettingFanStatus(int value);
+void bluetoothEnable();
+void bluetoothDisable();
+int bluetoothIsEnabled();
 
 #endif /* BLUETOOTH_H_ */

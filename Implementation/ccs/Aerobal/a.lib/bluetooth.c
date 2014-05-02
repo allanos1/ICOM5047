@@ -30,6 +30,8 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
 	uartMasterEnable(uart,uartBaud);
 	//To track number of events for testing.
 	bluetoothEventCount = 0;
+	bluetoothSettingFanStatus = 0;
+	bluetoothEnable();
 }
 
 /*****************************
@@ -49,7 +51,13 @@ void bluetoothInterruptHandler(void){
 	bluetoothEventCount++;
 	while(uartHasAvailable(bluetoothUART)){
 		//uartWriteCharSync(bluetoothUART,uartGetBufferCharSync(bluetoothUART));
-		bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
+		if(bluetoothIsEnabled()){
+			bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
+		}
+		else{
+			//Empty Buffer.
+			uartGetBufferChar(bluetoothUART);
+		}
     }
 
 }
@@ -351,13 +359,13 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(stringEquals(value,"on")){
 			bluetoothSendString("fan:");
 			bluetoothSendString(value);
-			bluetoothSettingFanStatus = 1;
+			bluetoothSetSettingFanStatus(1);
 			bluetoothSendTerminator();
 		}
 		else if(stringEquals(value,"off")){
 			bluetoothSendString("fan:");
 			bluetoothSendString(value);
-			bluetoothSettingFanStatus = 0;
+			motorAtvTurnOff();
 			bluetoothSendTerminator();
 		}
 		else{
@@ -403,6 +411,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		//Set WS ok
 		bluetoothSendString("ws:");
 		bluetoothSettingExpWindSpeed = stringSTOD(value);
+		motorAtvSetTargetSpeed(bluetoothSettingExpWindSpeed);
 		bluetoothSendString(value);
 		bluetoothSendTerminator();
 	}
@@ -416,7 +425,27 @@ void bluetoothEvaluateBuffer(char *buffer){
 	}
 	else{
 		bluetoothSendErr();
+		bluetoothSendString(":UnkCom");
 	}
 }
 
+///////////////////////////////////////////
+// API Layer 1
+int bluetoothGetSettingFanStatus(){
+	return bluetoothSettingFanStatus;
+}
 
+void bluetoothSetSettingFanStatus(int value){
+	bluetoothSettingFanStatus = value;
+}
+
+void bluetoothEnable(){
+	bluetoothEnabled = 1;
+}
+void bluetoothDisable(){
+	bluetoothEnabled = 0;
+}
+
+int bluetoothIsEnabled(){
+	return bluetoothEnabled;
+}

@@ -90,7 +90,7 @@ void buttonsEnable(){
 
 
 void buttonsMask(){
-	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x00);
+	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x20);
 }
 void buttonsUnmask(){
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);

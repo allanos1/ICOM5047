@@ -30,18 +30,17 @@ FloatBuffer anemometerBuffer ;
  */
 void anemometerInit(uint32_t gpioPort, uint32_t gpioPin){
 
-	if(!ABTimeIsInited()){
-		anemometerPort = gpioPort;
-		anemometerPin = gpioPin;
-		ABTimeInit(ABTIME_BASE_TIMER_5,ABTIME_RESOLUTION_MILLISECOND);
-		gpioSetMasterEnable(anemometerPort);
-		gpioSetDigitalEnable(anemometerPort,anemometerPin,0xFF);
-		gpioSetDirection(anemometerPort,anemometerPin,0x00);
-		gpioSetInterruptBothEdges(anemometerPort,anemometerPin,0x00);
-		gpioSetInterruptEvent(anemometerPort,anemometerPin,0x00);
-		gpioHelperInterruptMasterEnable(anemometerPort);
-		gpioSetInterruptEnable(anemometerPort);
-	}
+	anemometerPort = gpioPort;
+	anemometerPin = gpioPin;
+	ABTimeInit(ABTIME_BASE_TIMER_5,ABTIME_RESOLUTION_MILLISECOND);
+	gpioSetMasterEnable(anemometerPort);
+	gpioSetDigitalEnable(anemometerPort,anemometerPin,0xFF);
+	gpioSetDirection(anemometerPort,anemometerPin,0x00);
+	gpioSetInterruptBothEdges(anemometerPort,anemometerPin,0x00);
+	gpioSetInterruptEvent(anemometerPort,anemometerPin,0x00);
+	gpioHelperInterruptMasterEnable(anemometerPort);
+	gpioSetInterruptEnable(anemometerPort);
+
 }
 
 /***************************

@@ -90,7 +90,7 @@ void ABSSRefreshAnemometer(){
 	anemometerSpeedBufferRefresh();
 	//Buffer Storage
 	//TODO: Settings.
-	ABSSBufferRefresh(&ABSSBufferAnemometer,anemometerSpeedConvertKmH(anemometerSpeedBufferGetAverage()));
+	ABSSBufferRefresh(&ABSSBufferAnemometer,anemometerSpeedBufferGetAverage());
 }
 
 void ABSSRefreshWindVane(){

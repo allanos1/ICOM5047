@@ -39,8 +39,9 @@ void relayToggle(){
 
 void relayOn(){
 	gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PIN_STOP,0x00);
-	ABTime t0 = ABTimeGetReference();
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < 1);
+	//ABTime t0 = ABTimeGetReference();
+	SysCtlDelay(6000000);
+	//while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < 1);
 	gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PIN_START,0x00);
 }
 
