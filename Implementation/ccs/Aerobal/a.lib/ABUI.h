@@ -23,6 +23,7 @@
 #include "ABTime.h"
 #include "relay.h"
 #include "motorAtv.h"
+#include "ABExperimentCentral.h"
 
 #define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
 #define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
@@ -108,6 +109,7 @@ uint32_t ABUIButtonNextStateB4_MENU;
 uint32_t ABUIButtonNextStateB5_PANIC;
 
 uint32_t ABUIStateMachineNextState;
+uint32_t ABUIStateMachineSlot01;
 uint32_t ABUIBackgroundNextState;
 uint32_t ABUIBackgroundStateSlot1;
 uint32_t ABUIBackgroundStateSlot2;

@@ -71,15 +71,15 @@ void loadCellRefreshSetSize(int size){
 
 //Insert Characterization Formulas.
 float loadCellGetDragFront(){
-	return loadCellBufferDragFront.average;
+	return loadCellBufferDragFront.average*0.535-63.946;
 }
 
 float loadCellGetDragBack(){
-	return loadCellBufferDragBack.average;
+	return loadCellBufferDragBack.average*0.1055-3.9814;
 }
 
 float loadCellGetLiftUp(){
-	return loadCellBufferLiftUp.average;
+	return loadCellBufferLiftUp.average*0.1684-24.589;
 }
 
 float loadCellGetLiftDown(){

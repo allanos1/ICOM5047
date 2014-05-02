@@ -49,8 +49,8 @@ void ABSSBufferRefresh(ABSensorServerBuffer* sensorBuffer, float newValue){
 	sensorBuffer->count = (sensorBuffer->count + 1) % ABSENSORSERVER_BUFFER_SIZE;
 	sensorBuffer->average = sensorBuffer->sum /(float)ABSENSORSERVER_BUFFER_SIZE ;
 }
+
 /* SensorServer Refresh Function for DHT.
- *
  */
 void ABSSRefreshDHT(){
 
@@ -216,11 +216,11 @@ float ABSSGetMPSAIndexTemperature(int index){
 void ABSSRefreshSequential(){
 	switch(ABSSSequentialRefreshCount){
 	case 0: ABSSRefreshDHT(); break;
-	case 1: ABSSRefreshBMP(); break;
+	case 1: /*ABSSRefreshBMP();*/ break;
 	case 2: ABSSRefreshWindVane(); break;
 	case 3: ABSSRefreshAnemometer(); break;
 	case 4: ABSSRefreshLoadCells(); break;
-	case 5: ABSSRefreshMPSA(); break;
+	case 5: /*ABSSRefreshMPSA();*/ break;
 	default: ABSSSequentialRefreshCount=-1; break;
 	}
 	ABSSSequentialRefreshCount++;
