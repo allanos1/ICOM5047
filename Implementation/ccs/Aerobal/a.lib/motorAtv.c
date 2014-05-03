@@ -51,6 +51,9 @@ void motorAtvSpeedReset(){
 	lcdSerialWriteString("Reset Complete.");
 }
 
+void motorAtvSpeedBase(){
+
+}
 void motorAtvSpeedInc(){
 	gpioSetData(MOTORATV_PORT_SPEED_POT_INC,MOTORATV_PIN_SPEED_POT_INC,0x00);
 	SysCtlDelay(500000);

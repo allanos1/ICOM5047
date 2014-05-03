@@ -83,13 +83,13 @@ float loadCellGetLiftUp(){
 }
 
 float loadCellGetLiftDown(){
-	return loadCellBufferLiftDown.average;
+	return loadCellBufferLiftDown.average*0.4405-8.758;
 }
 
 float loadCellGetSideLeft(){
-	return loadCellBufferSideLeft.average;
+	return loadCellBufferSideLeft.average*0.0718-19.8506;
 }
 
 float loadCellGetSideRight(){
-	return loadCellBufferSideRight.average;
+	return loadCellBufferSideRight.average*0.2744-130.8;
 }

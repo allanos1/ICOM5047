@@ -228,10 +228,10 @@ void ABSSRefreshSequential(){
 
 void ABSSRefreshAll(){
 	ABSSRefreshDHT();
-	ABSSRefreshBMP();
+	//ABSSRefreshBMP();
 	ABSSRefreshWindVane();
 	ABSSRefreshAnemometer();
 	ABSSRefreshWindVane();
 	ABSSRefreshLoadCells();
-	ABSSRefreshMPSA();
+	//ABSSRefreshMPSA();
 }

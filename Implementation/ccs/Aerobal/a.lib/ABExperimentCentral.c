@@ -79,7 +79,7 @@ void ABECStoreO_NW(){
 }
 
 void ABECAddPressure(){
-	ABECBufferRefresh(&ABECMesPressure,ABSSGetMPSAIndexPressure(0));
+	ABECBufferRefresh(&ABECMesPressure,ABSSGetDHTTemperature(0));
 }
 
 void ABECAddTemperature(){

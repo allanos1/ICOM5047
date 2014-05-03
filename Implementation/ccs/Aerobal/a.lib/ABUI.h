@@ -118,7 +118,8 @@ uint32_t ABUIBackgroundStateSlot4;
 
 ABTime ABUIT0;
 ABTime ABUIT1;
-
+ABTime ABUIF0;
+ABTime ABUIF1;
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
 int ABUIMenu_Control_OptionsSize;

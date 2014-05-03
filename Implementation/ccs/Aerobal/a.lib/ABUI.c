@@ -97,6 +97,7 @@ void ABUIInitModules(){
 	ABUIPowerWait(4000000);
 	//MPSA
 	ABUIWriteLoadMessage("Sensor: MPSA...");
+	//bmp085Init(BMP_I2C_MODULE_1)
 	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
 	//bmp085ArraySetCurrentSensor(0);
 	ABUIWriteWait(5);
@@ -669,6 +670,7 @@ void ABUIStateMachineRun(){
 			buttonsMask();
 			lcdSerialClear();
 			motorAtvSpeedReset();
+
 			motorAtvTurnOn();
 			ABUIEventCounter=0;
 			ABUICounter01 = 0;
@@ -677,13 +679,14 @@ void ABUIStateMachineRun(){
 			anemometerStart();
 			lcdSerialClear();
 			ABUIT0 = ABTimeGetReference();
+			ABUIF0 = ABTimeGetReference();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_WIND_SPEED);
 			ABUIBackgroundStateSlot1 = ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND;
 			buttonsEnable();
 			break;
 		case ABUI_STATE_EXP_12_DISPLAY_RESULTS:
 			ABUIButtonsSetNextState(
-				ABUI_STATE_NONE,ABUI_STATE_NONE,
+					ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
 				ABUI_STATE_MAIN_1,ABUI_STATE_MAIN_1,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
@@ -1186,6 +1189,7 @@ void ABUIMenu_Experiment_CalibrationNoObject(){
 	ABTime t0 = ABTimeGetReference();
 	ABTime f0 = ABTimeGetReference();
 	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
+		ABSSRefreshLoadCells();
 		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
 		//At frequency.
 		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
@@ -1221,6 +1225,7 @@ void ABUIMenu_Experiment_CalibrationNoObjectWind(){
 	ABTime t0 = ABTimeGetReference();
 	ABTime f0 = ABTimeGetReference();
 	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
+		ABSSRefreshLoadCells();
 		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
 		//At frequency
 		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
@@ -1244,6 +1249,7 @@ void ABUIMenu_Experiment_CalibrationObjectConfirm(){
 			"Colocar objeto en balanza",
 			"y cerrar tunel.",
 			"[Enter]: Continuar");
+	motorAtvTurnOff();
 	buttonsUnmask();
 }
 void ABUIMenu_Experiment_CalibrationObject(){
@@ -1284,20 +1290,25 @@ void ABUIMenu_Experiment_Measure(){
 			"Tomando Medidas...",
 			"",
 			"");
-	ABTime t0 = ABTimeGetReference();
-	ABTime f0 = ABTimeGetReference();
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
-		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
-		//At frequency
-		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
-				ABTimeGetDelta(ABTimeGetReference(),f0).seconds*1000
-				> (1.0/((float)expSetup.frequencyHz))*1000.0){
-			f0 = ABTimeGetReference();
-			ABECAddForces();
-		}
+	ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+	//At frequency
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
+			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
+			> (1.0/((float)expSetup.frequencyHz))*1000.0){
+		ABUIF0 = ABTimeGetReference();
+		ABECAddForces();
+		ABECAddHumidity();
+		ABECAddPressure();
+		ABECAddTemperature();
+		ABECAddVelocity();
+		ABECAddWindDirection();
 	}
-	ABUIStateMachineNextState = ABUI_STATE_EXP_12_DISPLAY_RESULTS;
-	ABUIStateMachineRun();
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > expSetup.timeSeconds){
+		motorAtvTurnOff();
+		ABUIStateMachineNextState = ABUI_STATE_EXP_12_DISPLAY_RESULTS;
+		ABUIStateMachineRun();
+	}
 }
 
 void ABUIMenu_Experiment_ShowResults(){
@@ -1306,14 +1317,51 @@ void ABUIMenu_Experiment_ShowResults(){
 			"",
 			"",
 			"");
-	lcdSerialCursorLine2();
-	lcdSerialWriteString("Drag: ");
-	lcdSerialWriteNumber(ABECComputeObjectDrag());
-	lcdSerialCursorLine3();
-	lcdSerialWriteString("Lift: ");
-	lcdSerialWriteNumber(ABECComputeObjectDrag());
-	lcdSerialCursorLine4();
-	lcdSerialWriteString("Side: ");
-	lcdSerialWriteNumber(ABECComputeObjectDrag());
+	if(ABUIEventCounter < 0 || ABUIEventCounter > 2){
+		ABUIEventCounter = 0;
+	}
+	if(ABUIIntVariable01 != ABUIEventCounter) lcdSerialClear();
+	ABUIIntVariable01 = ABUIEventCounter;
+	switch(ABUIEventCounter){
+	case 0:
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("Resultados: ");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("Drag:");
+		lcdSerialWriteNumber(ABECComputeObjectDrag());
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("Lift: ");
+		lcdSerialWriteNumber(ABECComputeObjectLift());
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("Side: ");
+		lcdSerialWriteNumber(ABECComputeObjectSide());
+		break;
+	case 1:
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("Resultados: ");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("P: ");
+		lcdSerialWriteNumber(ABECGetAveragePressure());
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("T");
+		lcdSerialWriteNumber(ABECGetAverageTemperature());
+		lcdSerialCursorLine4();
+		lcdSerialWriteString("H: ");
+		lcdSerialWriteNumber(ABECGetAverageHumidity());
+		break;
+	case 2:
+		lcdSerialCursorLine1();
+		lcdSerialWriteString("Resultados: ");
+		lcdSerialCursorLine2();
+		lcdSerialWriteString("V: ");
+		lcdSerialWriteNumber(ABECGetAverageVelocity());
+		lcdSerialCursorLine3();
+		lcdSerialWriteString("Dir: ");
+		lcdSerialWriteNumber(ABECGetAverageWindDirection());
+		break;
+	default:
+		break;
+
+	}
 	buttonsUnmask();
 }
