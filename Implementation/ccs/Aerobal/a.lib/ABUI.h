@@ -83,9 +83,11 @@
 
 #define ABUI_STATE_CONTROL_1 0x0400
 #define ABUI_STATE_CONTROL_2 0x0401
+#define ABUI_STATE_CONTROL_3 0x0402
 #define ABUI_STATE_BG_CTL_FAN 0x0480
 #define ABUI_STATE_BG_CTL_WIND_SPEED 0x0481
-
+#define ABUI_STATE_BG_CTL_SET_TEST_WINDSPEED 0x0482
+#define ABUI_STATE_BG_EXP_WIND_SPEED 0x483
 
 #define ABUI_STATE_BUTTON_INCREASE 0xFD00
 #define ABUI_STATE_BUTTON_DECREASE 0xFD01
@@ -120,6 +122,7 @@ ABTime ABUIT0;
 ABTime ABUIT1;
 ABTime ABUIF0;
 ABTime ABUIF1;
+
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
 int ABUIMenu_Control_OptionsSize;
@@ -128,7 +131,22 @@ int ABUIEventCounter;
 int ABUIResetMotor;
 int ABUICounter01;
 int ABUIIntVariable01;
+int ABUIIntVariable02;
 
+float ABUIRefDragFront;
+float ABUIRefDragBack;
+float ABUIRefLiftUp;
+float ABUIRefLiftDown;
+float ABUIRefSideLeft;
+float ABUIRefSideRight;
+
+uint32_t ABUIConfigNextState01;
+uint32_t ABUIConfigNextState02;
+
+int ABUIConfigVariable01;
+
+int ABUIBluetoothSettingWindSpeed;
+float ABUIBluetoothSpeedRef;
 /////////////////////////////////
 // API Layer 0
 void ABUIPowerWait(uint32_t waitTime);
@@ -169,6 +187,7 @@ void ABUIMenu_Sensor_MPSA();
 //Control
 void ABUIMenu_Control_Motor();
 void ABSetMotorWindSpeed();
+void ABUIExperiment_Control_SetWindSpeed();
 
 //Experiment
 void ABUIMenu_Experiment_SetupTime();

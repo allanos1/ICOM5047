@@ -52,7 +52,6 @@ uint8_t bluetoothReset;
 char bluetoothBuffer[20];
 int bluetoothState;
 int bluetoothEnabled;
-
 int bluetoothSettingFanStatus ;
 float bluetoothSettingExpWindSpeed ;
 

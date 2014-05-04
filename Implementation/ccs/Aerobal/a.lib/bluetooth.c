@@ -31,7 +31,6 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
 	//To track number of events for testing.
 	bluetoothEventCount = 0;
 	bluetoothSettingFanStatus = 0;
-	bluetoothEnable();
 }
 
 /*****************************
@@ -45,21 +44,10 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
  */
 void bluetoothInterruptHandler(void){
 	uartInterruptClear(bluetoothUART);
-	//gpioSetData(GPIO_PORTF,0x0C,0x0C);
-	//SysCtlDelay(100000);
-	//gpioSetData(GPIO_PORTF,0x0C,0x00);
 	bluetoothEventCount++;
 	while(uartHasAvailable(bluetoothUART)){
-		//uartWriteCharSync(bluetoothUART,uartGetBufferCharSync(bluetoothUART));
-		if(bluetoothIsEnabled()){
-			bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
-		}
-		else{
-			//Empty Buffer.
-			uartGetBufferChar(bluetoothUART);
-		}
+		bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
     }
-
 }
 
 /*
@@ -440,10 +428,12 @@ void bluetoothSetSettingFanStatus(int value){
 }
 
 void bluetoothEnable(){
-	bluetoothEnabled = 1;
+	uartIntEnable(bluetoothUART);
+	//bluetoothEnabled = 1;
 }
 void bluetoothDisable(){
-	bluetoothEnabled = 0;
+	uartIntDisable(bluetoothUART);
+	//bluetoothEnabled = 0;
 }
 
 int bluetoothIsEnabled(){

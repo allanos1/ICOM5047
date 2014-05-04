@@ -22,7 +22,12 @@ ABExperimentCentralBuffer ABECMesWindVane;
 void ABECBufferReset(ABExperimentCentralBuffer* sensorBuffer){
 	sensorBuffer->sum = 0;
 	sensorBuffer->count = 0;
+	int i = 0;
+	for(i = 0; i < ABEC_BUFFER_SIZE; i++){
+		sensorBuffer->buffer[i] = 0;
+	}
 	sensorBuffer->average = 0;
+	sensorBuffer->dataCount = 0;
 }
 
 void ABECBufferRefresh(ABExperimentCentralBuffer* sensorBuffer, float newValue){
@@ -30,7 +35,8 @@ void ABECBufferRefresh(ABExperimentCentralBuffer* sensorBuffer, float newValue){
 	sensorBuffer->sum += newValue;
 	sensorBuffer->buffer[sensorBuffer->count] = newValue;
 	sensorBuffer->count = (sensorBuffer->count + 1) % ABEC_BUFFER_SIZE;
-	sensorBuffer->average = sensorBuffer->sum /(float)ABEC_BUFFER_SIZE;
+	if(sensorBuffer->dataCount < 10) sensorBuffer->dataCount++;
+	sensorBuffer->average = sensorBuffer->sum /(float)sensorBuffer->dataCount;
 }
 
 
@@ -98,6 +104,27 @@ void ABECAddWindDirection(){
 void ABECAddVelocity(){
 	ABECBufferRefresh(&ABECMesHumidity,ABSSGetAnemometerSpeed());
 }
+
+
+float ABECTestGetAverageDragFront(){
+	return ABECMesForceDragFront.average;
+}
+float ABECTestGetAverageDragBack(){
+	return ABECMesForceDragBack.average;
+}
+float ABECTestGetAverageLiftUp(){
+	return ABECMesForceLiftUp.average;
+}
+float ABECTestGetAverageLiftDown(){
+	return ABECMesForceLiftDown.average;
+}
+float ABECTestGetAverageSideLeft(){
+	return ABECMesForceSideLeft.average;
+}
+float ABECTestGetAverageSideRight(){
+	return ABECMesForceSideRight.average;
+}
+
 
 /////////////////////////////////////
 // API Layer 1

@@ -56,7 +56,6 @@ void ABSSRefreshDHT(){
 
 	//Refresh Sequence.
 	if(dht11CanRefresh()){
-		//SysCtlDelay(3000000);
 		dht11init();
 		dht11getData();
 		while(dhtIsActive());
@@ -73,9 +72,11 @@ void ABSSRefreshDHT(){
 
 void ABSSRefreshBMP(){
 
+	anemometerEnd();
 	//Refresh Sequence.
-	ABSSRefreshMPSAIndex(0);
-
+	bmp085DataRead(0);
+	//ABSSRefreshMPSAIndex(0);
+	anemometerStart();
 	//Buffer Storage:
 
 	//BMP Temperature
@@ -214,16 +215,20 @@ float ABSSGetMPSAIndexTemperature(int index){
 // API Layer 2 - Automatization Routines
 
 void ABSSRefreshSequential(){
+	buttonsMask();
+	bluetoothDisable();
 	switch(ABSSSequentialRefreshCount){
-	case 0: ABSSRefreshDHT(); break;
-	case 1: /*ABSSRefreshBMP();*/ break;
-	case 2: ABSSRefreshWindVane(); break;
-	case 3: ABSSRefreshAnemometer(); break;
-	case 4: ABSSRefreshLoadCells(); break;
-	case 5: /*ABSSRefreshMPSA();*/ break;
-	default: ABSSSequentialRefreshCount=-1; break;
+		case 0: ABSSRefreshDHT(); break;
+		case 1: ABSSRefreshBMP(); break;
+		case 2: ABSSRefreshWindVane(); break;
+		case 3: ABSSRefreshAnemometer(); break;
+		case 4: ABSSRefreshLoadCells(); break;
+		case 5: /*ABSSRefreshMPSA();*/ break;
+		default: ABSSSequentialRefreshCount=-1; break;
 	}
 	ABSSSequentialRefreshCount++;
+	buttonsUnmask();
+	bluetoothEnable();
 }
 
 void ABSSRefreshAll(){

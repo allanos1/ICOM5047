@@ -97,7 +97,7 @@ void ABUIInitModules(){
 	ABUIPowerWait(4000000);
 	//MPSA
 	ABUIWriteLoadMessage("Sensor: MPSA...");
-	//bmp085Init(BMP_I2C_MODULE_1)
+	bmp085Init(BMP_I2C_MODULE_1);
 	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
 	//bmp085ArraySetCurrentSensor(0);
 	ABUIWriteWait(5);
@@ -135,7 +135,7 @@ void ABUIInitModules(){
 	//UI Config
 	ABUIMenu_Main_OptionsSize = 4;
 	ABUIMenu_Sensor_OptionsSize = 7;
-	ABUIMenu_Control_OptionsSize = 2;
+	ABUIMenu_Control_OptionsSize = 3;
 	motorAtvSetTargetSpeed(37);
 	ABUIStateMachineSlot01 = ABUI_STATE_NONE;
 
@@ -318,7 +318,7 @@ void ABUIStateMachineRun(){
 		lcdSerialClear();
 		ABUIStateMachineBackgroundReset();
 		if(ABUIResetMotor){
-			motorAtvTurnOff();
+			//motorAtvTurnOff();
 			ABUIResetMotor=0;
 		}
 	}
@@ -363,7 +363,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_1);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_1,ABUI_STATE_SENSOR_2,
-				ABUI_STATE_BG_SENSOR_FORCE,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_FORCE,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -372,7 +372,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_2);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_1,ABUI_STATE_SENSOR_3,
-				ABUI_STATE_BG_SENSOR_PRESSURE,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_PRESSURE,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -381,7 +381,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_3);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_2,ABUI_STATE_SENSOR_4,
-				ABUI_STATE_BG_SENSOR_TEMPERATURE,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_TEMPERATURE,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -390,7 +390,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_4);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_3,ABUI_STATE_SENSOR_5,
-				ABUI_STATE_BG_SENSOR_VELOCITY,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_VELOCITY,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -400,7 +400,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_5);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_4,ABUI_STATE_SENSOR_6,
-				ABUI_STATE_BG_SENSOR_HUMIDITY,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_HUMIDITY,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -409,7 +409,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_6);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_5,ABUI_STATE_SENSOR_7,
-				ABUI_STATE_BG_SENSOR_DIRECTION,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_DIRECTION,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -418,7 +418,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_7);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_SENSOR_6,ABUI_STATE_SENSOR_7,
-				ABUI_STATE_BG_SENSOR_MPSA,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_SENSOR_MPSA,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -427,7 +427,7 @@ void ABUIStateMachineRun(){
 			ABUIMenu_Control_Write(0xF & ABUI_STATE_CONTROL_1);
 			ABUIButtonsSetNextState(
 				ABUI_STATE_CONTROL_1,ABUI_STATE_CONTROL_2,
-				ABUI_STATE_BG_CTL_FAN,ABUI_STATE_MAIN_1,
+				ABUI_STATE_BG_CTL_FAN,ABUI_STATE_MAIN_3,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -435,15 +435,24 @@ void ABUIStateMachineRun(){
 		case ABUI_STATE_CONTROL_2:
 			ABUIMenu_Control_Write(0xF & ABUI_STATE_CONTROL_2);
 			ABUIButtonsSetNextState(
-				ABUI_STATE_CONTROL_1,ABUI_STATE_CONTROL_2,
-				ABUI_STATE_BG_CTL_WIND_SPEED,ABUI_STATE_MAIN_1,
+				ABUI_STATE_CONTROL_1,ABUI_STATE_CONTROL_3,
+				ABUI_STATE_BG_CTL_WIND_SPEED,ABUI_STATE_MAIN_3,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			break;
+		case ABUI_STATE_CONTROL_3:
+			ABUIMenu_Control_Write(0xF & ABUI_STATE_CONTROL_3);
+			ABUIButtonsSetNextState(
+				ABUI_STATE_CONTROL_2,ABUI_STATE_CONTROL_3,
+				ABUI_STATE_BG_CTL_SET_TEST_WINDSPEED,ABUI_STATE_MAIN_3,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
 			break;
 		case ABUI_STATE_BG_SENSOR_FORCE:
 			ABUIButtonsSetNextState(
-				ABUI_STATE_NONE,ABUI_STATE_NONE,
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
 				ABUI_STATE_NONE,ABUI_STATE_SENSOR_1,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
@@ -473,9 +482,9 @@ void ABUIStateMachineRun(){
 			break;
 		case ABUI_STATE_BG_SENSOR_VELOCITY:
 			ABUIButtonsSetNextState(
-				ABUI_STATE_SENSOR_4,ABUI_STATE_SENSOR_4,
-				ABUI_STATE_SENSOR_4,ABUI_STATE_SENSOR_4,
-				ABUI_STATE_SENSOR_4,ABUI_STATE_PANIC
+				ABUI_STATE_NONE,ABUI_STATE_NONE,
+				ABUI_STATE_NONE,ABUI_STATE_SENSOR_4,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
 			lcdSerialClear();
@@ -532,7 +541,7 @@ void ABUIStateMachineRun(){
 			break;
 		case ABUI_STATE_BG_CTL_WIND_SPEED:
 			ABUIButtonsSetNextState(
-				ABUI_STATE_NONE,ABUI_STATE_NONE,
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
 				ABUI_STATE_NONE,ABUI_STATE_CONTROL_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
@@ -540,14 +549,23 @@ void ABUIStateMachineRun(){
 			lcdSerialClear();
 			motorAtvSpeedReset();
 			motorAtvTurnOn();
-			ABUIEventCounter=0;
+			ABUIEventCounter=motorAtvGetTargetSpeed();
 			ABUICounter01 = 0;
-			ABUIIntVariable01 = 2; //Will be used as time in seconds.
+			ABUIIntVariable01 = 2;
 			//ABUIResetMotor=1;
 			anemometerStart();
 			lcdSerialClear();
 			ABUIT0 = ABTimeGetReference();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_WIND_SPEED);
+			break;
+		case ABUI_STATE_BG_CTL_SET_TEST_WINDSPEED:
+			ABUIButtonsSetNextState(
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
+				ABUI_STATE_CONTROL_3,ABUI_STATE_CONTROL_3,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			ABUIEventCounter = motorAtvGetTargetSpeed();
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_SETUP_WINDSPEED);
 			break;
 		case ABUI_STATE_EXP_1_SETUP_TIME:
 			ABUIButtonsSetNextState(
@@ -601,6 +619,8 @@ void ABUIStateMachineRun(){
 				ABUI_STATE_EXP_6_CALIBRATE_NOOBJECT_WIND_CONFIRM,ABUI_STATE_NONE,
 				ABUI_STATE_NONE,ABUI_STATE_PANIC
 			);
+			ABUIT0 = ABTimeGetReference();
+			ABUIF0 = ABTimeGetReference();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_CALIBRATE_NOOBJECT);
 			buttonsEnable();
 			break;
@@ -624,14 +644,12 @@ void ABUIStateMachineRun(){
 			lcdSerialClear();
 			motorAtvSpeedReset();
 			motorAtvTurnOn();
-			ABUIEventCounter=0;
-			ABUICounter01 = 0;
-			ABUIIntVariable01 = 2; //Will be used as time in seconds.
-			//ABUIResetMotor=1;
-			anemometerStart();
+			motorAtvSetTargetSpeed(expSetup.windSpeed);
 			lcdSerialClear();
+			motorAtvSetSpeedCharacterized();
+			anemometerStart();
 			ABUIT0 = ABTimeGetReference();
-			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_WIND_SPEED);
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_WIND_SPEED);
 			ABUIBackgroundStateSlot1 = ABUI_STATE_BG_EXP_CALIBRATE_NOOBJECT_WIND;
 			break;
 		case ABUI_STATE_EXP_8_CALIBRATE_OBJECT_CONFIRM:
@@ -649,6 +667,8 @@ void ABUIStateMachineRun(){
 				ABUI_STATE_EXP_10_OBJECT_WIND_CONFIRM,ABUI_STATE_NONE,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
+			ABUIT0 = ABTimeGetReference();
+			ABUIF0 = ABTimeGetReference();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_CALIBRATE_OBJECT);
 			break;
 		case ABUI_STATE_EXP_10_OBJECT_WIND_CONFIRM:
@@ -670,17 +690,13 @@ void ABUIStateMachineRun(){
 			buttonsMask();
 			lcdSerialClear();
 			motorAtvSpeedReset();
-
 			motorAtvTurnOn();
-			ABUIEventCounter=0;
-			ABUICounter01 = 0;
-			ABUIIntVariable01 = 2; //Will be used as time in seconds.
-			//ABUIResetMotor=1;
-			anemometerStart();
+			motorAtvSetTargetSpeed(expSetup.windSpeed);
 			lcdSerialClear();
+			motorAtvSetSpeedCharacterized();
+			anemometerStart();
 			ABUIT0 = ABTimeGetReference();
-			ABUIF0 = ABTimeGetReference();
-			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_WIND_SPEED);
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_WIND_SPEED);
 			ABUIBackgroundStateSlot1 = ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND;
 			buttonsEnable();
 			break;
@@ -693,7 +709,6 @@ void ABUIStateMachineRun(){
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_RESULTS);
 			buttonsEnable();
 			break;
-
 		case ABUI_STATE_BUTTON_INCREASE:
 			ABUIEventCounter++;
 			buttonsEnable();
@@ -752,28 +767,37 @@ void ABUIStateMachineBackgroundRun(){
 		case ABUI_STATE_BG_EXP_RESULTS: ABUIMenu_Experiment_ShowResults(); break;
 		case ABUI_STATE_BG_CTL_FAN: ABUIMenu_Control_Motor(); break;
 		case ABUI_STATE_BG_CTL_WIND_SPEED: ABSetMotorWindSpeed(); break;
+		case ABUI_STATE_BG_CTL_SET_TEST_WINDSPEED: ABUIMenu_Experiment_SetupWindSpeed(); break;
+		case ABUI_STATE_BG_EXP_WIND_SPEED: ABUIExperiment_Control_SetWindSpeed(); break;
 		case ABUI_STATE_NONE:
 			if(bluetoothGetSettingFanStatus()){
-				//bluetoothDisable();
+				//Disable the bluetooth
+				bluetoothDisable();
+
+				//Set the fan status of the bluetooth.
 				bluetoothSetSettingFanStatus(0);
 				lcdSerialClear();
+
+				//Reset Wind Speed
 				motorAtvSpeedReset();
 				motorAtvTurnOn();
-				ABUIEventCounter=0;
-				ABUICounter01 = 0;
-				ABUIIntVariable01 = 2; //Will be used as time in seconds.
+				ABUIBluetoothSettingWindSpeed = 1;
 				anemometerStart();
+				ABUIIntVariable02 = 0;
 				lcdSerialClear();
-				ABUIT0 = ABTimeGetReference();
-				////
+				ABUIEventCounter = motorAtvGetTargetSpeed();
+				expSetup.windSpeed = motorAtvGetTargetSpeed();
+				//Set the bluetooth
 				ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_CTL_WIND_SPEED);
 			}
 			else{
-				//Reset Bluetooth????
-				//bluetoothEnable();
+				bluetoothEnable();
 			}
 			break;
-		default: break;
+		default:
+			lcdSerialClear();
+			lcdSerialWriteString("Unknown Background State.");
+			break;
 	}
 }
 
@@ -833,7 +857,7 @@ int ABUIMenu_Control_Size(){
 
 void ABUIMenu_Control_Write(int option){
 	char *ABUIMenu_Control_Options[] = {
-		"Motor", "Speed Algorithm"
+		"Motor", "Speed Algorithm", "Set Wind Speed"
 	};
 	ABUIWriteMenu("View Controls:",ABUIMenu_Control_Options,ABUIMenu_Control_OptionsSize,option);
 }
@@ -848,28 +872,47 @@ void ABUIMenu_Sensor_Stub(char * sensor){
 void ABUIMenu_Sensor_Force(){
 	buttonsMask();
 	ABSSRefreshLoadCells();
+	if(ABUIEventCounter != 0){
+		if(ABUIEventCounter > 0){
+			ABUIRefDragFront = ABSSGetLoadCellDragFront();
+			ABUIRefDragBack = ABSSGetLoadCellDragBack();
+			ABUIRefLiftUp = ABSSGetLoadCellLiftUp();
+			ABUIRefLiftDown = ABSSGetLoadCellLiftDown();
+			ABUIRefSideLeft = ABSSGetLoadCellSideLeft();
+			ABUIRefSideRight = ABSSGetLoadCellSideRight();
+		}
+		else{
+			ABUIRefDragFront = 0;
+			ABUIRefDragBack = 0;
+			ABUIRefLiftUp = 0;
+			ABUIRefLiftDown = 0;
+			ABUIRefSideLeft = 0;
+			ABUIRefSideRight = 0;
+		}
+		ABUIEventCounter=0;
+	}
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("Force: Raw Averages");
+	lcdSerialWriteString("[Up/Down] Set/Clr Ref.");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("DF:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragFront(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragFront()-ABUIRefDragFront,0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialWriteString("DB:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragBack(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellDragBack()-ABUIRefDragBack,0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("LU:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftUp(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftUp()-ABUIRefLiftUp,0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialWriteString("LD:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftDown(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellLiftDown()-ABUIRefLiftDown,0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("SL:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideLeft(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideLeft()-ABUIRefSideLeft,0,1);
 	lcdSerialWriteString(" ");
 	lcdSerialWriteString("SR:");
-	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideRight(),0,1);
+	lcdSerialWriteNumberWithBounds(ABSSGetLoadCellSideRight()-ABUIRefSideRight,0,1);
 	lcdSerialWriteString(" ");
 	buttonsUnmask();
 }
@@ -1016,97 +1059,77 @@ void ABUIMenu_Control_Motor(){
 
 void ABSetMotorWindSpeed(){
 	buttonsMask();
-	if(ABUIEventCounter < 0 || ABUIEventCounter > 15) ABUIEventCounter = 0;
-	ABUIEventCounter++;
+	if(ABUICounter01 < 0 || ABUICounter01 > 15) ABUICounter01 = 0;
+	ABUICounter01++;
 	ABSSRefreshAnemometer();
-	int targetWindSpeed = motorAtvGetTargetSpeed();
 	float currentWindSpeed = anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage());
+	float targetWindSpeed = motorAtvGetTargetSpeed();
+
+	if(ABUIEventCounter < 1 || ABUIEventCounter > 50)
+		ABUIEventCounter = 1;
+	if(ABUIEventCounter != motorAtvGetTargetSpeed() && !ABUIBluetoothSettingWindSpeed){
+		motorAtvSetTargetSpeed(ABUIEventCounter);
+		ABUIIntVariable01 = 1;
+	}
+	if(ABUIBluetoothSettingWindSpeed){
+		ABUIIntVariable01 = -1;
+	}
+	if(ABUIBluetoothSettingWindSpeed){
+		if(!ABUIIntVariable02){
+			motorAtvSetTargetSpeed(expSetup.windSpeed);
+			motorAtvSetSpeedCharacterized();
+			ABUIIntVariable02 = 1;
+		}
+		if((currentWindSpeed > targetWindSpeed*(1-0.03)
+				&& currentWindSpeed < targetWindSpeed*(1+0.03)) && currentWindSpeed > 0.5 ){
+			ABUIBluetoothSettingWindSpeed = 0;
+			ABUIStateMachineNextState = ABUI_STATE_MAIN_1;
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_NONE);
+			ABUIStateMachineRun();
+			bluetoothSendAck();
+		}
+	}
+
+
+
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Setting Wind Speed:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Current: ");
 	lcdSerialWriteNumber(currentWindSpeed);
+	lcdSerialWriteString("  ");
 	lcdSerialCursorLine3();
-	lcdSerialWriteString("Target: ");
-	lcdSerialWriteNumber(targetWindSpeed);
-	ABUIT1 = ABTimeGetReference();
-	lcdSerialWriteString(" T: ");
-	lcdSerialWriteNumber(ABTimeGetDelta(ABUIT1,ABUIT0).seconds);
-	lcdSerialWriteString("/");
-	lcdSerialWriteNumber(ABUIIntVariable01);
-	lcdSerialWriteString("s");
-	ABUIWriteWait(ABUIEventCounter);
+	lcdSerialWriteString("Target:");
+	lcdSerialWriteNumber(ABUIEventCounter);
+	lcdSerialWriteString(" ");
+	lcdSerialWriteString("Stp: ");
+	lcdSerialWriteNumber(motorAtvGetStep(ABUIEventCounter));
+	lcdSerialWriteString(" ");
+	lcdSerialCursorLine4();
+	ABUIWriteWait(ABUICounter01);
 
-	if(currentWindSpeed > targetWindSpeed*(1-0.04)
-			&& currentWindSpeed < targetWindSpeed*(1+0.04)){
-		//Additional Conditioning.
-		while(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds < ABUIIntVariable01){
-			ABSSRefreshAnemometer();
-			lcdSerialCursorLine3();
-			lcdSerialWriteString("Re-cal in ");
-			lcdSerialWriteNumber(ABUIIntVariable01);
-			lcdSerialWriteString(" seconds.");
-		}
-		if(ABUICounter01 < 3){
-			switch(ABUICounter01){
-			case 0:ABUIIntVariable01 = 3; break;
-			case 1:ABUIIntVariable01 = 3; break;
-			case 2:ABUIIntVariable01 = 3; break;
-			default: break;
-			}
-			ABTimeGetDelta(ABUIT1,ABUIT0).seconds >= 4;
-			ABUICounter01++;
-		}
-		else{
-			lcdSerialClear();
-			lcdSerialCursorLine1();
-			lcdSerialWriteString("AeroBal:");
-			lcdSerialCursorLine2();
-			lcdSerialWriteString("Motor Speed Set");
-			lcdSerialCursorLine3();
-			lcdSerialWriteString("Value: ");
-			lcdSerialWriteNumber(motorAtvGetTargetSpeed());
-			while(ABTimeGetDelta(ABTimeGetReference(),ABUIT1).seconds < 3){
-				lcdSerialCursorLine4();
-				lcdSerialWriteString("Send Ack in ");
-				lcdSerialWriteNumber(ABTimeGetDelta(ABTimeGetReference(),ABUIT1).seconds);
-				lcdSerialWriteString("/3 s");
-			}
-			//Send Ack to BT.
-			//bluetoothEnable();
-			bluetoothSendAck();
-			if(ABUIButtonNextStateB3_CANCEL == ABUI_STATE_CONTROL_2){
-				ABUIBackgroundNextState = ABUI_STATE_NONE;
-			}
-			else{
-				ABUIStateMachineBackgroundSetNextState(ABUIBackgroundStateSlot1);
-				ABUIBackgroundStateSlot1 = ABUI_STATE_NONE;
-			}
-		}
+	if(ABUIIntVariable01 != -1){
+		ABUIIntVariable01 = -1;
+		motorAtvSpeedReset();
+		motorAtvSetSpeedCharacterized();
+		lcdSerialClear();
 	}
-	else{
-		//Wait some time to adjust the VFD.
-			if(currentWindSpeed <= targetWindSpeed*(1-0.04)){
-				motorAtvSpeedInc();
-				while(ABTimeGetDelta(ABTimeGetReference(),ABUIT1).seconds < ABUIIntVariable01){
-					ABSSRefreshAnemometer();
-					currentWindSpeed = anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage());
-					lcdSerialCursorLine2();
-					lcdSerialWriteString("Current: ");
-					lcdSerialWriteNumber(currentWindSpeed);
-				}
-			}
-			else if(currentWindSpeed > targetWindSpeed*(1+0.04)){
-				motorAtvSpeedDec();
-				while(ABTimeGetDelta(ABTimeGetReference(),ABUIT1).seconds < ABUIIntVariable01){
-					ABSSRefreshAnemometer();
-					currentWindSpeed = anemometerSpeedConvertMiH(anemometerSpeedBufferGetAverage());
-					lcdSerialCursorLine2();
-					lcdSerialWriteString("Current: ");
-					lcdSerialWriteNumber(currentWindSpeed);
-				}
-			}
-			ABUIT0 = ABTimeGetReference();
+
+
+	buttonsUnmask();
+
+}
+
+void ABUIExperiment_Control_SetWindSpeed(){
+	buttonsMask();
+	lcdSerialCursorLine1();
+	lcdSerialWriteString("Setting Wind Speed...");
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("Waiting 10 Seconds...");
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > 10){
+		ABUIT0 = ABTimeGetReference();
+		ABUIF0 = ABTimeGetReference();
+		ABUIStateMachineBackgroundSetNextState(ABUIBackgroundStateSlot1);
 	}
 }
 
@@ -1115,14 +1138,14 @@ void ABSetMotorWindSpeed(){
 
 void ABUIMenu_Experiment_SetupTime(){
 	buttonsMask();
-	if(ABUIEventCounter<5){
-		ABUIEventCounter = 5;
+	if(ABUIEventCounter<3){
+		ABUIEventCounter = 3;
 	}
 	if(ABUIEventCounter>60){
 		ABUIEventCounter = 60;
 	}
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("Tiempo de Prueba:");
+	lcdSerialWriteString("Set Time Length:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Seconds: ");
 	lcdSerialWriteNumber(ABUIEventCounter);
@@ -1138,10 +1161,10 @@ void ABUIMenu_Experiment_SetupFrequency(){
 		ABUIEventCounter = 1;
 	}
 	if(ABUIEventCounter>15){
-		ABUIEventCounter = 15;
+		ABUIEventCounter = 10;
 	}
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("Frecuencia de Datos:");
+	lcdSerialWriteString("Set Data Frequency:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Hz: ");
 	lcdSerialWriteNumber(ABUIEventCounter);
@@ -1152,17 +1175,18 @@ void ABUIMenu_Experiment_SetupFrequency(){
 }
 void ABUIMenu_Experiment_SetupWindSpeed(){
 	buttonsMask();
-	if(ABUIEventCounter<23){
-		ABUIEventCounter = 23;
+	if(ABUIEventCounter<1){
+		ABUIEventCounter = 1;
 	}
 	if(ABUIEventCounter>50){
 		ABUIEventCounter = 50;
 	}
 	lcdSerialCursorLine1();
-	lcdSerialWriteString("Rapidez Viento:");
+	lcdSerialWriteString("Set Wind Speed:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Mi/h: ");
 	lcdSerialWriteNumber(ABUIEventCounter);
+	lcdSerialWriteString("  ");
 	expSetup.windSpeed=ABUIEventCounter;
 	motorAtvSetTargetSpeed(expSetup.windSpeed);
 	lcdSerialCursorLine4();
@@ -1172,125 +1196,167 @@ void ABUIMenu_Experiment_SetupWindSpeed(){
 
 void ABUIMenu_Experiment_CalibrationNoObjectConfirm(){
 	buttonsMask();
-	ABUILCDWrite("Calibracion Balanza:",
-			"Favor de remover",
-			"objeto.",
-			"[Enter]: Continuar");
+	ABUILCDWrite("Base Calibration:",
+			"Please Remove",
+			"object.",
+			"[Enter]: Continue");
 	buttonsUnmask();
 }
 
 void ABUIMenu_Experiment_CalibrationNoObject(){
 	buttonsMask();
-	ABUILCDWrite("Calibrando Balanza:",
-			"Tomando Medidas sin",
-			"objeto.",
+	ABUILCDWrite("Balance Calibration:",
+			"Setting force",
+			"reference frame.",
 			"");
-	//NO BASE - NO WIND SETUP
-	ABTime t0 = ABTimeGetReference();
-	ABTime f0 = ABTimeGetReference();
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
-		ABSSRefreshLoadCells();
-		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
-		//At frequency.
-		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
-				ABTimeGetDelta(ABTimeGetReference(),f0).seconds*1000
-				> (1.0/((float)expSetup.frequencyHz))*1000.0){
-			f0 = ABTimeGetReference();
-			ABECAddForces();
-		}
+	ABSSRefreshLoadCells();
+	ABTime t1 = ABTimeGetReference();
+	ABTime f1 = ABTimeGetReference();
+	ABUIWriteWait(((float)ABTimeGetDelta(t1,ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
+			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
+			> (1.0/((float)expSetup.frequencyHz))*1000.0){
+		ABUIF0 = ABTimeGetReference();
+		ABECAddForces();
 	}
-	ABECStoreNONW();
-	ABECClearForceBuffer();
-	buttonsUnmask();
-	ABUIStateMachineNextState = ABUI_STATE_EXP_6_CALIBRATE_NOOBJECT_WIND_CONFIRM;
-	ABUIBackgroundNextState = ABUI_STATE_NONE;
-	ABUIStateMachineRun();
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > expSetup.timeSeconds){
+		ABECStoreNONW();
+		ABECClearForceBuffer();
+		ABUIStateMachineNextState = ABUI_STATE_EXP_6_CALIBRATE_NOOBJECT_WIND_CONFIRM;
+		ABUIBackgroundNextState = ABUI_STATE_NONE;
+		buttonsUnmask();
+		ABUIStateMachineRun();
+	}
+
 }
 
 void ABUIMenu_Experiment_CalibrationNoObjectWindConfirm(){
 	buttonsMask();
-	ABUILCDWrite("Calibracion Balanza:",
-			"Calibracion Viento:",
-			"Cerrar tunel sin obj.",
+	ABUILCDWrite("Base Calibration",
+			"Wind: Close tunnel",
+			"without object.",
 			"[Enter]: Continuar");
 	buttonsUnmask();
 }
 void ABUIMenu_Experiment_CalibrationNoObjectWind(){
 	buttonsMask();
-	ABUILCDWrite("Calibracion Balanza:",
-				"Tomando Medidas sin",
-				"objeto con viento.",
+	ABUILCDWrite("Base Calibration:   ",
+				"Measuring base     ",
+				"aerodynamic forces.",
 				"");
-	//NO BASE - WIND
-	ABTime t0 = ABTimeGetReference();
-	ABTime f0 = ABTimeGetReference();
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
-		ABSSRefreshLoadCells();
-		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
-		//At frequency
-		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
-				ABTimeGetDelta(ABTimeGetReference(),f0).seconds*1000
-				> (1.0/((float)expSetup.frequencyHz))*1000.0){
-			f0 = ABTimeGetReference();
-			ABECAddForces();
-		}
+	ABSSRefreshLoadCells();
+	ABTime t1 = ABTimeGetReference();
+	ABTime f1 = ABTimeGetReference();
+	ABUIWriteWait(((float)ABTimeGetDelta(t1,ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
+			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
+			> (1.0/((float)expSetup.frequencyHz))*1000.0){
+		ABUIF0 = ABTimeGetReference();
+		ABECAddForces();
 	}
-	ABECStoreNO_W();
-	ABECClearForceBuffer();
-	ABUIStateMachineNextState = ABUI_STATE_EXP_8_CALIBRATE_OBJECT_CONFIRM;
-	ABUIStateMachineRun();
-	buttonsUnmask();
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > expSetup.timeSeconds){
+		ABECStoreNO_W();
+		ABECClearForceBuffer();
+		ABUIStateMachineNextState = ABUI_STATE_EXP_8_CALIBRATE_OBJECT_CONFIRM;
+		ABUIBackgroundNextState = ABUI_STATE_NONE;
+		buttonsUnmask();
+		motorAtvTurnOff();
+		ABUIStateMachineRun();
+	}
 }
 
 
 void ABUIMenu_Experiment_CalibrationObjectConfirm(){
 	buttonsMask();
-	ABUILCDWrite("Calibracion Objeto:",
-			"Colocar objeto en balanza",
-			"y cerrar tunel.",
-			"[Enter]: Continuar");
+	ABUILCDWrite("Object Calibration:",
+			"Set object in base.",
+			"",
+			"[Enter]: Continue");
 	motorAtvTurnOff();
 	buttonsUnmask();
 }
 void ABUIMenu_Experiment_CalibrationObject(){
 	buttonsMask();
-	ABUILCDWrite("Calibracion Objeto:",
-			"Tomando Medidas de",
-			"objeto en balanza.",
+	ABUILCDWrite("Calibrating Object",
+			"with no wind, please",
+			"wait.               ",
 			"");
-	ABTime t0 = ABTimeGetReference();
-	ABTime f0 = ABTimeGetReference();
-	while(ABTimeGetDelta(ABTimeGetReference(),t0).seconds < expSetup.timeSeconds){
-		ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),t0).seconds/(float)expSetup.timeSeconds)*16.0);
-		//At frequency
-		if(ABTimeGetDelta(ABTimeGetReference(),f0).milliseconds+
-				ABTimeGetDelta(ABTimeGetReference(),f0).seconds*1000
-				> (1.0/((float)expSetup.frequencyHz))*1000.0){
-			f0 = ABTimeGetReference();
-			ABECAddForces();
-		}
+	ABSSRefreshLoadCells();
+	ABTime t1 = ABTimeGetReference();
+	ABTime f1 = ABTimeGetReference();
+	ABUIWriteWait(((float)ABTimeGetDelta(t1,ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
+			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
+			> (1.0/((float)expSetup.frequencyHz))*1000.0){
+		ABUIF0 = ABTimeGetReference();
+		ABECAddForces();
 	}
-	ABECStoreO_NW();
-	ABECClearForceBuffer();
-	ABUIStateMachineNextState = ABUI_STATE_EXP_10_OBJECT_WIND_CONFIRM;
-	ABUIStateMachineRun();
-	buttonsUnmask();
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > expSetup.timeSeconds){
+		ABECStoreO_NW();
+		ABECClearForceBuffer();
+		ABUIStateMachineNextState = ABUI_STATE_EXP_10_OBJECT_WIND_CONFIRM;
+		ABUIBackgroundNextState = ABUI_STATE_NONE;
+		buttonsUnmask();
+		ABUIStateMachineRun();
+	}
+
 }
 void ABUIMenu_Experiment_MeasureConfirm(){
 	buttonsMask();
-	ABUILCDWrite("Comenzar Experimento:",
-			"Presione enter para",
-			"comenzar.",
-			"[Enter]: Continuar");
+	ABUILCDWrite("Confirm Start:",
+			"Press enter to begin",
+			"experiment.",
+			"[Enter]: Continue");
 	buttonsUnmask();
 }
 void ABUIMenu_Experiment_Measure(){
 	buttonsMask();
-	ABUILCDWrite("AeroBal:",
-			"Tomando Medidas...",
-			"",
+	ABUILCDWrite("AeroBal:            ",
+			"Taking Measurements...",
+			"                      ",
 			"");
+
+
 	ABUIWriteWait(((float)ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+
+	ABSSRefreshLoadCells();
+	ABSSRefreshDHT();
+	ABSSRefreshBMP();
+	ABSSRefreshWindVane();
+	ABSSRefreshAnemometer();
+	ABSSRefreshLoadCells();
+
+	ABTime t1 = ABTimeGetReference();
+	ABTime f1 = ABTimeGetReference();
+	ABUIWriteWait(((float)ABTimeGetDelta(t1,ABUIT0).seconds/(float)expSetup.timeSeconds)*16.0);
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
+			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
+			> (1.0/((float)expSetup.frequencyHz))*1000.0){
+		ABUIF0 = ABTimeGetReference();
+		ABECAddForces();
+		ABECAddHumidity();
+		ABECAddPressure();
+		ABECAddTemperature();
+		ABECAddVelocity();
+		ABECAddWindDirection();
+	}
+
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > expSetup.timeSeconds){
+		ABUIStateMachineNextState = ABUI_STATE_EXP_12_DISPLAY_RESULTS;
+		ABUIBackgroundNextState = ABUI_STATE_NONE;
+		motorAtvTurnOff();
+		buttonsUnmask();
+		ABUIStateMachineRun();
+	}
+
+	/*
 	//At frequency
 	if(ABTimeGetDelta(ABTimeGetReference(),ABUIF0).milliseconds+
 			ABTimeGetDelta(ABTimeGetReference(),ABUIF0).seconds*1000
@@ -1309,14 +1375,11 @@ void ABUIMenu_Experiment_Measure(){
 		ABUIStateMachineNextState = ABUI_STATE_EXP_12_DISPLAY_RESULTS;
 		ABUIStateMachineRun();
 	}
+	*/
 }
 
 void ABUIMenu_Experiment_ShowResults(){
 	buttonsMask();
-	ABUILCDWrite("Resultados:",
-			"",
-			"",
-			"");
 	if(ABUIEventCounter < 0 || ABUIEventCounter > 2){
 		ABUIEventCounter = 0;
 	}
@@ -1343,7 +1406,7 @@ void ABUIMenu_Experiment_ShowResults(){
 		lcdSerialWriteString("P: ");
 		lcdSerialWriteNumber(ABECGetAveragePressure());
 		lcdSerialCursorLine3();
-		lcdSerialWriteString("T");
+		lcdSerialWriteString("T: ");
 		lcdSerialWriteNumber(ABECGetAverageTemperature());
 		lcdSerialCursorLine4();
 		lcdSerialWriteString("H: ");
@@ -1363,5 +1426,6 @@ void ABUIMenu_Experiment_ShowResults(){
 		break;
 
 	}
+	//Delay here!!
 	buttonsUnmask();
 }

@@ -5,7 +5,7 @@
 void ABRun(){
 	ABUIInit();
 	while(1){
-		//ABSSRefreshSequential();
+		ABSSRefreshSequential();
 		ABUIStateMachineBackgroundRun();
 	}
 }

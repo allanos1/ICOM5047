@@ -170,7 +170,13 @@ void uartMasterEnable(uint32_t uart, uint32_t baud){
 }
 
 
+void uartIntEnable(uint32_t uart){
+	UARTIntEnable(uartGetBase(uart),UART_INT_RX | UART_INT_RT);
+}
 
+void uartIntDisable(uint32_t uart){
+	UARTIntDisable(uartGetBase(uart),UART_INT_RX | UART_INT_RT);
+}
 /*
  *Clears the interrupts for the UARTS.
  */

@@ -36,6 +36,7 @@
 
 int motorAtvCurrentStep;
 int motorAtvTargetSpeed;
+
 /////////////////////////////////
 // API Layer 0
 void motorAtvInit();
@@ -45,11 +46,12 @@ void motorAtvSpeedInc();
 void motorAtvSpeedDec();
 void motorAtvSpeedReset();
 void motorAtvSetTargetSpeed(int speed);
+void motorAtvSetSpeedCharacterized();
 int motorAtvGetTargetSpeed();
 
 /////////////////////////////////
 // API Layer 1
-void motorAtvSetStep(int step);
+int motorAtvGetStep(int step);
 
 
 
