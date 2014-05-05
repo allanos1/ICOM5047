@@ -230,6 +230,12 @@ int32_t uartGetBufferCharSync(uint32_t uart){
 
 ////////////////////////////////////////////
 // API Layer 2
+
+/*
+ * Enables the UART Module using no interrupts.
+ * This mode is helpful for only writing from
+ * the TIVA to a device.
+ */
 void uartMasterEnableNoInterrupt(uint32_t uart, uint32_t baud){
 
 	//TODO: Check clock dependency.

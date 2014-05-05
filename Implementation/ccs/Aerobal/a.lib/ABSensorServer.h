@@ -2,7 +2,7 @@
  * ABSensorServer.h
  *
  *  Created on: Apr 24, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #ifndef ABSENSORSERVER_H_

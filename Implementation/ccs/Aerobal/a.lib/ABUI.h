@@ -2,7 +2,7 @@
  * ABUI.h
  *
  *  Created on: Apr 6, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #ifndef ABUI_H_
@@ -25,21 +25,9 @@
 #include "motorAtv.h"
 #include "ABExperimentCentral.h"
 
-#define ABUI_LCD_UARTPORT0 LCDSERIAL_INIT_UART0
-#define ABUI_LCD_UARTPORT1 LCDSERIAL_INIT_UART1
-#define ABUI_LCD_UARTPORT2 LCDSERIAL_INIT_UART2
-#define ABUI_LCD_UARTPORT3 LCDSERIAL_INIT_UART3
-#define ABUI_LCD_UARTPORT4 LCDSERIAL_INIT_UART4
-#define ABUI_LCD_UARTPORT5 LCDSERIAL_INIT_UART5
-#define ABUI_LCD_UARTPORT6 LCDSERIAL_INIT_UART6
-#define ABUI_LCD_UARTPORT7 LCDSERIAL_INIT_UART7
 
-#define ABUI_MENU_WELCOME 0x00
-#define ABUI_MENU_MAIN 0x01
-#define ABUI_MENU_START 0x02
-#define ABUI_MENU_SETUP 0x03
-#define ABUI_MENU_CALIBRATE 0x04
-
+////////////////////////////////
+//Menu States
 #define ABUI_STATE_MAIN_1 0x0000
 #define ABUI_STATE_MAIN_2 0x0001
 #define ABUI_STATE_MAIN_3 0x0002
@@ -52,6 +40,12 @@
 #define ABUI_STATE_SENSOR_5 0x0014
 #define ABUI_STATE_SENSOR_6 0x0015
 #define ABUI_STATE_SENSOR_7 0x0016
+#define ABUI_STATE_CONTROL_1 0x0400
+#define ABUI_STATE_CONTROL_2 0x0401
+#define ABUI_STATE_CONTROL_3 0x0402
+
+////////////////////////////////
+//Sensors Background States
 #define ABUI_STATE_BG_SENSOR_FORCE 0x0020
 #define ABUI_STATE_BG_SENSOR_PRESSURE 0x0021
 #define ABUI_STATE_BG_SENSOR_TEMPERATURE 0x0022
@@ -60,11 +54,7 @@
 #define ABUI_STATE_BG_SENSOR_DIRECTION 0x0025
 #define ABUI_STATE_BG_SENSOR_MPSA 0x0026
 
-
-
-
-
-
+////////////////////////////////
 //Experiment States
 #define ABUI_STATE_EXP_1_SETUP_TIME 0x0100
 #define ABUI_STATE_EXP_2_SETUP_FREQUENCY 0x0110
@@ -79,7 +69,8 @@
 #define ABUI_STATE_EXP_11_OBJECT_WIND_MEASURE 0x0161
 #define ABUI_STATE_EXP_12_DISPLAY_RESULTS 0x0170
 
-//Background Processes
+////////////////////////////////
+//Experiment Background States
 #define ABUI_STATE_BG_SM_FG_RUN 0x200
 #define ABUI_STATE_BG_EXP_SETUP_TIME 0x0210
 #define ABUI_STATE_BG_EXP_SETUP_FREQUENCY 0x0220
@@ -90,22 +81,38 @@
 #define ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND 0x0270
 #define ABUI_STATE_BG_EXP_RESULTS 0x0280
 
-#define ABUI_STATE_CONTROL_1 0x0400
-#define ABUI_STATE_CONTROL_2 0x0401
-#define ABUI_STATE_CONTROL_3 0x0402
+////////////////////////////////
+//Control Background States
 #define ABUI_STATE_BG_CTL_FAN 0x0480
 #define ABUI_STATE_BG_CTL_WIND_SPEED 0x0481
 #define ABUI_STATE_BG_CTL_SET_TEST_WINDSPEED 0x0482
 #define ABUI_STATE_BG_EXP_WIND_SPEED 0x483
 
+////////////////////////////////
+//Input States
 #define ABUI_STATE_BUTTON_INCREASE 0xFD00
 #define ABUI_STATE_BUTTON_DECREASE 0xFD01
+
+////////////////////////////////
+//System States
 #define ABUI_STATE_BTCONTROL 0xFE00
 #define ABUI_STATE_PANIC 0xFFFC
 #define ABUI_STATE_ERROR 0xFFFD
 #define ABUI_STATE_RESET 0xFFFE
 #define ABUI_STATE_NONE 0xFFFF
 
+////////////////////////////////
+// Defaults
+#define ABUI_DEFAULTS_FREQUENCY_MAX 15
+#define ABUI_DEFAULTS_FREQUENCY_MIN 1
+#define ABUI_DEFAULTS_TIME_MAX 60
+#define ABUI_DEFAULTS_TIME_MIN 3
+#define ABUI_DEFAULTS_WINDSPEED_MAX 50
+#define ABUI_DEFAULTS_WINDSPEED_MIN 1
+#define ABUI_DEFAULTS_CONTROL_WINDSPEED_WAIT 20 //In seconds
+
+////////////////////////////////
+// Variables
 typedef struct {
 	int timeSeconds;
 	int frequencyHz;
@@ -132,6 +139,7 @@ ABTime ABUIT1;
 ABTime ABUIF0;
 ABTime ABUIF1;
 
+//Menu Sizes
 int ABUIMenu_Main_OptionsSize;
 int ABUIMenu_Sensor_OptionsSize;
 int ABUIMenu_Control_OptionsSize;
@@ -141,7 +149,10 @@ int ABUIResetMotor;
 int ABUICounter01;
 int ABUIIntVariable01;
 int ABUIIntVariable02;
+uint32_t ABUIConfigNextState01;
+uint32_t ABUIConfigNextState02;
 
+//Force Reference Frame Variables
 float ABUIRefDragFront;
 float ABUIRefDragBack;
 float ABUIRefLiftUp;
@@ -149,15 +160,16 @@ float ABUIRefLiftDown;
 float ABUIRefSideLeft;
 float ABUIRefSideRight;
 
-uint32_t ABUIConfigNextState01;
-uint32_t ABUIConfigNextState02;
 
 int ABUIConfigVariable01;
 
 int ABUIBluetoothSettingWindSpeed;
 float ABUIBluetoothSpeedRef;
+
+
 /////////////////////////////////
 // API Layer 0
+
 void ABUIPowerWait(uint32_t waitTime);
 void ABUIWriteWait(int step);
 void ABUIInit();

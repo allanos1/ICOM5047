@@ -53,6 +53,7 @@ char bluetoothBuffer[20];
 int bluetoothState;
 int bluetoothEnabled;
 int bluetoothSettingFanStatus ;
+int bluetoothSettingFanQuery;
 float bluetoothSettingExpWindSpeed ;
 
 ///////////////////////////////////
@@ -69,6 +70,7 @@ void bluetoothSendString(char * s);
 int bluetoothIsQuery(char *value);
 void bluetoothGetQuery(char * value);
 void bluetoothEvaluateBuffer(char *buffer);
+int bluetoothGetNumber(char value);
 
 ////////////////////////////////////
 // API Layer 1
@@ -76,6 +78,7 @@ int bluetoothGetSettingFanStatus();
 void bluetoothSetSettingFanStatus(int value);
 void bluetoothEnable();
 void bluetoothDisable();
-int bluetoothIsEnabled();
+void bluetoothSetSettingFanQuery(int value);
+int bluetoothGetSettingFanQuery();
 
 #endif /* BLUETOOTH_H_ */

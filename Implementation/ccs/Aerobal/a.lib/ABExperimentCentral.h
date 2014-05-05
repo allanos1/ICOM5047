@@ -90,5 +90,6 @@ float ABECGetAverageHumidity();
 float ABECGetAverageWindDirection();
 float ABECGetAverageVelocity();
 
+void ABECClearAllBuffers();
 
 #endif /* ABEXPERIMENTCENTRAL_H_ */

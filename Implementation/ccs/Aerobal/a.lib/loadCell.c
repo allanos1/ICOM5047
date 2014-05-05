@@ -17,6 +17,10 @@ LoadCellBuffer loadCellBufferSideRight;
 //////////////////////////
 // API Layer 0
 
+/* Initializes the loadCell pins to perform measurements using the pins
+ * PE0-PE5.
+ *
+ */
 void loadCellInit(){
 	adcInit(ADC_0);
 	adcMuxPinSet(ADC_0,LOADCELL_FORCE_MUX_DRAG_FRONT,LOADCELL_FORCE_PIN_DRAG_FRONT);
@@ -29,6 +33,10 @@ void loadCellInit(){
 	loadCellRefreshSetSize(LOADCELL_BUFFER_SIZE); //Default and Max Refresh Size.
 }
 
+/*
+ * Refreshes a buffer of LoadCellBuffer type. This Essentially performs
+ * a rolling buffer refresh.
+ */
 void loadCellBufferRefresh(LoadCellBuffer* sensorBuffer, float newValue){
 	sensorBuffer->sum -= sensorBuffer->buffer[sensorBuffer->count];
 	sensorBuffer->sum += newValue;
@@ -37,6 +45,9 @@ void loadCellBufferRefresh(LoadCellBuffer* sensorBuffer, float newValue){
 	sensorBuffer->average = sensorBuffer->sum /(float)LOADCELL_BUFFER_SIZE ;
 }
 
+/*
+ * Refreshes all of the pins of the LoadCells.
+ */
 void loadCellRefresh(){
 
 	int i = 0;
@@ -57,6 +68,10 @@ void loadCellRefresh(){
 	}
 }
 
+/*
+ * Sets the size of the refreshing performed on the
+ * pins.
+ */
 void loadCellRefreshSetSize(int size){
 	if(size < 1){
 		loadCellRefreshSize = 1;
@@ -69,27 +84,46 @@ void loadCellRefreshSetSize(int size){
 	}
 }
 
-//Insert Characterization Formulas.
+///////////////////////////////////
+// API Layer 1
+/*
+ * Returns the value of the Drag-Front buffer.
+ */
 float loadCellGetDragFront(){
 	return loadCellBufferDragFront.average*0.535-63.946;
 }
 
+/*
+ * Returns the value of the Drag-Back buffer.
+ */
 float loadCellGetDragBack(){
 	return loadCellBufferDragBack.average*0.1055-3.9814;
 }
 
+/*
+ * Returns the value of the Lift-Up buffer.
+ */
 float loadCellGetLiftUp(){
 	return loadCellBufferLiftUp.average*0.1684-24.589;
 }
 
+/*
+ * Returns the value of the Lift-Down buffer.
+ */
 float loadCellGetLiftDown(){
 	return loadCellBufferLiftDown.average*0.4405-8.758;
 }
 
+/*
+ * Returns the value of the Side-Left buffer.
+ */
 float loadCellGetSideLeft(){
 	return loadCellBufferSideLeft.average*0.0718-19.8506;
 }
 
+/*
+ * Returns the value of the Side-Right buffer.
+ */
 float loadCellGetSideRight(){
 	return loadCellBufferSideRight.average*0.2744-130.8;
 }

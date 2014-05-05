@@ -10,24 +10,24 @@
 /////////////////////////////////
 // API Layer 0
 
-//uint32_t ABUIButtonNextStateB0_UP = ABUI_STATE_MAIN_1;
-//uint32_t ABUIButtonNextStateB1_DOWN = ABUI_STATE_MAIN_1;
-//uint32_t ABUIButtonNextStateB2_ENTER = ABUI_STATE_MAIN_1;
-//uint32_t ABUIButtonNextStateB3_CANCEL = ABUI_STATE_MAIN_1;
-//uint32_t ABUIButtonNextStateB4_MENU = ABUI_STATE_MAIN_1;
-//uint32_t ABUIButtonNextStateB5_PANIC = ABUI_STATE_MAIN_1;
-
-//uint32_t ABUIStateMachineNextState = ABUI_STATE_NONE;
-//uint32_t ABUIBackgroundNextState = ABUI_STATE_NONE;
-
+/*
+ * Maintains the state of the experiments performed on the HW UI.
+ */
 ABUIExpSetup expSetup ;
 
+/*
+ * Main initializer for the UI. Delays to
+ * wait for stabilization of the circuit, primarily
+ * the LCD Serial Backpack.
+ */
 void ABUIInit(){
 	SysCtlDelay(3000000);
 	ABUIInitModules();
 }
 
-
+/*
+ * Blinks the power LED and waits the desired amount of delay.
+ */
 void ABUIPowerWait(uint32_t waitTime){
 	gpioSetData(GPIO_PORTA,0x20,0x00);
 	SysCtlDelay(waitTime/4);
@@ -40,7 +40,13 @@ void ABUIPowerWait(uint32_t waitTime){
 	gpioSetData(GPIO_PORTA,0x20,~gpioGetData(GPIO_PORTA,0x20));
 }
 
+/*
+ * Writes a wait bar with no amount indication.
+ * Step is a number between 0-15.
+ */
 void ABUIWriteWait(int step){
+	if(step < 0) step = 0;
+	if(step > 15) step = 15;
 	lcdSerialCursorLine4();
 	lcdSerialWriteString(" [");
 	int i = 0;
@@ -50,6 +56,10 @@ void ABUIWriteWait(int step){
 
 }
 
+/*
+ * Writes a number that indicates the ratio total
+ * of the wait time.
+ */
 void ABUIWriteWaitTimed(float current, float total, char* timeUnit){
 	lcdSerialCursorLine4();
 	lcdSerialWriteString(" [");
@@ -65,6 +75,9 @@ void ABUIWriteWaitTimed(float current, float total, char* timeUnit){
 
 }
 
+/*
+ * Writes a module Load message.
+ */
 void ABUIWriteLoadMessage(char *message){
 	lcdSerialCursorLine3();
 	lcdSerialWriteString(message);
@@ -75,6 +88,10 @@ void ABUIWriteLoadMessage(char *message){
 }
 
 
+/*
+ * Main initializer for the UI. This function initializes all
+ * of the modules of AeroBal to be interfaced with the UI.
+ */
 void ABUIInitModules(){
 	//LEDs
 	gpioSetMasterEnable(GPIO_PORTA);
@@ -148,20 +165,23 @@ void ABUIInitModules(){
 	ABUIButtonNextStateB5_PANIC = ABUI_STATE_MAIN_1;
 
 	//UI Config
-	ABUIMenu_Main_OptionsSize = 5;
-	ABUIMenu_Sensor_OptionsSize = 7;
-	ABUIMenu_Control_OptionsSize = 3;
+	ABUIMenu_Main_OptionsSize = 5; //Size of Main Menu.
+	ABUIMenu_Sensor_OptionsSize = 7; //Size of Sensor Menu.
+	ABUIMenu_Control_OptionsSize = 3; //Size of control Menu.
 	motorAtvSetTargetSpeed(5); //Default Initial Target Speed
-	ABUIStateMachineSlot01 = ABUI_STATE_NONE;
+	ABUIStateMachineSlot01 = ABUI_STATE_NONE; // Slot for state machine.
 
 	ABUIWriteWait(16);
 	ABUIPowerWait(4000000);
 	buttonsInit();
-	gpioSetData(GPIO_PORTA,0x20,0x20);
+	gpioSetData(GPIO_PORTA,0x20,0x20); //Leave the Power Light on.
 	ABUIStateMachineRun();
 
 }
 
+/*
+ * Writes the 4 given strings in the LCD.
+ */
 void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4){
 	if(stringLength(ln1)){
 		lcdSerialCursorLine1();
@@ -181,7 +201,9 @@ void ABUILCDWrite(char * ln1, char* ln2, char* ln3, char* ln4){
 	}
 
 }
-
+/*
+ * Writes a menu with a title, and its options along with the selector.
+ */
 void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option){
 
 	lcdSerialClear();
@@ -282,18 +304,35 @@ void ABUIWriteMenu(char* menuTitle, char* options[], int optionSize, int option)
 
 }
 
+/*
+ * Sets the next state of the state machine. The State
+ * machine must be executed contrary to the background
+ * state machine.
+ */
 void ABUIStateMachineSetNextState(uint32_t nextState){
 	ABUIStateMachineNextState = nextState;
 }
 
+/*
+ * Sets the next state of the background state machine.
+ */
 void ABUIStateMachineBackgroundSetNextState(uint32_t nextState){
 	ABUIBackgroundNextState = nextState;
 }
 
+/*
+ * Resets the Background State machine state to NONE.
+ */
 void ABUIStateMachineBackgroundReset(){
 	ABUIBackgroundNextState = ABUI_STATE_NONE;
 }
 
+/*Interrupt Handler:
+ * | extern void ABUIStateMachineSetNextState_InterruptHandler()
+ ******************
+ * Sets the next state of the state machine and executes it.
+ *
+ */
 void ABUIStateMachineSetNextState_InterruptHandler(){
 	buttonsInterruptHandler();
 	if(buttonsWasPressed()){
@@ -320,6 +359,9 @@ void ABUIStateMachineSetNextState_InterruptHandler(){
 	ABUIStateMachineRun();
 }
 
+/*
+ * Sets the next state that each button will have on next press.
+ */
 void ABUIButtonsSetNextState(uint32_t nextStateB0,uint32_t nextStateB1,uint32_t nextStateB2,
 							 uint32_t nextStateB3,uint32_t nextStateB4,uint32_t nextStateB5){
 	ABUIButtonNextStateB0_UP = nextStateB0;
@@ -330,6 +372,10 @@ void ABUIButtonsSetNextState(uint32_t nextStateB0,uint32_t nextStateB1,uint32_t 
 	ABUIButtonNextStateB5_PANIC = nextStateB5;
 }
 
+/*
+ * The AeroBal State Machine. The #define-d identifiers
+ * denote and give an idea of what a state is about.
+ */
 void ABUIStateMachineRun(){
 	if(ABUIStateMachineNextState != ABUI_STATE_NONE
 			&& ABUIStateMachineNextState != ABUI_STATE_BUTTON_INCREASE
@@ -603,7 +649,7 @@ void ABUIStateMachineRun(){
 			);
 			buttonsEnable();
 			lcdSerialClear();
-			ABUIEventCounter = 0;
+			ABUIEventCounter = (ABUI_DEFAULTS_TIME_MAX-ABUI_DEFAULTS_TIME_MIN)/2;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_SETUP_TIME);
 			break;
 		case ABUI_STATE_EXP_2_SETUP_FREQUENCY:
@@ -615,7 +661,7 @@ void ABUIStateMachineRun(){
 			);
 			buttonsEnable();
 			lcdSerialClear();
-			ABUIEventCounter = 0;
+			ABUIEventCounter = (ABUI_DEFAULTS_FREQUENCY_MAX-ABUI_DEFAULTS_FREQUENCY_MIN)/2;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_SETUP_FREQUENCY);
 			break;
 		case ABUI_STATE_EXP_3_SETUP_WIND_SPEED:
@@ -627,7 +673,7 @@ void ABUIStateMachineRun(){
 			);
 			buttonsEnable();
 			lcdSerialClear();
-			ABUIEventCounter = 25;
+			ABUIEventCounter = (ABUI_DEFAULTS_WINDSPEED_MAX-ABUI_DEFAULTS_WINDSPEED_MIN)/2;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_SETUP_WINDSPEED);
 			break;
 		case ABUI_STATE_EXP_4_CALIBRATE_NOOBJECT_CONFIRM:
@@ -724,13 +770,14 @@ void ABUIStateMachineRun(){
 			motorAtvSetSpeedCharacterized();
 			anemometerStart();
 			ABUIT0 = ABTimeGetReference();
+			lcdSerialClear();
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_EXP_WIND_SPEED);
 			ABUIBackgroundStateSlot1 = ABUI_STATE_BG_EXP_MEASURE_OBJECT_WIND;
 			buttonsEnable();
 			break;
 		case ABUI_STATE_EXP_12_DISPLAY_RESULTS:
 			ABUIButtonsSetNextState(
-					ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
 				ABUI_STATE_MAIN_1,ABUI_STATE_MAIN_1,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
@@ -775,6 +822,12 @@ void ABUIStateMachineRun(){
 
 	}
 }
+
+/*
+ * The background state machine. This state machine is executed
+ * when the micro is not doing another thing. A function is assigned
+ * to the state that it is handling.
+ */
 void ABUIStateMachineBackgroundRun(){
 	switch(ABUIBackgroundNextState){
 		case ABUI_STATE_BG_SM_FG_RUN: ABUIStateMachineRun(); break;
@@ -833,6 +886,9 @@ void ABUIStateMachineBackgroundRun(){
 /////////////////////////////////
 // API Layer 1
 
+/*
+ *Writes the LoadBar of the AeroBal Initialize interface.
+ */
 void ABUIMenu_LoadBar_Write(int delay, int lines){
 	lcdSerialCursorLine4();
 	lcdSerialWriteString("[");
@@ -846,6 +902,10 @@ void ABUIMenu_LoadBar_Write(int delay, int lines){
 	if(delay) SysCtlDelay(6000000);
 }
 
+/*
+ * Writes the first output to the UI on micro
+ * power on.
+ */
 void ABUIMenu_Load_Write(){
 	ABUILCDWrite(" ---  AeroBal  ---  ",
 				 "====================",
@@ -854,10 +914,17 @@ void ABUIMenu_Load_Write(){
 
 }
 
+/*
+ * Returns the size of the Main Menu options.
+ */
 int ABUIMenu_Main_Size(){
 	return ABUIMenu_Main_OptionsSize;
 }
 
+/*
+ * Writes the Main Menu on screen. uses the last bit
+ * of the state machine identifiers as a selector for options.
+ */
 void ABUIMenu_Main_Write(int option){
 
 	char* ABUIMenu_Main_Options[] = {
@@ -866,10 +933,17 @@ void ABUIMenu_Main_Write(int option){
 	ABUIWriteMenu("Principal Menu:",ABUIMenu_Main_Options,ABUIMenu_Main_OptionsSize,option);
 }
 
+/*
+ * Returns the size of the Sensor Options.
+ */
 int ABUIMenu_Sensor_Size(){
 	return ABUIMenu_Sensor_OptionsSize;
 }
 
+/*
+ * Writes the Sensor Menu on screen; uses the last bit
+ * of the state machine identifiers as a selector for options.
+ */
 void ABUIMenu_Sensor_Write(int option){
 	char *ABUIMenu_Sensor_Options[] = {
 		"Force", "Pressure", "Temperature",
@@ -879,10 +953,17 @@ void ABUIMenu_Sensor_Write(int option){
 	ABUIWriteMenu("View Sensors:",ABUIMenu_Sensor_Options,ABUIMenu_Sensor_OptionsSize,option);
 }
 
+/*
+ * Returns the size of the Control options.
+ */
 int ABUIMenu_Control_Size(){
 	return ABUIMenu_Control_OptionsSize;
 }
 
+/*
+ * Wirtes the Control Menu on screen; uses the last bit
+ * of the state machine identifiers as a selector for options.
+ */
 void ABUIMenu_Control_Write(int option){
 	char *ABUIMenu_Control_Options[] = {
 		"Motor", "Speed Algorithm", "Set Wind Speed"
@@ -890,6 +971,9 @@ void ABUIMenu_Control_Write(int option){
 	ABUIWriteMenu("View Controls:",ABUIMenu_Control_Options,ABUIMenu_Control_OptionsSize,option);
 }
 
+/*
+ * Stub function for writing a skeleton background process or routine.
+ */
 void ABUIMenu_Sensor_Stub(char * sensor){
 	lcdSerialCursorLine1();
 	lcdSerialWriteString(sensor);
@@ -897,6 +981,12 @@ void ABUIMenu_Sensor_Stub(char * sensor){
 	lcdSerialCursorLine2();
 	lcdSerialWriteNumber(ABUIEventCounter++);
 }
+
+/*
+ * Force Sensor Routine.
+ * Refreshes the values from the load cells and
+ * then writes each value on screen.
+ */
 void ABUIMenu_Sensor_Force(){
 	buttonsMask();
 	ABSSRefreshLoadCells();
@@ -945,6 +1035,13 @@ void ABUIMenu_Sensor_Force(){
 	buttonsUnmask();
 }
 
+/*
+ * Pressure Sensor Routine.
+ * Refreshes the values from the pressure sensors and
+ * then writes each value on screen.
+ *
+ * Uses the BMP Library sensor 0.
+ */
 void ABUIMenu_Sensor_Pressure(){
 	buttonsMask();
 	ABSSRefreshBMP();
@@ -959,9 +1056,17 @@ void ABUIMenu_Sensor_Pressure(){
 	buttonsUnmask();
 
 }
+
+/*
+ * Temperature Sensor Routine.
+ * Refreshes the values from the temperature sensor and
+ * then writes each value on screen.
+ *
+ * Uses the DHT22 temperature.
+ */
 void ABUIMenu_Sensor_Temperature(){
 	buttonsMask();
-	ABSSRefreshBMP();
+	ABSSRefreshDHT();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Temperature Sensor:");
 	lcdSerialCursorLine2();
@@ -973,6 +1078,13 @@ void ABUIMenu_Sensor_Temperature(){
 	buttonsUnmask();
 }
 
+/*
+ * Anemometer Sensor Routine.
+ * Refreshes the values from the anemometer sensor and
+ * then writes each value on screen.
+ *
+ * Uses the Anemometer Library.
+ */
 void ABUIMenu_Sensor_Velocity(){
 	buttonsMask();
 	ABSSRefreshAnemometer();
@@ -990,6 +1102,13 @@ void ABUIMenu_Sensor_Velocity(){
 	buttonsUnmask();
 }
 
+/*
+ * Humidity Sensor Routine.
+ * Refreshes the values from the humidity sensor and
+ * then writes each value on screen.
+ *
+ * Uses the DHT22 library.
+ */
 void ABUIMenu_Sensor_Humidity(){
 	buttonsMask();
 	ABUIEventCounter = (ABUIEventCounter + 1) % 10;
@@ -1010,7 +1129,13 @@ void ABUIMenu_Sensor_Humidity(){
 	buttonsUnmask();
 }
 
-
+/*
+ * Direction Sensor Routine.
+ * Refreshes the values from the direction sensor and
+ * then writes each value on screen.
+ *
+ * Uses the Wind Vane library.
+ */
 void ABUIMenu_Sensor_Direction(){
 	buttonsMask();
 	ABSSRefreshWindVane();
@@ -1025,6 +1150,14 @@ void ABUIMenu_Sensor_Direction(){
 
 }
 
+/*
+ * MPSA Sensor Routine.
+ * Refreshes the values from the pressure sensors and
+ * then writes each value on screen on the selected index.
+ *
+ * Uses the MPSA (bmp085Array) library.
+ *
+ */
 void ABUIMenu_Sensor_MPSA(){
 	buttonsMask();
 	if(ABUIEventCounter > 15 || ABUIEventCounter < 0) ABUIEventCounter = 0;
@@ -1054,6 +1187,11 @@ void ABUIMenu_Sensor_MPSA(){
 /////////////////////////////////////
 // Control
 
+/*
+ * Motor Control Routine.
+ * Allows control of the VFD by providing an increase
+ * decrease interface for the motor.
+ */
 void ABUIMenu_Control_Motor(){
 	buttonsMask();
 	ABSSRefreshAnemometer();
@@ -1085,6 +1223,13 @@ void ABUIMenu_Control_Motor(){
 	buttonsUnmask();
 }
 
+/*
+ *	Motor Wind Speed Algorithm Routine
+ *	The algorithm simply uses characterization to set
+ *	the wind speed due to resolution issues with the
+ *	potentiometer.
+ *
+ */
 void ABSetMotorWindSpeed(){
 	buttonsMask();
 	if(ABUICounter01 < 0 || ABUICounter01 > 15) ABUICounter01 = 0;
@@ -1162,13 +1307,21 @@ void ABSetMotorWindSpeed(){
 
 }
 
+/*
+ * Provides a quick way to set the desired speed
+ * by characterization. This background process
+ * waits for the speed to reach its place by delaying
+ * for worst case set seconds.
+ */
 void ABUIExperiment_Control_SetWindSpeed(){
 	buttonsMask();
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Setting Wind Speed...");
 	lcdSerialCursorLine2();
-	lcdSerialWriteString("Waiting 10 Seconds...");
-	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > 10){
+	lcdSerialWriteString("Waiting ");
+	lcdSerialWriteNumber(ABUI_DEFAULTS_CONTROL_WINDSPEED_WAIT);
+	lcdSerialWriteString(" Seconds...");
+	if(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds > ABUI_DEFAULTS_CONTROL_WINDSPEED_WAIT){
 		ABUIT0 = ABTimeGetReference();
 		ABUIF0 = ABTimeGetReference();
 		ABUIStateMachineBackgroundSetNextState(ABUIBackgroundStateSlot1);
@@ -1178,47 +1331,58 @@ void ABUIExperiment_Control_SetWindSpeed(){
 		lcdSerialWriteString("Time: ");
 		lcdSerialWriteNumber(ABTimeGetDelta(ABTimeGetReference(),ABUIT0).seconds);
 		lcdSerialWriteString("/");
-		lcdSerialWriteNumber(10);
+		lcdSerialWriteNumber(ABUI_DEFAULTS_CONTROL_WINDSPEED_WAIT);
 	}
 }
 
 /////////////////////////////////////
-// Experiment
+// Experiment Handlers:
+////////////////////////
+// Experiment Sequence is handled by functions below.
 
+/*
+ * Ask the user for the experiment time length.
+ */
 void ABUIMenu_Experiment_SetupTime(){
 	buttonsMask();
-	if(ABUIEventCounter<3){
-		ABUIEventCounter = 3;
+	if(ABUIEventCounter<ABUI_DEFAULTS_TIME_MIN){
+		ABUIEventCounter = ABUI_DEFAULTS_TIME_MIN;
 	}
-	if(ABUIEventCounter>60){
-		ABUIEventCounter = 60;
+	if(ABUIEventCounter>ABUI_DEFAULTS_TIME_MAX){
+		ABUIEventCounter = ABUI_DEFAULTS_TIME_MAX;
 	}
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Set Time Length:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Seconds: ");
 	lcdSerialWriteNumber(ABUIEventCounter);
+	lcdSerialWriteString("  ");
 	expSetup.timeSeconds = ABUIEventCounter;
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("[Up/Down]: Change");
 	lcdSerialCursorLine4();
-	lcdSerialWriteString("[Enter]: Continuar");
+	lcdSerialWriteString("[Enter]: Continue");
 	buttonsUnmask();
 }
 
+/*
+ * Ask for the experiment frequency of that lecture
+ * for buffers.
+ */
 void ABUIMenu_Experiment_SetupFrequency(){
 	buttonsMask();
-	if(ABUIEventCounter<1){
-		ABUIEventCounter = 1;
+	if(ABUIEventCounter<ABUI_DEFAULTS_FREQUENCY_MIN){
+		ABUIEventCounter = ABUI_DEFAULTS_FREQUENCY_MIN;
 	}
-	if(ABUIEventCounter>15){
-		ABUIEventCounter = 10;
+	if(ABUIEventCounter>ABUI_DEFAULTS_FREQUENCY_MAX){
+		ABUIEventCounter = ABUI_DEFAULTS_FREQUENCY_MAX;
 	}
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Set Data Frequency:");
 	lcdSerialCursorLine2();
 	lcdSerialWriteString("Hz: ");
 	lcdSerialWriteNumber(ABUIEventCounter);
+	lcdSerialWriteString("  ");
 	expSetup.frequencyHz = ABUIEventCounter;
 	lcdSerialCursorLine3();
 	lcdSerialWriteString("[Up/Down]: Change");
@@ -1226,13 +1390,17 @@ void ABUIMenu_Experiment_SetupFrequency(){
 	lcdSerialWriteString("[Enter]: Continue");
 	buttonsUnmask();
 }
+
+/*
+ * Ask for the wind speed of the experiment.
+ */
 void ABUIMenu_Experiment_SetupWindSpeed(){
 	buttonsMask();
-	if(ABUIEventCounter<1){
-		ABUIEventCounter = 1;
+	if(ABUIEventCounter<ABUI_DEFAULTS_WINDSPEED_MIN){
+		ABUIEventCounter = ABUI_DEFAULTS_WINDSPEED_MIN;
 	}
-	if(ABUIEventCounter>50){
-		ABUIEventCounter = 50;
+	if(ABUIEventCounter>ABUI_DEFAULTS_WINDSPEED_MAX){
+		ABUIEventCounter = ABUI_DEFAULTS_WINDSPEED_MAX;
 	}
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("Set Wind Speed:");
@@ -1249,8 +1417,13 @@ void ABUIMenu_Experiment_SetupWindSpeed(){
 	buttonsUnmask();
 }
 
+/*
+ * Instruct the user to remove any object from the tunnel and
+ * balance.
+ */
 void ABUIMenu_Experiment_CalibrationNoObjectConfirm(){
 	buttonsMask();
+	ABECClearAllBuffers();
 	ABUILCDWrite("Base Calibration:",
 			"Please remove",
 			"object.",
@@ -1258,6 +1431,11 @@ void ABUIMenu_Experiment_CalibrationNoObjectConfirm(){
 	buttonsUnmask();
 }
 
+/*
+ * Take initial measurements of the base weight.
+ * This sets a reference frame for the base drag,
+ * lift and tilt.
+ */
 void ABUIMenu_Experiment_CalibrationNoObject(){
 	buttonsMask();
 	ABUILCDWrite("Balance Calibration:",
@@ -1287,6 +1465,9 @@ void ABUIMenu_Experiment_CalibrationNoObject(){
 
 }
 
+/*
+ * Instruct the user to close the tunnel for wind speed setup.
+ */
 void ABUIMenu_Experiment_CalibrationNoObjectWindConfirm(){
 	buttonsMask();
 	ABUILCDWrite("Base Calibration",
@@ -1295,6 +1476,10 @@ void ABUIMenu_Experiment_CalibrationNoObjectWindConfirm(){
 			"[Enter]: Continuar");
 	buttonsUnmask();
 }
+
+/*
+ * Take the measurements of the forces on wind.
+ */
 void ABUIMenu_Experiment_CalibrationNoObjectWind(){
 	buttonsMask();
 	ABUILCDWrite("Base Calibration:   ",
@@ -1324,7 +1509,9 @@ void ABUIMenu_Experiment_CalibrationNoObjectWind(){
 	}
 }
 
-
+/*
+ * Instruct the user to set the object in the base.
+ */
 void ABUIMenu_Experiment_CalibrationObjectConfirm(){
 	buttonsMask();
 	ABUILCDWrite("Object Calibration:",
@@ -1334,6 +1521,10 @@ void ABUIMenu_Experiment_CalibrationObjectConfirm(){
 	motorAtvTurnOff();
 	buttonsUnmask();
 }
+
+/*
+ * Take object+base reference frame measurements.
+ */
 void ABUIMenu_Experiment_CalibrationObject(){
 	buttonsMask();
 	ABUILCDWrite("Calibrating Object",
@@ -1362,18 +1553,27 @@ void ABUIMenu_Experiment_CalibrationObject(){
 	}
 
 }
+
+/*
+ * Instruct the user to close the tunnel.
+ */
 void ABUIMenu_Experiment_MeasureConfirm(){
 	buttonsMask();
 	ABUILCDWrite("Confirm Start:",
-			"Press enter to begin",
-			"experiment.",
+			"Please close tunnel",
+			"to begin.",
 			"[Enter]: Continue");
 	buttonsUnmask();
 }
+
+/*
+ * Take the experiment measurements. In this phase
+ * all measurements are taken.
+ */
 void ABUIMenu_Experiment_Measure(){
 	buttonsMask();
-	ABUILCDWrite("AeroBal:          ",
-			"Conducting Experiment.",
+	ABUILCDWrite("AeroBal:",
+			"Reading Sensors...",
 			"Please Wait...",
 			"");
 
@@ -1410,6 +1610,9 @@ void ABUIMenu_Experiment_Measure(){
 
 }
 
+/*
+ * Show the results stored in the last experiment.
+ */
 void ABUIMenu_Experiment_ShowResults(){
 	buttonsMask();
 	if(ABUIEventCounter < 0 || ABUIEventCounter > 4){

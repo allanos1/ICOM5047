@@ -14,7 +14,7 @@
 #include "relay.h"
 
 /*
- * Initializes the port and pin of the relay: port A5.
+ * Initializes the port and pin of the relay: port A2 and A3.
  * Port is configured with digital function and output
  * direction.
  */
@@ -24,17 +24,6 @@ void relayInit(){
 	gpioSetDirection(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0xFF);
 	ABTimeInit(ABTIME_BASE_TIMER_5,ABTIME_RESOLUTION_MILLISECOND);
 	ABTimeStart();
-}
-
-//Toggles the state of the relay;
-void relayToggle(){
-	uint8_t state = gpioGetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS);
-	if((state & 0x20)){
-		gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0x00);
-	}
-	else{
-		gpioSetData(AB_MODULE_RELAY_PORT,AB_MODULE_RELAY_PINS,0xFF);
-	}
 }
 
 void relayOn(){

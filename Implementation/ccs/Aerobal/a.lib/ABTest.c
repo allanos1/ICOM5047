@@ -288,32 +288,6 @@ void ABTimerTest(){
 	while(1);
 }
 
-void ABTestBinaryCounter(){
-	binCounterInit(BINCOUNTER_GPIO_PORTD,BINCOUNTER_GPIO_PIN_1,
-			BINCOUNTER_GPIO_PORTA,BINCOUNTER_GPIO_PIN_2,
-			BINCOUNTER_GPIO_PORTA,BINCOUNTER_GPIO_PIN_3);
-
-	int i = 0;
-	while(1){
-		binCounterClear();
-		SysCtlDelay(10000000);
-
-		for(i = 0; i < 254;i++){
-			binCounterIncrease();
-			SysCtlDelay(100000);
-		}
-		for(; i >=0;i--){
-			binCounterDecrease();
-			SysCtlDelay(100000);
-		}
-
-		for(i=127; i >=0;i--){
-			binCounterDecrease();
-			SysCtlDelay(100000);
-		}
-		SysCtlDelay(10000000);
-	}
-}
 void ABTestButtonsInit(){
 	ABTestLCDInit();
 	gpioSetMasterEnable(GPIO_PORTB);

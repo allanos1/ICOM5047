@@ -44,6 +44,8 @@ int bmpI2CInited;
 int bmpCurrentInstance;
 volatile uint_fast8_t bmp085_dataFlag;
 
+///////////////////////////
+// API Layer 0
 void bmp085AppCallback(void* bmp085CallbackData, uint_fast8_t bmp085Status);
 void bmp085I2CIntHandler(void);
 void bmp085Init(uint32_t i2cModule);
@@ -51,5 +53,10 @@ void bmp085DataRead(int index);
 float bmp085GetTemperature();
 float bmp085GetPressure();
 
+
+////////////////////////////
+// API Layer 1
+float bmp085GetAirDensity(float P0, float T, float RH);
+float bmp085GetPressureVelocity(float pStatic, float pDynamic,float temperature, float humidity);
 
 #endif /* BMP085_H_ */

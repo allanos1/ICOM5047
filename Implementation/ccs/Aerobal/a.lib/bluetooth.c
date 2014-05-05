@@ -181,12 +181,17 @@ void bluetoothGetQuery(char * value){
 	value[i-1] = '\0';
 }
 
+/*
+ *Character to integer translation.
+ */
 int bluetoothGetNumber(char value){
 	return value-48;
 }
 /*
  * Evaluates the string coming from the
- * bluetooth communication.
+ * bluetooth communication. Uses Aerobal's
+ * proposed Bluetooth Communication
+ * protocol.
  */
 void bluetoothEvaluateBuffer(char *buffer){
 	char command[5] ;
@@ -251,7 +256,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 			stringITOA(pNumber,out);
 			bluetoothSendString(out);
 			bluetoothSendString(":");
-			stringFTOA(ABSSGetMPSAIndexTemperature(pNumber),out);
+			stringFTOA(ABSSGetDHTHumidity(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			//bluetoothSendAck();
@@ -419,23 +424,53 @@ void bluetoothEvaluateBuffer(char *buffer){
 
 ///////////////////////////////////////////
 // API Layer 1
+
+/*
+ * Returns the status if the fan setting. This
+ * status determines whether the state machine will
+ * set the VFD on. If 1, the state machine will
+ * initiate a sequence to start the tunnel
+ * and set the speed set in the motorAtv module.
+ */
 int bluetoothGetSettingFanStatus(){
 	return bluetoothSettingFanStatus;
 }
 
+/*
+ * Sets the status of the fan setting. This
+ * status determines whether the VFD will be set in
+ * the state machine.
+ */
 void bluetoothSetSettingFanStatus(int value){
 	bluetoothSettingFanStatus = value;
 }
 
-void bluetoothEnable(){
-	uartIntEnable(bluetoothUART);
-	//bluetoothEnabled = 1;
+/*
+ * Sets the status of the fan as in the remote
+ * interfaces.
+ */
+void bluetoothSetSettingFanQuery(int value){
+	bluetoothSettingFanQuery = value;
 }
-void bluetoothDisable(){
-	uartIntDisable(bluetoothUART);
-	//bluetoothEnabled = 0;
+/*
+ * Returns the status of the fan as in remote
+ * interface.
+ */
+int bluetoothGetSettingFanQuery(){
+	return bluetoothSettingFanQuery;
 }
 
-int bluetoothIsEnabled(){
-	return bluetoothEnabled;
+/*
+ * Enables UART Interrupts from the Bluetooth.
+ */
+void bluetoothEnable(){
+	uartIntEnable(bluetoothUART);
 }
+
+/*
+ * Disables UART Interrupts from the Bluetooth.
+ */
+void bluetoothDisable(){
+	uartIntDisable(bluetoothUART);
+}
+

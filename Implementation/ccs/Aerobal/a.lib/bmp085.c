@@ -112,3 +112,44 @@ float bmp085GetTemperature(){
 float bmp085GetPressure(){
 	return bmpPressure;
 }
+
+/* Calculates the humidity of air (water vapor)
+ * using the static pressure, the temperature and
+ * the relative humidity.
+ *
+ * Procedure taken using the Humidity Section of
+ * http://en.wikipedia.org/wiki/Density_of_air.
+ *
+ */
+float bmp085GetAirDensity(float P0, float T, float RH){
+
+	//Air Density
+
+	//P0 is static in Pa
+
+	float adR = 8.314; // Universal Gas Constant - J/(K*mol)
+	float adMv = 0.018016; //Molar Mass of water vapor - kg/mol.
+	float adMd = 0.028964; //Molar Mass of Dry air - kg/mol
+	//float adRv = 461.465; //Specific gas constant for water vapor - J/(kg*K)
+	//float adRd = 287.058; //Specific gas constant for dry air - J/(kg*K)
+
+	//Need to calculate pd and pv
+	//pv = relative humidity * psat
+	float adPsat = 6.1078 * pow(10.0,(7.5*T)/(T+237.3));
+	float adPv = (RH/100.0 * adPsat)*100; //Pa - scaling
+
+	//PD
+	float adPd = P0-adPv;
+
+	return ((adPd*adMd)+(adPv*adMv))/(adR*(T+273));
+}
+
+/*
+ *Calculates the velocity of air using the static and dynamic pressures along
+ *with the temperature and humidity.
+ *
+ *Taken from Bernoulli's Equation.
+ */
+float bmp085GetPressureVelocity(float pStatic, float pDynamic,float temperature, float humidity){
+	return sqrt(2*(pDynamic-pStatic)/bmp085GetAirDensity(pStatic,temperature,humidity));
+}
