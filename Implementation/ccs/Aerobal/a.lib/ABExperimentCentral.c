@@ -85,7 +85,7 @@ void ABECStoreO_NW(){
 }
 
 void ABECAddPressure(){
-	ABECBufferRefresh(&ABECMesPressure,ABSSGetDHTTemperature(0));
+	ABECBufferRefresh(&ABECMesPressure,ABSSGetBMPPressure());
 }
 
 void ABECAddTemperature(){
@@ -98,11 +98,11 @@ void ABECAddHumidity(){
 }
 
 void ABECAddWindDirection(){
-	ABECBufferRefresh(&ABECMesHumidity,ABSSGetWindVaneDirection());
+	ABECBufferRefresh(&ABECMesWindVane,ABSSGetWindVaneDirection());
 }
 
 void ABECAddVelocity(){
-	ABECBufferRefresh(&ABECMesHumidity,ABSSGetAnemometerSpeed());
+	ABECBufferRefresh(&ABECMesVelocity,ABSSGetAnemometerSpeed());
 }
 
 
@@ -197,11 +197,11 @@ float ABECGetAverageTemperature(){
 	return ABECMesTemperature.average;
 }
 float ABECGetAverageHumidity(){
-	return ABECMesVelocity.average;
-}
-float ABECGetAverageWindDirection(){
 	return ABECMesHumidity.average;
 }
-float ABECGetAverageVelocity(){
+float ABECGetAverageWindDirection(){
 	return ABECMesWindVane.average;
+}
+float ABECGetAverageVelocity(){
+	return ABECMesVelocity.average;
 }

@@ -74,7 +74,7 @@ void ABSSRefreshBMP(){
 
 	anemometerEnd();
 	//Refresh Sequence.
-	bmp085DataRead(0);
+	//bmp085DataRead(0);
 	//ABSSRefreshMPSAIndex(0);
 	anemometerStart();
 	//Buffer Storage:

@@ -10,7 +10,7 @@
 
 #include "ABSensorServer.h"
 
-#define ABEC_BUFFER_SIZE 30
+#define ABEC_BUFFER_SIZE 255
 
 
 typedef struct {

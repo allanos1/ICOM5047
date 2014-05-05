@@ -76,6 +76,7 @@ uint32_t _lcdSerialSetupUART;
 //////////////////////////////////////////
 // API Layer 0
 
+void lcdSerialWrite(uint32_t value);
 void lcdSerialSendCommand(uint32_t command);
 void lcdSerialSendConfig(uint32_t config);
 void lcdSerialClear();
