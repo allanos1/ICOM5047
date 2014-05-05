@@ -30,7 +30,7 @@ void ABRun(){
 void ABRunTest(){
 	//Uncomment to run the test you wish to run.
 	//ABTestFanRelay();
-	//ABBmp085ArrayTest(16,0);
+	ABBmp085ArrayTest(14,0);
 	//ABTestAnemometer();
 	//ABTestWindVane();
 	//ABTestADC();
@@ -51,7 +51,7 @@ void ABRunTest(){
 int main(int argc, const char * argv[]){
 
 	//Aerobal Testing Routine
-	//ABRunTest(); Uncomment to run a test.
+	//ABRunTest(); //Uncomment to run a test.
 
 	//AeroBal Software Main Routine.
 	ABRun();

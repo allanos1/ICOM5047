@@ -39,7 +39,7 @@ static void IntDefaultHandler(void);
 // External declaration for the reset handler that is to be called when the
 // processor is started
 //*****************************************************************************
-extern void _c_int00(void);
+//extern void _c_int00(void);
 
 
 //*****************************************************************************
@@ -50,15 +50,11 @@ extern void bluetoothInterruptHandler(void);
 extern void dht11getData();
 extern void dht11count1uS();
 extern void readDataBit();
-extern void buttonsInterruptHandler();
 extern void ABTimeInterruptHandler_Counter();
 extern void anemometerInterruptHandler_Counter();
-extern void bmp085ArraySampleTimer();
 extern void ABTimerTestInterruptHandler();
 extern void ABUIStateMachineSetNextState_InterruptHandler();
-extern void InterruptHandlerPortD();
 extern void ABTimerTestInterruptHandler();
-extern void bmp085ArraySynchronize();
 
 
 //*****************************************************************************

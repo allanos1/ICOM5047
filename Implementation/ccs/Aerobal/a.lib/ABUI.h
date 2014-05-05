@@ -24,6 +24,7 @@
 #include "relay.h"
 #include "motorAtv.h"
 #include "ABExperimentCentral.h"
+#include <math.h>
 
 
 ////////////////////////////////
@@ -40,6 +41,7 @@
 #define ABUI_STATE_SENSOR_5 0x0014
 #define ABUI_STATE_SENSOR_6 0x0015
 #define ABUI_STATE_SENSOR_7 0x0016
+#define ABUI_STATE_SENSOR_8 0x0017
 #define ABUI_STATE_CONTROL_1 0x0400
 #define ABUI_STATE_CONTROL_2 0x0401
 #define ABUI_STATE_CONTROL_3 0x0402
@@ -53,6 +55,7 @@
 #define ABUI_STATE_BG_SENSOR_HUMIDITY 0x0024
 #define ABUI_STATE_BG_SENSOR_DIRECTION 0x0025
 #define ABUI_STATE_BG_SENSOR_MPSA 0x0026
+#define ABUI_STATE_BG_SENSOR_PSPEED 0x0027
 
 ////////////////////////////////
 //Experiment States
@@ -206,6 +209,7 @@ void ABUIMenu_Sensor_Velocity();
 void ABUIMenu_Sensor_Humidity();
 void ABUIMenu_Sensor_Direction();
 void ABUIMenu_Sensor_MPSA();
+void ABUIMenu_Sensor_PSpeed();
 
 //Control
 void ABUIMenu_Control_Motor();

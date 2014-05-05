@@ -129,9 +129,9 @@ void ABUIInitModules(){
 	ABUIPowerWait(4000000);
 	//MPSA
 	ABUIWriteLoadMessage("Sensor: MPSA...");
-	bmp085Init(BMP_I2C_MODULE_1);
-	//bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 16, true);
-	//bmp085ArraySetCurrentSensor(0);
+	//bmp085Init(BMP_I2C_MODULE_1);
+	bmp085ArrayInit(GPIO_PORTD, GPIO_PIN_2 , GPIO_PORTD, GPIO_PIN_3, 14, true);
+	bmp085ArraySetCurrentSensor(0);
 	ABUIWriteWait(5);
 	ABUIPowerWait(4000000);
 	//Relay
@@ -166,7 +166,7 @@ void ABUIInitModules(){
 
 	//UI Config
 	ABUIMenu_Main_OptionsSize = 5; //Size of Main Menu.
-	ABUIMenu_Sensor_OptionsSize = 7; //Size of Sensor Menu.
+	ABUIMenu_Sensor_OptionsSize = 8; //Size of Sensor Menu.
 	ABUIMenu_Control_OptionsSize = 3; //Size of control Menu.
 	motorAtvSetTargetSpeed(5); //Default Initial Target Speed
 	ABUIStateMachineSlot01 = ABUI_STATE_NONE; // Slot for state machine.
@@ -491,8 +491,17 @@ void ABUIStateMachineRun(){
 		case ABUI_STATE_SENSOR_7:
 			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_7);
 			ABUIButtonsSetNextState(
-				ABUI_STATE_SENSOR_6,ABUI_STATE_SENSOR_7,
+				ABUI_STATE_SENSOR_6,ABUI_STATE_SENSOR_8,
 				ABUI_STATE_BG_SENSOR_MPSA,ABUI_STATE_MAIN_2,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			break;
+		case ABUI_STATE_SENSOR_8:
+			ABUIMenu_Sensor_Write(0xF & ABUI_STATE_SENSOR_8);
+			ABUIButtonsSetNextState(
+				ABUI_STATE_SENSOR_7,ABUI_STATE_SENSOR_8,
+				ABUI_STATE_BG_SENSOR_PSPEED,ABUI_STATE_MAIN_2,
 				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
 			);
 			buttonsEnable();
@@ -596,6 +605,17 @@ void ABUIStateMachineRun(){
 			bmp085ArrayReset();
 			ABUIEventCounter=0;
 			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_MPSA);
+			break;
+		case ABUI_STATE_BG_SENSOR_PSPEED:
+			ABUIButtonsSetNextState(
+				ABUI_STATE_BUTTON_INCREASE,ABUI_STATE_BUTTON_DECREASE,
+				ABUI_STATE_NONE,ABUI_STATE_SENSOR_7,
+				ABUI_STATE_MAIN_1,ABUI_STATE_PANIC
+			);
+			buttonsEnable();
+			lcdSerialClear();
+			ABUIEventCounter=0;
+			ABUIStateMachineBackgroundSetNextState(ABUI_STATE_BG_SENSOR_PSPEED);
 			break;
 		case ABUI_STATE_BG_CTL_FAN:
 			ABUIButtonsSetNextState(
@@ -838,6 +858,7 @@ void ABUIStateMachineBackgroundRun(){
 		case ABUI_STATE_BG_SENSOR_HUMIDITY: ABUIMenu_Sensor_Humidity(); break;
 		case ABUI_STATE_BG_SENSOR_DIRECTION: ABUIMenu_Sensor_Direction(); break;
 		case ABUI_STATE_BG_SENSOR_MPSA: ABUIMenu_Sensor_MPSA(); break;
+		case ABUI_STATE_BG_SENSOR_PSPEED: ABUIMenu_Sensor_PSpeed(); break;
 		case ABUI_STATE_BG_EXP_SETUP_TIME: ABUIMenu_Experiment_SetupTime(); break;
 		case ABUI_STATE_BG_EXP_SETUP_FREQUENCY: ABUIMenu_Experiment_SetupFrequency(); break;
 		case ABUI_STATE_BG_EXP_SETUP_WINDSPEED: ABUIMenu_Experiment_SetupWindSpeed(); break;
@@ -948,7 +969,7 @@ void ABUIMenu_Sensor_Write(int option){
 	char *ABUIMenu_Sensor_Options[] = {
 		"Force", "Pressure", "Temperature",
 		"Velocity","Humidity","Direction",
-		"Pressure Array"
+		"Pressure Array", "Pressure Speed"
 	};
 	ABUIWriteMenu("View Sensors:",ABUIMenu_Sensor_Options,ABUIMenu_Sensor_OptionsSize,option);
 }
@@ -1160,7 +1181,7 @@ void ABUIMenu_Sensor_Direction(){
  */
 void ABUIMenu_Sensor_MPSA(){
 	buttonsMask();
-	if(ABUIEventCounter > 15 || ABUIEventCounter < 0) ABUIEventCounter = 0;
+	if(ABUIEventCounter > 13 || ABUIEventCounter < 0) ABUIEventCounter = 0;
 	ABSSRefreshMPSAIndex(ABUIEventCounter);
 	lcdSerialCursorLine1();
 	lcdSerialWriteString("MPSA Sensor: ");
@@ -1182,6 +1203,67 @@ void ABUIMenu_Sensor_MPSA(){
 	ABSSGetMPSAIndexTemperature(ABUIEventCounter);
 	buttonsUnmask();
 
+}
+
+/*
+ * Temperature Sensor Routine.
+ * Refreshes the values from the temperature sensor and
+ * then writes each value on screen.
+ *
+ * Uses the DHT22 temperature.
+ */
+void ABUIMenu_Sensor_PSpeed(){
+	buttonsMask();
+	ABSSRefreshDHT();
+	bmp085ArrayDataReadPosition(0);
+	float pStatic = bmp085ArrayGetPressure();
+	bmp085ArrayDataReadPosition(1);
+	float pDynamic = bmp085ArrayGetPressure();
+	float temperature = dht22GetTemperature();
+	float humidity = dht22GetHumidity();
+	lcdSerialCursorLine1();
+	lcdSerialWriteString("PS:");
+	lcdSerialWriteNumber(pStatic);
+	lcdSerialCursorLine2();
+	lcdSerialWriteString("PD: ");
+	lcdSerialWriteNumber(pDynamic);
+	lcdSerialWriteString("  ");
+	lcdSerialCursorLine3();
+	lcdSerialWriteString("T: ");
+	lcdSerialWriteNumberWithBounds(temperature,0,2);
+	lcdSerialWriteString(" H: ");
+	lcdSerialWriteNumberWithBounds(humidity,0,2);
+	lcdSerialCursorLine4();
+	lcdSerialWriteString("Result: ");
+
+	//////////////////
+
+	float T = temperature;
+	float RH = humidity;
+	float P0 = pStatic;
+	float adR = 8.314; // Universal Gas Constant - J/(K*mol)
+	float adMv = 0.018016; //Molar Mass of water vapor - kg/mol.
+	float adMd = 0.028964; //Molar Mass of Dry air - kg/mol
+	//float adRv = 461.465; //Specific gas constant for water vapor - J/(kg*K)
+	//float adRd = 287.058; //Specific gas constant for dry air - J/(kg*K)
+
+	//Need to calculate pd and pv
+	//pv = relative humidity * psat
+	float adPsat = 6.1078 * pow(10.0,(7.5*T)/(T+237.3));
+	float adPv = (RH/100.0 * adPsat)*100.0; //Pa - scaling
+
+	//PD
+	float adPd = P0-adPv;
+
+	float rhoAir = ((adPd*adMd)+(adPv*adMv))/(adR*(T+273.0));
+
+	float result = sqrt(2.0*(abs(pDynamic-pStatic))/rhoAir)/0.44704;
+
+	///////////////////
+
+	//lcdSerialWriteNumber(bmp085GetPressureVelocity(pStatic,pDynamic,temperature,humidity));
+	lcdSerialWriteNumber(result);
+	buttonsUnmask();
 }
 
 /////////////////////////////////////

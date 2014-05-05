@@ -150,6 +150,8 @@ float bmp085GetAirDensity(float P0, float T, float RH){
  *
  *Taken from Bernoulli's Equation.
  */
-float bmp085GetPressureVelocity(float pStatic, float pDynamic,float temperature, float humidity){
-	return sqrt(2*(pDynamic-pStatic)/bmp085GetAirDensity(pStatic,temperature,humidity));
+float bmp085GetPressureVelocity(float prStatic, float prDynamic,float prTemperature, float prHumidity){
+	float rhoAir = bmp085GetAirDensity(prStatic,prTemperature,prHumidity);
+	float result1 = 2.0*(prDynamic-prStatic)/rhoAir;
+	return sqrt(result1);
 }

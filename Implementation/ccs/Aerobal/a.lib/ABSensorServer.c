@@ -78,7 +78,7 @@ void ABSSRefreshBMP(){
 
 	anemometerEnd();
 	//Refresh Sequence.
-	//bmp085DataRead(0);
+	bmp085DataRead(0);
 	//ABSSRefreshMPSAIndex(0);
 	anemometerStart();
 	//Buffer Storage:
@@ -278,7 +278,7 @@ void ABSSRefreshSequential(){
 		case 2: ABSSRefreshWindVane(); break;
 		case 3: ABSSRefreshAnemometer(); break;
 		case 4: ABSSRefreshLoadCells(); break;
-		case 5: /*ABSSRefreshMPSA();*/ break;
+		case 5: ABSSRefreshMPSA(); break;
 		default: ABSSSequentialRefreshCount=-1; break;
 	}
 	ABSSSequentialRefreshCount++;

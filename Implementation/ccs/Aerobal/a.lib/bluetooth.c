@@ -216,13 +216,13 @@ void bluetoothEvaluateBuffer(char *buffer){
 			stringITOA(pNumber,out);
 			bluetoothSendString(out);
 			bluetoothSendString(":");
-			stringFTOA(ABSSGetMPSAIndexPressure(pNumber),out);
+			stringFTOA(ABSSGetMPSAIndexPressure(0),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("hm",command)){
@@ -230,13 +230,12 @@ void bluetoothEvaluateBuffer(char *buffer){
 			//GET HM ok!
 			bluetoothSendString("hm:");
 			stringFTOA(ABSSGetDHTHumidity(),out);
-			//stringFTOA(143.987/(float)bluetoothEventCount,out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("tm",command)){
@@ -256,13 +255,14 @@ void bluetoothEvaluateBuffer(char *buffer){
 			stringITOA(pNumber,out);
 			bluetoothSendString(out);
 			bluetoothSendString(":");
-			stringFTOA(ABSSGetDHTHumidity(),out);
+			stringFTOA(ABSSGetDHTTemperature(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 
 	}
@@ -270,13 +270,14 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET WD ok!
 			bluetoothSendString("spda:");
-			stringFTOA(ABSSGetAnemometerSpeed(),out);
+			stringFTOA(anemometerSpeedConvertMiH(ABSSGetAnemometerSpeed()),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("spdp",command)){
@@ -290,6 +291,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("wd",command)){
@@ -303,6 +305,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("lc",command)){
@@ -339,6 +342,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 			}
 			else{
 				bluetoothSendErr();
+				bluetoothSendTerminator();
 				return;
 			}
 			bluetoothSendTerminator();
@@ -363,6 +367,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("ln1",command)){
@@ -411,14 +416,17 @@ void bluetoothEvaluateBuffer(char *buffer){
 	else if(stringEquals("ack",command)){
 		//Not Sure Yet.
 		bluetoothSendAck();
+		bluetoothSendTerminator();
 	}
 	else if(stringEquals("err",command)){
 		//Not Sure Yet.
 		bluetoothSendErr();
+		bluetoothSendTerminator();
 	}
 	else{
 		bluetoothSendErr();
 		bluetoothSendString(":UnkCom");
+		bluetoothSendTerminator();
 	}
 }
 
