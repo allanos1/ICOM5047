@@ -2,7 +2,7 @@
  * ABSensorServer.c
  *
  *  Created on: Apr 24, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #include "ABSensorServer.h"
@@ -51,12 +51,12 @@ void ABSSBufferRefresh(ABSensorServerBuffer* sensorBuffer, float newValue){
 }
 
 /* SensorServer Refresh Function for DHT.
+ * Takes a new measurement  and stores it in the buffer.
  */
 void ABSSRefreshDHT(){
 
 	//Refresh Sequence.
 	if(dht11CanRefresh()){
-		//SysCtlDelay(3000000);
 		dht11init();
 		dht11getData();
 		while(dhtIsActive());
@@ -71,11 +71,16 @@ void ABSSRefreshDHT(){
 	ABSSBufferRefresh(&ABSSBufferDHTTemperature, dht22GetTemperature());
 }
 
+/* SensorServer Refresh Function for BMP.
+ * Takes a new measurement and stores it in the buffer.
+ */
 void ABSSRefreshBMP(){
 
+	anemometerEnd();
 	//Refresh Sequence.
-	ABSSRefreshMPSAIndex(0);
-
+	bmp085DataRead(0);
+	//ABSSRefreshMPSAIndex(0);
+	anemometerStart();
 	//Buffer Storage:
 
 	//BMP Temperature
@@ -85,6 +90,9 @@ void ABSSRefreshBMP(){
 	ABSSBufferRefresh(&ABSSBufferBMPPressure, bmp085GetPressure());
 }
 
+/* SensorServer Refresh Function for Anemometer.
+ * Takes a new measurement  and stores it in the buffer.
+ */
 void ABSSRefreshAnemometer(){
 	//Refresh Sequence.
 	anemometerSpeedBufferRefresh();
@@ -93,6 +101,9 @@ void ABSSRefreshAnemometer(){
 	ABSSBufferRefresh(&ABSSBufferAnemometer,anemometerSpeedBufferGetAverage());
 }
 
+/* SensorServer Refresh Function for WindVane.
+ * Takes a new measurement  and stores it in the buffer.
+ */
 void ABSSRefreshWindVane(){
 	//Refresh Sequence.
 	windVaneRefresh(WIND_VANE_BUFFER_SIZE);
@@ -100,6 +111,9 @@ void ABSSRefreshWindVane(){
 	ABSSBufferRefresh(&ABSSBufferWindVane,windVaneGetAngle());
 }
 
+/* SensorServer Refresh Function for LoadCells.
+ * Takes a new measurement  and stores it in the buffer.
+ */
 void ABSSRefreshLoadCells(){
 	//TODO: Load Cell Library
 	//Refresh Sequence.
@@ -115,6 +129,9 @@ void ABSSRefreshLoadCells(){
 
 }
 
+/* SensorServer Refresh Function for MPSA.
+ * Takes a new measurement  and stores it in the buffers.
+ */
 void ABSSRefreshMPSA(){
 	int i = 0;
 	bmp085ArrayReset();
@@ -133,6 +150,9 @@ void ABSSRefreshMPSA(){
 
 }
 
+/* SensorServer Refresh Function for MPSA by Index.
+ * Takes a new measurement and stores it in the buffer.
+ */
 void ABSSRefreshMPSAIndex(int index){
 	//Refresh Sequence.
 	bmp085ArrayDataReadPosition(index);
@@ -154,58 +174,87 @@ void ABSSRefresh<x>(){
 //////////////////////////////////////
 // API Layer 1 - Getter SS Library
 
+/* SensorServer average function for DHT's Temperature value.
+ */
 float ABSSGetDHTTemperature(){
 	return ABSSBufferDHTTemperature.average;
 }
 
+/* SensorServer average function for DHT's Humidity value.
+ */
 float ABSSGetDHTHumidity(){
 	return ABSSBufferDHTHumidity.average;
 }
 
+/* SensorServer average function for BMP's Pressure value.
+ */
 float ABSSGetBMPPressure(){
 	return ABSSBufferBMPPressure.average;
 }
 
+/* SensorServer average function for BMP's Temperature value.
+ */
 float ABSSGetBMPTemperature(){
 	return ABSSBufferBMPTemperature.average;
 }
 
+/* SensorServer average function for Anemometer's speed value.
+ */
 float ABSSGetAnemometerSpeed(){
 	return ABSSBufferAnemometer.average;
 }
 
+/* SensorServer average function for WindVane's direction value.
+ */
 float ABSSGetWindVaneDirection(){
 	return ABSSBufferWindVane.average;
 }
 
+
+/* SensorServer average function for DragFront LoadCell Value.
+ */
 float ABSSGetLoadCellDragFront(){
 	return ABSSBufferLCDragFront.average;
 }
 
+/* SensorServer average function for DragBack LoadCell Value.
+ */
 float ABSSGetLoadCellDragBack(){
 	return ABSSBufferLCDragBack.average;
 }
 
+/* SensorServer average function for LiftUp LoadCell Value.
+ */
 float ABSSGetLoadCellLiftUp(){
 	return ABSSBufferLCLiftUp.average;
 }
 
+/* SensorServer average function for LiftDown LoadCell Value.
+ */
 float ABSSGetLoadCellLiftDown(){
 	return ABSSBufferLCLiftDown.average;
 }
 
+/* SensorServer average function for SideLeft LoadCell Value.
+ */
 float ABSSGetLoadCellSideLeft(){
 	return ABSSBufferLCSideLeft.average;
 }
 
+/* SensorServer average function for SideRight LoadCell Value.
+ */
 float ABSSGetLoadCellSideRight(){
 	return ABSSBufferLCSideRight.average;
 }
 
+/* SensorServer average function for MPSA Buffer[index] pressure value.
+ */
 float ABSSGetMPSAIndexPressure(int index){
 	return ABSSBufferMPSAPressure[index].average;
 }
 
+/* SensorServer average function for MPSA Buffer[index] temperature value.
+ */
 float ABSSGetMPSAIndexTemperature(int index){
 	return ABSSBufferMPSATemperature[index].average;
 }
@@ -213,19 +262,34 @@ float ABSSGetMPSAIndexTemperature(int index){
 /////////////////////////////////////////////
 // API Layer 2 - Automatization Routines
 
+/*
+ * Refresh Sequence for all sensors of the AeroBal System.
+ * It is performed sequentially by increasing a rolling counter.
+ * This can be put to run on a background process.
+ *
+ * TODO: Bluetooth is disabled during execution.
+ */
 void ABSSRefreshSequential(){
+	buttonsMask();
+	bluetoothDisable();
 	switch(ABSSSequentialRefreshCount){
-	case 0: ABSSRefreshDHT(); break;
-	case 1: /*ABSSRefreshBMP();*/ break;
-	case 2: ABSSRefreshWindVane(); break;
-	case 3: ABSSRefreshAnemometer(); break;
-	case 4: ABSSRefreshLoadCells(); break;
-	case 5: /*ABSSRefreshMPSA();*/ break;
-	default: ABSSSequentialRefreshCount=-1; break;
+		case 0: ABSSRefreshDHT(); break;
+		case 1: ABSSRefreshBMP(); break;
+		case 2: ABSSRefreshWindVane(); break;
+		case 3: ABSSRefreshAnemometer(); break;
+		case 4: ABSSRefreshLoadCells(); break;
+		case 5: ABSSRefreshMPSA(); break;
+		default: ABSSSequentialRefreshCount=-1; break;
 	}
 	ABSSSequentialRefreshCount++;
+	buttonsUnmask();
+	bluetoothEnable();
 }
 
+/*
+ * Initializes a forced complete refresh of all sensors for
+ * one time per execution.
+ */
 void ABSSRefreshAll(){
 	ABSSRefreshDHT();
 	//ABSSRefreshBMP();

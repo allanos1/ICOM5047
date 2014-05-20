@@ -277,6 +277,9 @@ void bmp085StartDataAdquisition(int frequency){
 	timerStart(TIMER_0);
 }
 
+/*
+ * Timer used for test function.
+ */
 void bmp085ArraySampleTimer(){
 	timerInterruptClear(TIMER_0);
 	if(bmp085ArrayCurrentSensor <= bmp085ArraySensorQuantity){

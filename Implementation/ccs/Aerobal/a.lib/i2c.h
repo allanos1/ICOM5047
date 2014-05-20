@@ -1,8 +1,13 @@
 /*
  * i2c.h
  *
+ * AeroBal I2C Library
+ *
+ * Used for activating an I2C module.
+ * Interface to be provided in later versions.
+ *
  *  Created on: Apr 4, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #ifndef I2C_H_

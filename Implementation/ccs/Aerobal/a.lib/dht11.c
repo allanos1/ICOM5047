@@ -94,9 +94,13 @@ int dht11dataValidationStatus(){
 	else{
 		dht11init();
 		return 0;
-	};
+	}
 }
 
+/*
+ * Sets up the DHT required peripheral and timers
+ * for use.
+ */
 void dhtSetup(){
 
 	dht11ClockSetup();
@@ -125,8 +129,8 @@ void dhtSetup(){
 }
 //****Helper Functions****/
 
-/* Private function.
- *Initialize port PB1 for data Output and set port value to HIGH.
+/*
+ * Re-initializes the DHT Library for a new lecture.
  */
 void dht11init(){
 
@@ -157,6 +161,10 @@ void dht11init(){
 
 	dht11ClockSetup();
 }
+
+/*
+ * Starts the process of reading data from the DHT.
+ */
 void dht11getData(){
 
 
@@ -180,6 +188,13 @@ void dht11getData(){
 
 }
 
+/*
+ * Must be verified so that the DHT
+ * is not read earlier than 2 seconds.
+ *
+ * TODO: This two second limit is for the
+ * DHT22 not the DHT11 which is 1 second.
+ */
 int dht11CanRefresh(){
 	ABTime t2 = ABTimeGetReference();
 	ABTime delta = ABTimeGetDelta(t2,dhtRefreshT0);
@@ -192,6 +207,9 @@ int dht11CanRefresh(){
 	}
 }
 
+/*
+ * Handles requests from each DHT Request performed.
+ */
 void dht11request(){
 	switch(step){
 	case REQUEST18MS:
@@ -214,6 +232,10 @@ void dht11request(){
 	}
 }
 
+/*
+ * Handles responses from the DHT. Interprets long
+ * pulses as 1 and short pulses as 0.
+ */
 void dht11response(){
 	//gpioSetData(GPIO_PORTB,0x02, 0x00);
 
@@ -245,6 +267,12 @@ void dht11response(){
 	}
 }
 
+/*
+ * Verifies the response from the DHT. If wrong,
+ * it halts execution and needs a reset.
+ *
+ * TODO: This halt must be fixed!
+ */
 void dht11responseStatus(){
 	switch(step){
 	case CHECKIFRESPONSEISOKSTEP:
@@ -255,6 +283,9 @@ void dht11responseStatus(){
 			; //DO NOTHING
 		}
 		else{
+			/*
+			 * TODO: Rover
+			 */
 			lcdSerialClear();
 			lcdSerialWriteString("Bad Response.");
 			SysCtlDelay(1000000);
@@ -272,6 +303,9 @@ void dht11responseStatus(){
 	};
 }
 
+/*
+ * Initiates the reading of data.
+ */
 void dht11dataReading(){
 
 		switch(step){
@@ -290,10 +324,19 @@ void dht11dataReading(){
 
 }
 
+/*
+ * Sets the clock of the dht for use.
+ */
 void dht11ClockSetup(){
 	SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
 }
 
+/* Interrupt Handler
+ * | extern void readDataBit();
+ *********************************
+ * Reads the response from the DHT. Assigned to
+ * port A4.
+ */
 void readDataBit(){
 	if(dataBitReadStatus < 40){
 	switch(bitTimingStatus){
@@ -332,6 +375,9 @@ void readDataBit(){
 	}
 }
 
+/*
+ * Reads the difference between bits.
+ */
 void bitTimeElapsed(){
 
 	bitsReceivedTiming[dataBitReadStatus] = bitExitTime - bitEntryTime;
@@ -340,23 +386,25 @@ void bitTimeElapsed(){
 
 }
 
+/*
+ * Converts the time of the pulses to their
+ * specified bits in the datasheet.
+ */
 void convertTimetoBits(){
 	int i = 0;
 	for(i = 0;i < 40;i++){
-
 		if(bitsReceivedTiming[i] > 0 && bitsReceivedTiming[i] <= 24){ //quantities on uS
-				dataBitsReceived[i] = 0;
-
-			}
+			dataBitsReceived[i] = 0;
+		}
 		if(bitsReceivedTiming[i] > 24){
-				dataBitsReceived[i] = 1;
-
-			}
+			dataBitsReceived[i] = 1;
+		}
 	}
-
 }
 
-
+/*
+ * Initializes the time module.
+ */
 void initTimeControlModule(){
 
 	HWREG(GPIO_PORTA | GPIO_OFFSET_INTERRUPT_BOTH_EDGES) &= 0xEF; //Delegate to Event Register 408
@@ -368,6 +416,9 @@ void initTimeControlModule(){
 }
 
 
+/*
+ * Ends the time control module.
+ */
 void endTimeControlModule(){
 
 	//HWREG(GPIO_PORTB | 0x408)|= 0x02; //Delegate to Event Register
@@ -377,6 +428,9 @@ void endTimeControlModule(){
 	IntEnable(INT_GPIOA);
 }
 
+/*
+ * Initializes the Timer 1 Module.
+ */
 void initTimer1Module(){
 
 	TimerIntEnable(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
@@ -385,11 +439,25 @@ void initTimer1Module(){
 
 }
 
+/* Interrupt Handler for the DHT11 Timer ( >:( )
+ * | extern void dht11count1uS()
+ ************************************
+ *
+ * Counts 1us steps.
+ *
+ * TODO: Not uint32_t
+ *
+ */
 void dht11count1uS(){
 	TimerIntClear(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
 	count1uS++;
 }
 
+/*
+ * Helper function for power.
+ *
+ * TODO: Change for Math.h's pow.
+ */
 float dhtPow(int base, int exponent){
 	int j = 1;
 	int power = 1;
@@ -400,6 +468,9 @@ float dhtPow(int base, int exponent){
 	return power;
 }
 
+/*
+ * Interprets the results of the DHT Response.
+ */
 void decodeData(){
 	sum = 0;
 	int i = 0;

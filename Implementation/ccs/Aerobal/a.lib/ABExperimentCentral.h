@@ -10,7 +10,7 @@
 
 #include "ABSensorServer.h"
 
-#define ABEC_BUFFER_SIZE 100
+#define ABEC_BUFFER_SIZE 255
 
 
 typedef struct {
@@ -18,6 +18,7 @@ typedef struct {
 	float buffer[ABEC_BUFFER_SIZE];
 	int count;
 	float average;
+	float dataCount;
 } ABExperimentCentralBuffer;
 
 
@@ -64,6 +65,13 @@ void ABECAddHumidity();
 void ABECAddWindDirection();
 void ABECAddVelocity();
 
+float ABECTestGetAverageDragFront();
+float ABECTestGetAverageDragBack();
+float ABECTestGetAverageLiftUp();
+float ABECTestGetAverageLiftDown();
+float ABECTestGetAverageSideLeft();
+float ABECTestGetAverageSideRight();
+
 ///////////////////////////
 // API Layer 1
 float ABECComputeBaseDrag();
@@ -82,5 +90,6 @@ float ABECGetAverageHumidity();
 float ABECGetAverageWindDirection();
 float ABECGetAverageVelocity();
 
+void ABECClearAllBuffers();
 
 #endif /* ABEXPERIMENTCENTRAL_H_ */

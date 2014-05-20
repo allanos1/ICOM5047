@@ -170,7 +170,13 @@ void uartMasterEnable(uint32_t uart, uint32_t baud){
 }
 
 
+void uartIntEnable(uint32_t uart){
+	UARTIntEnable(uartGetBase(uart),UART_INT_RX | UART_INT_RT);
+}
 
+void uartIntDisable(uint32_t uart){
+	UARTIntDisable(uartGetBase(uart),UART_INT_RX | UART_INT_RT);
+}
 /*
  *Clears the interrupts for the UARTS.
  */
@@ -224,6 +230,12 @@ int32_t uartGetBufferCharSync(uint32_t uart){
 
 ////////////////////////////////////////////
 // API Layer 2
+
+/*
+ * Enables the UART Module using no interrupts.
+ * This mode is helpful for only writing from
+ * the TIVA to a device.
+ */
 void uartMasterEnableNoInterrupt(uint32_t uart, uint32_t baud){
 
 	//TODO: Check clock dependency.

@@ -2,7 +2,7 @@
  * ABSensorServer.h
  *
  *  Created on: Apr 24, 2014
- *      Author: Administrator
+ *      Author: Anthony
  */
 
 #ifndef ABSENSORSERVER_H_
@@ -14,6 +14,8 @@
 #include "windVane.h"
 #include "loadCell.h"
 #include "bmp085Array.h"
+#include "buttons.h"
+#include "bluetooth.h"
 
 #define ABSENSORSERVER_BUFFER_SIZE 10 //TODO: CHECK
 

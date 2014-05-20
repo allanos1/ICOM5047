@@ -10,6 +10,19 @@
 
 #include "adc.h"
 
+////////////////////////////
+//AeroBal Defined pins for forces.
+// PE0-PE5
+// Drag:
+// 		Front	PE0
+//		Back 	PE1
+// Lift:
+//		Up		PE2
+//		Down	PE3
+// Side:
+//		Left	PE4
+//		Right	PE5
+//
 #define LOADCELL_FORCE_PIN_DRAG_FRONT ADC_PIN_IN03_PE0
 #define LOADCELL_FORCE_PIN_DRAG_BACK ADC_PIN_IN02_PE1
 #define LOADCELL_FORCE_PIN_LIFT_UP ADC_PIN_IN01_PE2
@@ -24,7 +37,7 @@
 #define LOADCELL_FORCE_MUX_SIDE_LEFT ADC_MUX_5
 #define LOADCELL_FORCE_MUX_SIDE_RIGHT ADC_MUX_6
 
-#define LOADCELL_BUFFER_SIZE 20
+#define LOADCELL_BUFFER_SIZE 10
 
 typedef struct {
 	float sum ;
@@ -40,6 +53,10 @@ int loadCellRefreshSize;
 void loadCellInit();
 void loadCellRefresh();
 void loadCellRefreshSetSize(int size);
+
+
+///////////////////////////////////
+// API Layer 1 - Load Cell Characterizations.
 float loadCellGetDragFront();
 float loadCellGetDragBack();
 float loadCellGetLiftUp();

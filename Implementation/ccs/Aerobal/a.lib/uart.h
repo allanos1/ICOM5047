@@ -44,7 +44,8 @@ void uartWriteCharSync(uint32_t uart, unsigned char data);
 void uartWriteChar(uint32_t uart, unsigned char data);
 int32_t uartGetBufferCharSync(uint32_t uart);
 int32_t uartGetBufferChar(uint32_t uart);
-
+void uartIntEnable(uint32_t uart);
+void uartIntDisable(uint32_t uart);
 ////////////////////////////////////////////
 // API Layer 2
 void uartMasterEnableNoInterrupt(uint32_t uart, uint32_t baud);

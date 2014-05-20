@@ -49,49 +49,84 @@ void buttonsInterruptHandler(){
 
 }
 
+/*
+ * Returns whether the button B0 was pressed.
+ */
 uint32_t buttonsWasPressedB0(){
 	return (buttonsLastPressed & BUTTONS_B0) == BUTTONS_B0;
 }
 
+/*
+ * Returns whether the button B1 was pressed.
+ */
 uint32_t buttonsWasPressedB1(){
 	return (buttonsLastPressed & BUTTONS_B1) == BUTTONS_B1;
 }
 
+/*
+ * Returns whether the button B2 was pressed.
+ */
 uint32_t buttonsWasPressedB2(){
 	return (buttonsLastPressed & BUTTONS_B2) == BUTTONS_B2;
 }
 
+/*
+ * Returns whether the button B3 was pressed.
+ */
 uint32_t buttonsWasPressedB3(){
 	return (buttonsLastPressed & BUTTONS_B3) == BUTTONS_B3;
 }
 
+/*
+ * Returns whether the button B4 was pressed.
+ */
 uint32_t buttonsWasPressedB4(){
 	return (buttonsLastPressed & BUTTONS_B4) == BUTTONS_B4;
 }
 
+/*
+ * Returns whether the button B5 was pressed.
+ */
 uint32_t buttonsWasPressedB5(){
 	return (buttonsLastPressed & BUTTONS_B5) == BUTTONS_B5;
 }
 
+/*
+ * Returns whether a button was pressed. Must be reset
+ * with buttonsEnable() to really be useful.
+ */
 int buttonsWasPressed(){
 	return buttonsLastPressed != 0;
 }
 
+/*
+ * Disables the interrupts on the buttons (all of them).
+ */
 void buttonsDisable(){
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x00);
 }
 
 
+/*
+ * Enables the buttons by eliminating the interrupt flags and the
+ * last pressed flag, then disabling the mask of the buttons.
+ */
 void buttonsEnable(){
 	buttonsLastPressed = 0;
 	gpioSetInterruptClear(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
 }
 
-
+/*
+ * Masks the interrupts of the buttons.
+ */
 void buttonsMask(){
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,0x20);
 }
+
+/*
+ * Unmasks the interrupts of the buttons.
+ */
 void buttonsUnmask(){
 	gpioSetInterruptMaskDisable(GPIO_PORTB,BUTTONS_ENABLED_BUTTONS,BUTTONS_ENABLED_BUTTONS);
 }

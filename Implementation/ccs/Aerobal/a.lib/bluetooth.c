@@ -31,7 +31,6 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
 	//To track number of events for testing.
 	bluetoothEventCount = 0;
 	bluetoothSettingFanStatus = 0;
-	bluetoothEnable();
 }
 
 /*****************************
@@ -45,21 +44,10 @@ void bluetoothInit(uint32_t uart, uint32_t uartBaud){
  */
 void bluetoothInterruptHandler(void){
 	uartInterruptClear(bluetoothUART);
-	//gpioSetData(GPIO_PORTF,0x0C,0x0C);
-	//SysCtlDelay(100000);
-	//gpioSetData(GPIO_PORTF,0x0C,0x00);
 	bluetoothEventCount++;
 	while(uartHasAvailable(bluetoothUART)){
-		//uartWriteCharSync(bluetoothUART,uartGetBufferCharSync(bluetoothUART));
-		if(bluetoothIsEnabled()){
-			bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
-		}
-		else{
-			//Empty Buffer.
-			uartGetBufferChar(bluetoothUART);
-		}
+		bluetoothStateMachine(uartGetBufferChar(bluetoothUART));
     }
-
 }
 
 /*
@@ -193,12 +181,17 @@ void bluetoothGetQuery(char * value){
 	value[i-1] = '\0';
 }
 
+/*
+ *Character to integer translation.
+ */
 int bluetoothGetNumber(char value){
 	return value-48;
 }
 /*
  * Evaluates the string coming from the
- * bluetooth communication.
+ * bluetooth communication. Uses Aerobal's
+ * proposed Bluetooth Communication
+ * protocol.
  */
 void bluetoothEvaluateBuffer(char *buffer){
 	char command[5] ;
@@ -223,13 +216,13 @@ void bluetoothEvaluateBuffer(char *buffer){
 			stringITOA(pNumber,out);
 			bluetoothSendString(out);
 			bluetoothSendString(":");
-			stringFTOA(ABSSGetMPSAIndexPressure(pNumber),out);
+			stringFTOA(ABSSGetMPSAIndexPressure(0),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("hm",command)){
@@ -237,13 +230,12 @@ void bluetoothEvaluateBuffer(char *buffer){
 			//GET HM ok!
 			bluetoothSendString("hm:");
 			stringFTOA(ABSSGetDHTHumidity(),out);
-			//stringFTOA(143.987/(float)bluetoothEventCount,out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
-			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("tm",command)){
@@ -263,13 +255,14 @@ void bluetoothEvaluateBuffer(char *buffer){
 			stringITOA(pNumber,out);
 			bluetoothSendString(out);
 			bluetoothSendString(":");
-			stringFTOA(ABSSGetMPSAIndexTemperature(pNumber),out);
+			stringFTOA(ABSSGetDHTTemperature(),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 
 	}
@@ -277,13 +270,14 @@ void bluetoothEvaluateBuffer(char *buffer){
 		if(bluetoothIsQuery(value)){
 			//GET WD ok!
 			bluetoothSendString("spda:");
-			stringFTOA(ABSSGetAnemometerSpeed(),out);
+			stringFTOA(anemometerSpeedConvertMiH(ABSSGetAnemometerSpeed()),out);
 			bluetoothSendString(out);
 			bluetoothSendTerminator();
 			//bluetoothSendAck();
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("spdp",command)){
@@ -297,6 +291,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("wd",command)){
@@ -310,6 +305,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("lc",command)){
@@ -346,6 +342,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 			}
 			else{
 				bluetoothSendErr();
+				bluetoothSendTerminator();
 				return;
 			}
 			bluetoothSendTerminator();
@@ -370,6 +367,7 @@ void bluetoothEvaluateBuffer(char *buffer){
 		}
 		else{
 			bluetoothSendErr();
+			bluetoothSendTerminator();
 		}
 	}
 	else if(stringEquals("ln1",command)){
@@ -418,34 +416,69 @@ void bluetoothEvaluateBuffer(char *buffer){
 	else if(stringEquals("ack",command)){
 		//Not Sure Yet.
 		bluetoothSendAck();
+		bluetoothSendTerminator();
 	}
 	else if(stringEquals("err",command)){
 		//Not Sure Yet.
 		bluetoothSendErr();
+		bluetoothSendTerminator();
 	}
 	else{
 		bluetoothSendErr();
 		bluetoothSendString(":UnkCom");
+		bluetoothSendTerminator();
 	}
 }
 
 ///////////////////////////////////////////
 // API Layer 1
+
+/*
+ * Returns the status if the fan setting. This
+ * status determines whether the state machine will
+ * set the VFD on. If 1, the state machine will
+ * initiate a sequence to start the tunnel
+ * and set the speed set in the motorAtv module.
+ */
 int bluetoothGetSettingFanStatus(){
 	return bluetoothSettingFanStatus;
 }
 
+/*
+ * Sets the status of the fan setting. This
+ * status determines whether the VFD will be set in
+ * the state machine.
+ */
 void bluetoothSetSettingFanStatus(int value){
 	bluetoothSettingFanStatus = value;
 }
 
-void bluetoothEnable(){
-	bluetoothEnabled = 1;
+/*
+ * Sets the status of the fan as in the remote
+ * interfaces.
+ */
+void bluetoothSetSettingFanQuery(int value){
+	bluetoothSettingFanQuery = value;
 }
-void bluetoothDisable(){
-	bluetoothEnabled = 0;
+/*
+ * Returns the status of the fan as in remote
+ * interface.
+ */
+int bluetoothGetSettingFanQuery(){
+	return bluetoothSettingFanQuery;
 }
 
-int bluetoothIsEnabled(){
-	return bluetoothEnabled;
+/*
+ * Enables UART Interrupts from the Bluetooth.
+ */
+void bluetoothEnable(){
+	uartIntEnable(bluetoothUART);
 }
+
+/*
+ * Disables UART Interrupts from the Bluetooth.
+ */
+void bluetoothDisable(){
+	uartIntDisable(bluetoothUART);
+}
+

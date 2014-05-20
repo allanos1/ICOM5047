@@ -33,7 +33,6 @@
 #include "bluetooth.h"
 #include "gpio.h"
 #include "timers.h"
-#include "binCounter.h"
 #include "buttons.h"
 #include "ABUI.h"
 #include "string.h"
@@ -54,7 +53,6 @@ void ABTestWindVane();
 void ABTimerTestInterruptHandler();
 void ABTimerTest();
 void ABTestBinaryCounter();
-void ABTestButtonsInit();
 void ABTestButtonsPool();
 void ABTestButtonsT1();
 void ABTestButtonsT2();

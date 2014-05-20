@@ -5,8 +5,12 @@
  *      Author: Anthony
  *
  * Module created for the Relay of the Aerobal System.
- * The module is programmed for use with the A5 pin.
+ * The module is programmed for use with the A2 and A3 pin.
  * Uses custom GPIO library.
+ *
+ * The motorAtv library uses this module to change the state
+ * of the VFD. A3 is programmed to be the START ('F') pin and
+ * A2 is programmed to be the STOP ('R').
  */
 
 #ifndef RELAY_H_
@@ -21,7 +25,6 @@
 #define AB_MODULE_RELAY_PIN_START 0x08
 
 void relayInit();
-void relayToggle();
 void relayOn();
 void relayOff();
 
